@@ -1,0 +1,11 @@
+body{
+    background-color: #fca103;
+    text-align: center;
+}
+#login-title{
+    text-align: center;
+}
+
+form {
+    display: inline-block;
+}

@@ -1,0 +1,17 @@
+{#<!-- templates/registration/login.html -->#}
+<link rel="stylesheet" type="text/css" href = "../../static/css/login.css">
+{% extends "base.html" %}
+{% block content %}
+    <h2 id="login-title">Squad</h2>
+    <body>
+        <form method="post" id="login-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+        <a href="../signup">Sign Up</a>
+        <p>Forgot your password? Click the link below.</p>
+        <p>link</p>
+    </body>
+{% endblock %}
+
