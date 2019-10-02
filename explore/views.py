@@ -8,5 +8,4 @@ class Explore(generic.CreateView):
     fields = '__all__'
 
     def get_queryset(self):
-        """Return Classes """
         return models.Class.objects.order_by('id')
