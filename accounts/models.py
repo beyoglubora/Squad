@@ -41,9 +41,9 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
-    profile_photo = models.FileField(default=None)
-    groups = models.CharField(validators=[validate_comma_separated_integer_list], max_length=200, default=[])
-    classes = models.CharField(validators=[validate_comma_separated_integer_list], max_length=200, default=[])
+    profile_photo = models.FileField(default=None, blank=True)
+    groups = models.CharField(validators=[validate_comma_separated_integer_list], max_length=200, blank=True)
+    classes = models.CharField(validators=[validate_comma_separated_integer_list], max_length=200, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["username"]
