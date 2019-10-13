@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
 
 {% block content %}
-<form method="post">
+    {% include 'navbar.html' %}
+    <h3 id="add-a-class" style="position: absolute; color:darkorange; font-family: 'Oleo Script Swash Caps', cursive; font-size: 30px; margin-left:25%; margin-top:3.5%">Add a Class</h3>
+<form id="create-class-form" method="post" style="position:absolute; margin-left:25%; margin-top:10%">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Create Class</button>

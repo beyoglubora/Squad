@@ -1,17 +1,31 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href = "../static/css/explore.css">
+<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
 {% extends 'base.html' %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
+    <h1 id="explore-title">Explore</h1>
+    {% include 'navbar.html' %}
     {% if user.is_instructor %}
-        <a href="/explore/create">Add a Class</a>
+        <a id="add_class" href="/explore/create">+ Add a Class</a>
     {% endif %}
-    <p><a href="{% url 'logout' %}">logout</a></p>
-    {% for class in classes %}
-        <a href = "/{{ class.pk }}">{{ class.name }}</a>
+    <ul class="class-list">
+        {% for class in classes %}
+            <li class="class-list-item">
+                <div class="class-container">
+                <div class="title-container">
+                    <h3 id="class-name">{{ class.name }}"</h3>
+                </div>
+                <div class="description-container">
+                    <p id="class-description">{{ class.description }}</p>
+                </div>
+                </div>
+            </li>
     {% endfor %}
+    </ul>
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>

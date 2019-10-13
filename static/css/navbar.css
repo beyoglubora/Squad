@@ -1,0 +1,22 @@
+#logout{
+    margin-top: 270px;
+    margin-left: -140px;
+    color: white;
+    position:absolute;
+}
+li{
+   margin-bottom: 30px;
+}
+#greeting{
+    margin-left: 18px;
+    color: white;
+}
+a.nav-link{
+    color: white;
+}
+a.nav-link:hover{
+    text-decoration: underline;
+}
+ul.nav{
+    margin-bottom:110%;
+}
