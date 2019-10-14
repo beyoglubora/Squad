@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
+<p>
+<h1>{{ fname }} {{ lname }}'s Profile</h1>
+    <button onclick="location.href='{% url 'profedit' %}'">EDIT</button>
+<h3>Personal information</h3>
+    {% load static %}
+    <img src="{{ photo.name }}" alt="{{ photo.name }}">
+    <p>Name:{{ fname }}&nbsp;{{ lname }}&nbsp;Email:{{ email }}</p>
+<div>Your are instructor(s) of the following classes</div>
+{% for ic in incins %}
+    <b>{{ ic.class_name }}</b>&nbsp;
+{% endfor %}
+<div>You enroll in these classes</div>
+{% for ec in encins %}
+    <b>{{ ec.class_name }}</b>&nbsp;
+{% endfor %}
+<h3>Description and Skills</h3>
+<div>description for every class</div>
+{% for dc in desins %}
+    <p>{{ dc.class_instance.class_name }}:{{ dc.description }}</p>
+{% endfor %}
+<div>tags for every class</div>
+{% for tc in sins %}
+    <b>{{ tc.class_instance.class_name }}:{{ tc.label }}</b>
+{% endfor %}
+    <button onclick="location.href='{% url 'dashboard' %}'">Back to DashBoard</button>
+</body>
+</html>

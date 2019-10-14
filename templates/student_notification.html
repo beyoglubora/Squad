@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notification</title>
+</head>
+<body>
+{% for notification in list_notification %}
+    {% if notification.status != 3 %}
+        <a href="/account/{{ notification.sender_instance.account_id }}">
+            {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}
+        </a>
+        {% if notification.status == -2 %}
+            DELETED you from
+        {% elif notification.status < 3 and notification.status > -2 %}
+            invites you in
+        {% endif %}
+        <a href="/class/{{ notification.class_instance.class_id}}">
+            {{ notification.class_instance.class_name }}
+        </a>
+        &nbsp;&nbsp;
+        {% if not notification.read %}
+            <button onclick="location.href='{% url 'globalread' %}{{ notification.notification_id }}'">
+                READ
+            </button>
+        {% endif %}
+        {% if notification.status == 1 %}
+            | you have accepted
+        {% elif notification.status == 2 %}
+            | you have declined
+        {% elif notification.status == -1 %}
+            <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">
+                ACCEPT
+            </button>
+            <button onclick="location.href='/notification/decline/{{ notification.notification_id }}'">
+                DECLINE
+            </button>
+        {% endif %}
+
+    {% endif %}
+{% endfor %}
+</body>
+</html>

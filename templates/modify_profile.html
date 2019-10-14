@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    <h3>User Information</h3>
+    <div>First Name</div><input name="newfname" value="{{ fname }}">
+    <div>Last Name</div><input name="newlname" value="{{ lname }}">
+    <div>Email Address</div><input name="newemail" value="{{ email }}">
+    <div>Photo</div>
+    <img src="{{ photo }}" alt="{{ photo.name }}">
+    <input type="file" name="newphoto" value="{{ photo }}">
+    <h3>Descriptions for Classes</h3>
+    {% for dc in desins %}
+        <div>{{ dc.class_instance.class_name }}</div><input name="new{{ dc.class_instance.class_name }}" value="{{ dc.description }}">
+    {% endfor %}
+    <h3>Skills for Classes</h3>
+    {% for tc in sins %}
+        <div>{{ tc.class_instance.class_name }}</div><input name="new{{ tc.class_instance.class_name }}" value="{{ tc.label }}">
+    {% endfor %}
+    <br>
+    <button type="submit">Save Changes</button>
+</form>
+</body>
+</html>
