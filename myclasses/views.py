@@ -9,17 +9,20 @@ def getIDInstance():
     """
     return DataModel.Account.objects.all()[2]
 
-def getMyClass(s_ins):
+
+def getMyCreatedClasses(instructor):
+    classes = DataModel.Class.objects.filter(instructor=instructor)
+    return classes
+
+
+def getMyEnrolledClasses(student):
     """
     :param s_ins: student_instance
     :return: a list of classes' name of s_ins enrolled in
     """
-    classes = DataModel.Relationship.objects.filter(student_instance=s_ins)
-    ls = []
-    for c in classes:
-        ls.append(c.class_instance)
-        # if ls is null
-    return ls
+    classes = DataModel.Relationship.objects.filter(student_instance=student)
+    return classes
+
 
 def listRequested(request):
     """
@@ -27,7 +30,9 @@ def listRequested(request):
     :return: a html contains a list of class
     """
     return render(request, 'studentDashBoard.html',
-                  {'myclasslist': getMyClass(getIDInstance())})
+                  {'enrolled_class_list': getMyEnrolledClasses(request.user),
+                   'created_class_list': getMyCreatedClasses(request.user)})
+
 
 def classDelete(request):
     """

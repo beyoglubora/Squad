@@ -2,13 +2,16 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data import models as DataModel
-from myclasses.views import getMyClass
+from myclasses.views import getMyEnrolledClasses
+
 
 def getIDInstance():
     """
     :return: current student instance who clicked
     """
     return DataModel.Account.objects.all()[2]
+
+
 def getAllProfile(s_ins):
     """
     :param s_ins: user instance for retrieve profiles
@@ -20,12 +23,13 @@ def getAllProfile(s_ins):
     is_instructor_of = DataModel.Class.objects.filter(instructor_instance=s_ins)
     photo = s_ins.photo
     descrip_by_class = DataModel.Description.objects.filter(student_instance=s_ins)
-    class_enroll = getMyClass(s_ins)
+    class_enroll = getMyEnrolledClasses(s_ins)
     skill = DataModel.Skill_label.objects.filter(student_instance=s_ins)
     list = [fname, lname, email, is_instructor_of,
             photo, descrip_by_class, class_enroll,
             skill]
     return list
+
 
 def listRequestedmine(request):
     # if (not getIDInstance()):
@@ -42,6 +46,7 @@ def listRequestedmine(request):
         'encins':list[6],
         'sins':list[7]
     })
+
 
 def listRequested(request):
     uid = request.get_full_path().split('/account/')[-1]
@@ -60,6 +65,7 @@ def listRequested(request):
         'encins':list[6],
         'sins':list[7]
     })
+
 
 def changProfile(request):
     s_ins = getIDInstance()

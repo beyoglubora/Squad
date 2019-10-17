@@ -1,31 +1,77 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-# Create your models here.
+
+class MyAccountManager(BaseUserManager):
+    def create_user(self, email, first_name, last_name, password=None):
+        if not email:
+            raise ValueError("Users must have an email address")
+        if not first_name:
+            raise ValueError("Users must have a first name")
+        if not last_name:
+            raise ValueError("Users must have a last name")
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, first_name, last_name, password):
+        user = self.create_user(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+            password=password
+        )
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
 
-class Account(models.Model):
+class Account(AbstractBaseUser):
     account_id = models.BigAutoField(primary_key=True)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    email = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=30)
+    email = models.EmailField(verbose_name="email", max_length=60, unique=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
-    photo = models.FileField(default=None, blank=True)
-    
+    profile_photo = models.FileField(default=None, blank=True)
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ["first_name", "last_name"]
+
+    objects = MyAccountManager()
+
+    def __str__(self):
+        return self.email + "; " + self.first_name + "; " + self.last_name + "; " + self.password + "; " + \
+               str(self.is_admin) + "; " + str(self.is_active) + "; " + str(self.is_staff) + "; " + \
+               str(self.is_superuser) + "; " + str(self.is_instructor)
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return True
 
 
 class Class(models.Model):
     class_id = models.BigAutoField(primary_key=True)
-    class_name = models.CharField(max_length=20)
+    class_name = models.CharField(max_length=200, unique=True, default=None)
     description = models.TextField()
-    instructor_instance = models.ForeignKey('Account', on_delete=models.CASCADE)
+    instructor = models.ForeignKey('Account', on_delete=models.CASCADE)
 
-    @classmethod
-    def add_class(cls, class_name, instructor):
-        temp = Class(class_name=class_name, instructor_instance=instructor)
-        temp.save()
-        return True
+    class Meta:
+        verbose_name_plural = "Classes"
 
 
 class Notification(models.Model):

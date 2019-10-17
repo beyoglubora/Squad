@@ -14,7 +14,7 @@
 <nav class="navbar navbar-dark" style="width:250px; height:100%; background-color: darkorange; position:fixed">
 <ul class="nav flex-column">
     <li class="nav-item">
-        <h3 id="greeting"> Hi, {{ user.username }}!</h3>
+        <h3 id="greeting"> Hi, {{ user.first_name }}!</h3>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/explore">Explore</a>
@@ -23,7 +23,7 @@
     <a class="nav-link active" href="#">My Account</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">My Classes & Groups</a>
+    <a class="nav-link" href="../myclasses">My Classes & Groups</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="#">Notifications</a>
@@ -31,7 +31,5 @@
 </ul>
     <p><a id="logout" href="{% url 'logout' %}">logout</a></p>
 </nav>
-
-
 </body>
 </html>
