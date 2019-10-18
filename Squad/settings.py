@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'accounts',
     'explore',
     'data',
-    'myclasses'
+    'myclasses',
+    'accountprofile'
 ]
 
 MIDDLEWARE = [

@@ -2,98 +2,51 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data import models as DataModel
-from myclasses.views import getMyEnrolledClasses
+from myclasses.views import get_skills_descriptions_groups_by_class
 
 
-def getIDInstance():
-    """
-    :return: current student instance who clicked
-    """
-    return DataModel.Account.objects.all()[2]
+def my_profile(request):
+    student_model = request.user
+    return render(request, 'userprofile.html', {'student_model': student_model})
 
 
-def getAllProfile(s_ins):
-    """
-    :param s_ins: user instance for retrieve profiles
-    :return: all profiles user has
-    """
-    fname = s_ins.first_name
-    lname = s_ins.last_name
-    email = s_ins.email
-    is_instructor_of = DataModel.Class.objects.filter(instructor_instance=s_ins)
-    photo = s_ins.photo
-    descrip_by_class = DataModel.Description.objects.filter(student_instance=s_ins)
-    class_enroll = getMyEnrolledClasses(s_ins)
-    skill = DataModel.Skill_label.objects.filter(student_instance=s_ins)
-    list = [fname, lname, email, is_instructor_of,
-            photo, descrip_by_class, class_enroll,
-            skill]
-    return list
-
-
-def listRequestedmine(request):
-    # if (not getIDInstance()):
-    #     messages.info(request, "You are not logged in!")
-    #     return HttpResponseRedirect('/account/')
-    list = getAllProfile(getIDInstance())
-    return render(request, 'userprofile.html', {
-        'fname':list[0],
-        'lname':list[1],
-        'email':list[2],
-        'incins':list[3],
-        'photo':list[4],
-        'desins':list[5],
-        'encins':list[6],
-        'sins':list[7]
-    })
-
-
-def listRequested(request):
-    uid = request.get_full_path().split('/account/')[-1]
-    u_ins = DataModel.Account.objects.filter(account_id=uid)
-    if (not u_ins):
+def other_profile(request):
+    student_id = request.get_full_path().split('/')[-1]
+    student = DataModel.Account.objects.filter(account_id=student_id).first()
+    if not student:
         messages.info(request, "No Such User")
         return HttpResponseRedirect('/account/')
-    list = getAllProfile(u_ins[0])
+    skills_description_groups_by_class = get_skills_descriptions_groups_by_class(student)
+    instructing_classes = DataModel.Class.objects.filter(instructor=student)
+    print(skills_description_groups_by_class)
     return render(request, 'userprofile.html', {
-        'fname':list[0],
-        'lname':list[1],
-        'email':list[2],
-        'incins':list[3],
-        'photo':list[4],
-        'desins':list[5],
-        'encins':list[6],
-        'sins':list[7]
+        'student_model': student,
+        'instructing_classes': instructing_classes,
+        'skills_descriptions_groups_by_class': skills_description_groups_by_class
     })
 
 
-def changProfile(request):
-    s_ins = getIDInstance()
-    list = getAllProfile(s_ins)
+def change_profile(request):
+    student = request.user
+    instructor_for_classes = DataModel.Class.objects.filter(instructor=student)
+    enrolled_class_ids = DataModel.Relationship.objects.filter(student_instance=student).values("class_instance")
+    enrolled_classes = DataModel.Class.objects.filter(pk__in=enrolled_class_ids)
+    skills_and_descriptions_by_class = {}
+    for c in enrolled_classes:
+        description = DataModel.Description.objects.filter(student_instance=student, class_instance=c).first()
+        skills = DataModel.Skill_label.objects.filter(student_instance=student, class_instance=c).first()
+        skills_and_descriptions_by_class[c] = {"description": description, "skills": skills}
+
     if request.method == 'POST':
-        s_ins.first_name = request.POST["newfname"]
-        s_ins.last_name = request.POST["newlname"]
-        s_ins.email = request.POST["newemail"]
-        if (request.POST['newphoto']):
-            s_ins.photo = request.POST['newphoto']
-        s_ins.save()
-        for dc in list[5]:
-            dc.description = request.POST["new"+dc.class_instance.class_name]
-            dc.save()
-        for tc in list[7]:
-            tc.label = request.POST["new"+tc.class_instance.class_name]
-            tc.save()
-
-        return HttpResponseRedirect('/account')
-
+        student.first_name = request.POST["new_first_name"]
+        student.last_name = request.POST["new_last_name"]
+        student.email = request.POST["new_email"]
+        if request.POST['new_photo']:
+            student.photo = request.POST['new_photo']
+        student.save()
+        return HttpResponseRedirect('/accountprofile')
     else:
         return render(request, 'modify_profile.html', {
-            'fname': list[0],
-            'lname': list[1],
-            'email': list[2],
-            'incins': list[3],
-            'photo': list[4],
-            'desins': list[5],
-            'encins': list[6],
-            'sins': list[7]
+            'instructor_for_classes': instructor_for_classes,
+            'skills_and_description_by_class': skills_and_descriptions_by_class,
         })

@@ -10,28 +10,62 @@ def getIDInstance():
     return DataModel.Account.objects.all()[2]
 
 
-def getMyCreatedClasses(instructor):
+def get_my_created_classes(instructor):
     classes = DataModel.Class.objects.filter(instructor=instructor)
     return classes
 
 
-def getMyEnrolledClasses(student):
+def get_enrolled_classes(student):
     """
-    :param s_ins: student_instance
+    :param student: student_instance
     :return: a list of classes' name of s_ins enrolled in
     """
-    classes = DataModel.Relationship.objects.filter(student_instance=student)
+    class_ids = DataModel.Relationship.objects.filter(student_instance=student).values("class_instance")
+    classes = DataModel.Class.objects.filter(pk__in=class_ids)
     return classes
 
 
-def listRequested(request):
+def get_skills_descriptions_groups_by_class(student):
+    enrolled_classes = get_enrolled_classes(student)
+    skills_descriptions_groups_by_class = {}
+    for c in enrolled_classes:
+        description = DataModel.Description.objects.filter(student_instance=student, class_instance=c).first()
+        skills = DataModel.Skill_label.objects.filter(student_instance=student, class_instance=c).first()
+        group_id = DataModel.Relationship.objects.filter(student_instance=student, class_instance=c).values(
+            "group_id").first()
+        if group_id == -1:
+            group = None
+        else:
+            group = DataModel.Group.objects.filter(group_id=1).first()
+        skills_descriptions_groups_by_class[c] = {"description": description, "skills": skills, "group": group}
+        return skills_descriptions_groups_by_class
+
+
+def my_classes(request):
     """
     :param request:
     :return: a html contains a list of class
     """
+    student = request.user
+    skills_descriptions_groups_by_class = get_skills_descriptions_groups_by_class(student)
     return render(request, 'studentDashBoard.html',
-                  {'enrolled_class_list': getMyEnrolledClasses(request.user),
-                   'created_class_list': getMyCreatedClasses(request.user)})
+                  {'skills_descriptions_groups_by_class': skills_descriptions_groups_by_class,
+                   'created_class_list': get_my_created_classes(request.user)})
+
+
+def edit_classes(request):
+    skills_descriptions_groups_by_class = get_skills_descriptions_groups_by_class(request.user)
+    if request.method == 'POST':
+        for key in skills_descriptions_groups_by_class:
+            description = skills_descriptions_groups_by_class[key]['description']
+            skills = skills_descriptions_groups_by_class[key]['skills']
+            description.description = request.POST["new_description_"+key.class_name]
+            skills.label = request.POST["new_skills_"+key.class_name]
+            description.save()
+            skills.save()
+        return HttpResponseRedirect('/myclasses')
+    else:
+        return render(request, 'classedit.html', {'skills_descriptions_groups_by_class': skills_descriptions_groups_by_class})
 
 
 def classDelete(request):

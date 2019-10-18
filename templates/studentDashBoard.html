@@ -3,9 +3,17 @@
 {% include 'navbar.html' %}
 <div id="enrolled_classes" style="margin-left:20%">
 <h1>Your Enrolled Classes: </h1>
-{% for c in enrolled_class_list %}
-    <a href="/class/{{ c.class_name }}">{{ c.class_name }}</a>
-    &nbsp;&nbsp
+<button onclick="location.href='{% url 'edit_class_page' %}'">EDIT</button>
+<br>
+{% for class, value in skills_descriptions_groups_by_class.items %}
+    <a href="/class/{{ class.class_name }}">{{ class.class_name }}</a>
+    <p>Description: {{ value.description.description }}</p>
+    <p>Skills: {{ value.skills.label }}</p>
+    {% if value.group %}
+        <p>Group: {{ value.group.group_name }}</p>
+    {% else %}
+        <p>Group: {{ user.first_name }} is not in a group for this class</p>
+    {% endif %}
 {% endfor %}
 </div>
 {% if user.is_instructor %}

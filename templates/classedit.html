@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="margin-left:20%">
+    <form method="post">
+    {% csrf_token %}
+    <h3>Edit Class Descriptions and Skills</h3>
+    {% for class, values in skills_descriptions_groups_by_class.items %}
+        <div>
+            {{ class.class_name }}
+            Describe Yourself: <input name="new_description_{{ class.class_name }}" value="{{ values.description.description }}">
+            List Your Skills<input name="new_skills_{{ class.class_name }}" value="{{ values.skills.label }}">
+        </div>
+    {% endfor %}
+    <button type="submit">Save Changes</button>
+    </form>
+    </div>
+{% endblock %}

@@ -1,40 +1,48 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
 </head>
-{% if messages %}
-        <script>
-            {% for msg in messages %}
-                alert('{{ msg.message }}');
-            {% endfor %}
-        </script>
-{% endif %}
-<p>
-<h1>{{ fname }} {{ lname }}'s Profile</h1>
+
+{#{% if messages %}#}
+{#        <script>#}
+{#            {% for msg in messages %}#}
+{#                alert('{{ msg.message }}');#}
+{#            {% endfor %}#}
+{#        </script>#}
+{#{% endif %}#}
+<div style="margin-left: 20%">
+<h1>{{ student_model.first_name }} {{ student_model.last_name }}'s Profile</h1>
+{% if student_model.pk == request.user.pk %}
     <button onclick="location.href='{% url 'profedit' %}'">EDIT</button>
+{% endif %}
+
 <h3>Personal information</h3>
-    {% load static %}
-    <img src="{{ photo.name }}" alt="{{ photo.name }}">
-    <p>Name:{{ fname }}&nbsp;{{ lname }}&nbsp;Email:{{ email }}</p>
-<div>Your are instructor(s) of the following classes</div>
-{% for ic in incins %}
-    <b>{{ ic.class_name }}</b>&nbsp;
-{% endfor %}
-<div>You enroll in these classes</div>
-{% for ec in encins %}
-    <b>{{ ec.class_name }}</b>&nbsp;
-{% endfor %}
-<h3>Description and Skills</h3>
-<div>description for every class</div>
-{% for dc in desins %}
-    <p>{{ dc.class_instance.class_name }}:{{ dc.description }}</p>
-{% endfor %}
-<div>tags for every class</div>
-{% for tc in sins %}
-    <b>{{ tc.class_instance.class_name }}:{{ tc.label }}</b>
-{% endfor %}
-    <button onclick="location.href='{% url 'dashboard' %}'">Back to DashBoard</button>
-</body>
-</html>
+{% load static %}
+<img src="{{ photo.name }}" alt="{{ photo.name }}">
+<p>Name: {{ student_model.first_name }} {{ student_model.last_name }} Email: {{ student_model.email }}</p>
+
+{% if student_model.is_instructor %}
+    <div>{{ student_model.first_name }} is an instructor of the following classes</div>
+    {% for class in instructing_classes %}
+        <b>{{ class.class_name }}</b>
+    {% endfor %}
+{% endif %}
+
+{% if student_model.pk != request.user.pk %}
+    <div>{{ student_model.first_name }} is enrolled in these classes</div>
+    {% for class, value in skills_descriptions_groups_by_class.items %}
+        <a href="/class/{{ class.class_name }}">{{ class.class_name }}</a>
+        <p>Description: {{ value.description.description }}</p>
+        <p>Skills: {{ value.skills.label }}</p>
+        {% if value.group %}
+            <p>Group: {{ value.group.group_name }}</p>
+        {% else %}
+            <p>Group: {{ user.first_name }} is not in a group for this class</p>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</div>
+{% endblock %}
