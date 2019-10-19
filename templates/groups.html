@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups</title>
+</head>
+<body>
+    <div>
+        All Groups: {{ groups }}
+    </div>
+
+    <div>
+{# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
+        {% for group_id, group_name in groups.items %}
+            <h2><a href="{% url 'group_detail' %}">{{ group_name }}</a></h2>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
