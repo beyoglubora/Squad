@@ -15,13 +15,12 @@ notification3 = data.models.Notification.objects.all()[2]
 '''
 
 
-def get_current_account():
+def get_current_account(request):
     """
     get current account()
     :return:
     """
-    stu2 = data.models.Account.objects.all()[1]
-    return stu2
+    return request.user
 
 
 def notification_requested(request):
@@ -30,7 +29,7 @@ def notification_requested(request):
     :return: render with list_notifications
     """
     return render(request, 'student_notification.html',
-                  {'list_notification': account_get_notification(get_current_account())})
+                  {'list_notification': account_get_notification(get_current_account(request))})
 
 
 def read_nofitication(request):
@@ -62,7 +61,7 @@ def accept_nofitication(request):
         print("ERROR: cant find the notification")
         return False
     notification_instance = temp_obj[0]
-    flag_success = accept_invitation(current_account=get_current_account(), notification_instance=notification_instance)
+    flag_success = accept_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
         return HttpResponseRedirect('/notification')
     else:
@@ -81,7 +80,7 @@ def decline_nofitication(request):
         print("ERROR: cant find the notification")
         return False
     notification_instance = temp_obj[0]
-    flag_success = decline_invitation(current_account=get_current_account(), notification_instance=notification_instance)
+    flag_success = decline_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
         return HttpResponseRedirect('/notification')
     else:

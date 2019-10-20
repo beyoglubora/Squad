@@ -6,14 +6,14 @@
 </head>
 <body>
 {% for notification in list_notification %}
-    {% if notification.status != 3 %}
+    {% if notification.status != -3 %}
         <a href="/account/{{ notification.sender_instance.account_id }}">
             {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}
         </a>
         {% if notification.status == -2 %}
             DELETED you from
-        {% elif notification.status < 3 and notification.status > -2 %}
-            invites you in
+        {% elif notification.status < 6 and notification.status > -2 %}
+            wants to group with you in
         {% endif %}
         <a href="/class/{{ notification.class_instance.class_id}}">
             {{ notification.class_instance.class_name }}
@@ -24,9 +24,9 @@
                 READ
             </button>
         {% endif %}
-        {% if notification.status == 1 %}
+        {% if notification.status == 1 or notification.status == 4 %}
             | you have accepted
-        {% elif notification.status == 2 %}
+        {% elif notification.status == 2 or notification.status == 5 %}
             | you have declined
         {% elif notification.status == -1 %}
             <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">
