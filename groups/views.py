@@ -55,6 +55,16 @@ def join_group(request):
     message = "Successfully sent join notifications. Waiting for responses..."
     return render(request, 'groups.html', {'message': message})
 
+def invite(request):
+    sender_id = request.user.pk
+
+    # push notifications to the invited people
+    invited_id = int(request.POST.get('invited_id'))
+    create_notidfication(1, sender_id, invited_id, False, -1)
+    message = "Successfully sent invite notifications. Waiting for responses..."
+    return render(request, 'groups.html', {'message': message})
+
+
 def create_notidfication(class_id, sender, receiver, read, status):
     notification = DataModel.Notification()
     notification.class_instance_id = class_id
