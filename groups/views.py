@@ -3,10 +3,7 @@ from data import models as DataModel
 import re
 
 
-def display_groups(request):
-
-    # The class_id should be retrieved from the sent request displaying the class detail page.
-    class_id = 1
+def load_group_page_data(class_id):
 
     group_relations = DataModel.Relationship.objects.filter(class_instance=class_id)
 
@@ -15,7 +12,7 @@ def display_groups(request):
     for relation in group_relations:
         active_group_ids.add(relation.group_id)
     if -1 in active_group_ids:
-        active_group_ids.remove(-1) # remove the default group
+        active_group_ids.remove(-1)  # remove the default group
 
     active_groups = dict()
     for group_id in active_group_ids:
@@ -24,9 +21,14 @@ def display_groups(request):
 
     # Get active students
     student_relations = DataModel.Relationship.objects.filter(class_instance=class_id, group_id=-1)
-    active_students = set()
-    for relation in student_relations:
-        active_students.add(relation.student_instance.first_name + " " + relation.student_instance.last_name)
+
+    return active_groups, student_relations
+
+def display_groups(request):
+
+    # The class_id should be retrieved from the sent request displaying the class detail page.
+    class_id = 1
+    active_groups, student_relations = load_group_page_data(class_id)
 
     return render(request, 'groups.html', {'groups': active_groups, 'active_students': student_relations})
 
@@ -54,7 +56,13 @@ def join_group(request):
         create_notidfication(1, sender_id, receiver, False, 3)
 
     message = "Successfully sent join notifications. Waiting for responses..."
-    return render(request, 'groups.html', {'message': message})
+
+    class_id = 1
+    active_groups, student_relations = load_group_page_data(class_id)
+
+    return render(request, 'groups.html', {'message': message,
+                                           'groups': active_groups,
+                                           'active_students': student_relations})
 
 def invite(request):
     sender_id = request.user.pk
@@ -63,7 +71,13 @@ def invite(request):
     invited_id = int(request.POST.get('invited_id'))
     create_notidfication(1, sender_id, invited_id, False, -1)
     message = "Successfully sent invite notifications. Waiting for responses..."
-    return render(request, 'groups.html', {'message': message})
+
+    class_id = 1
+    active_groups, student_relations = load_group_page_data(class_id)
+
+    return render(request, 'groups.html', {'message': message,
+                                           'groups': active_groups,
+                                           'active_students': student_relations})
 
 
 def create_notidfication(class_id, sender, receiver, read, status):
