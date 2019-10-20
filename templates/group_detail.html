@@ -1,17 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <div>
-        <h1>Group Name: {{ group_name }}</h1>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href = "../static/css/group_detail.css">
+<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="margin-left: 20%">
+        <div>
+            <h1>Group Name: {{ group_name }}</h1>
+            {% for student_id, student_name in group_members.items %}
+                <h2><a href="/accountprofile/{{ student_id }}"> {{ student_name }}</a></h2>
+            {% endfor %}
+        </div>
+
+        <div>
+            <form action="join-group" method="POST">
+                <input type="hidden" name="group_members" value="{{ group_members }}" />
+                {% csrf_token %}
+                <input type="submit" value="Join Group">
+            </form>
+        </div>
+
     </div>
-    <div>
-        {% for student_id, student_name in group_members.items %}
-            <h2><a href="/account/{{ student_id }}"> {{ student_name }}</a></h2>
-        {% endfor %}
-    </div>
-</body>
-</html>
+{% endblock %}

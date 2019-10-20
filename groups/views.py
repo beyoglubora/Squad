@@ -39,4 +39,38 @@ def group_detail(request):
     group_member_relations = DataModel.Relationship.objects.filter(group_id=group_id)
     for relation in group_member_relations:
         group_members[relation.student_instance.account_id] = relation.student_instance.first_name + " " + relation.student_instance.last_name
-    return render(request, 'group_detail.html', {'group_id': group_id, 'group_name': group_name, 'group_members': group_members})
+    return render(request, 'group_detail.html', {'group_id': group_id,
+                                                 'group_name': group_name,
+                                                 'group_members': group_members})
+
+def join_group(request):
+    sender_id = request.user.pk
+
+    # push notifications to other group members
+    group_members = request.POST.get('group_members')
+    receivers = re.findall(r'\d+(?=:)', group_members)
+    for receiver in receivers:
+        create_notidfication(1, sender_id, receiver, False, 3)
+
+    message = "Successfully sent join notifications. Waiting for responses..."
+    return render(request, 'groups.html', {'message': message})
+
+def invite(request):
+    sender_id = request.user.pk
+
+    # push notifications to the invited people
+    invited_id = int(request.POST.get('invited_id'))
+    create_notidfication(1, sender_id, invited_id, False, -1)
+    message = "Successfully sent invite notifications. Waiting for responses..."
+    return render(request, 'groups.html', {'message': message})
+
+
+def create_notidfication(class_id, sender, receiver, read, status):
+    notification = DataModel.Notification()
+    notification.class_instance_id = class_id
+    notification.sender_instance_id = sender
+    notification.receiver_instance_id = receiver
+    notification.read = read
+    notification.status = status
+    notification.save()
+    return

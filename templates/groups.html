@@ -1,32 +1,42 @@
-{# TODO: Don't include this, instead extend base.html (you can look at explore.html as an example #}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Groups</title>
-</head>
-{# TODO: include the navbar.htlm (you can look at explore.html as an example #}
-{# TODO: include class name and instructor #}
-<body>
-    <h1>Active Groups</h1>
-    <div>
-        All Groups: {{ groups }}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href = "../static/css/group.css">
+<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+{% extends 'base.html' %}
+{# TODO: Add invite buttons next to each name so user can invite them to group. If user is not in a group, a popup should tell them to create a group before inviting someone #}
+
+
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="margin-left: 20%">
+
+        {% if message %}
+            <script>
+                alert('{{ message }}');
+            </script>
+        {% endif %}
+
+        <h1>Active Groups</h1>
+        <div>
+        {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
+            {% for group_id, group_name in groups.items %}
+                <h2><a href="{{ group_id }}">{{ group_name }}</a></h2>
+            {% endfor %}
+        </div>
+
+        <h1>Active Students</h1>
+        <div>
+            {% for student in active_students %}
+                <h2><a href="/accountprofile/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
+                {# TODO: Add invite buttons next to each name so user can invite them to group. If user is not in a group, a popup should tell them to create a group before inviting someone #}
+                <form action="invite" method="POST">
+                    <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
+                    {% csrf_token %}
+                    <input type="submit" value="Invite">
+                </form>
+            {% endfor %}
+
+        </div>
+
     </div>
 
-    <div>
-{# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
-        {% for group_id, group_name in groups.items %}
-            <h2><a href="{{ group_id }}">{{ group_name }}</a></h2>
-        {% endfor %}
-    </div>
-
-    <h1>Active Students</h1>
-    <div>
-        {% for student in active_students %}
-            <h2><a href="/accountprofile/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
-            {# TODO: Add invite buttons next to each name so user can invite them to group. If user is not in a group, a popup should tell them to create a group before inviting someone #}
-        {% endfor %}
-
-    </div>
-</body>
-</html>
+{%endblock %}
