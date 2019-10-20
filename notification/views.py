@@ -29,10 +29,11 @@ def notification_requested(request):
     :return: render with list_notifications
     """
     return render(request, 'student_notification.html',
-                  {'list_notification': account_get_notification(get_current_account(request))})
+                  {'list_notification': account_get_notification(get_current_account(request)),
+                   'current_user': get_current_account(request)})
 
 
-def read_nofitication(request):
+def read_notification(request):
     """
     :param request:
     :return: False or HttpResponseRedirect('/notification')

@@ -5,6 +5,7 @@
     <title>Notification</title>
 </head>
 <body>
+<p> {{ current_user.first_name }} </p>
 {% for notification in list_notification %}
     {% if notification.status != -3 %}
         <a href="/account/{{ notification.sender_instance.account_id }}">

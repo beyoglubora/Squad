@@ -49,7 +49,7 @@ def decline_invitation(current_account, notification_instance):
     if current_account != receiver:
         print("you're processing others notification, strange here")
         return False
-    if status != -1:
+    if status != -1 and status != 3:
         print("notification has been processed, strange here")
         return False
     notification_instance.status = 2
@@ -122,7 +122,7 @@ def accept_invitation(current_account, notification_instance):
     if current_account != receiver:
         print("you're processing others notification, strange here")
         return False
-    if status != -1:
+    if status != -1 and status != 3:
         print("notification has been processed, strange here")
         return False
     if receiver.is_instructor:
