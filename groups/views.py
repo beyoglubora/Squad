@@ -2,7 +2,6 @@ from django.shortcuts import render
 from data import models as DataModel
 import re
 
-# Create your views here.
 
 def display_groups(request):
 

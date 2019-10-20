@@ -1,9 +1,12 @@
+{# TODO: Don't include this, instead extend base.html (you can look at explore.html as an example #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Groups</title>
 </head>
+{# TODO: include the navbar.htlm (you can look at explore.html as an example #}
+{# TODO: include class name and instructor #}
 <body>
     <h1>Active Groups</h1>
     <div>
@@ -20,7 +23,8 @@
     <h1>Active Students</h1>
     <div>
         {% for student in active_students %}
-            <h2><a href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
+            <h2><a href="/accountprofile/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
+            {# TODO: Add invite buttons next to each name so user can invite them to group. If user is not in a group, a popup should tell them to create a group before inviting someone #}
         {% endfor %}
 
     </div>
