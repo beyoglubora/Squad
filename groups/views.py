@@ -14,7 +14,8 @@ def display_groups(request):
     active_group_ids = set()
     for relation in group_relations:
         active_group_ids.add(relation.group_id)
-    active_group_ids.remove(-1) # remove the default group
+    if -1 in active_group_ids:
+        active_group_ids.remove(-1) # remove the default group
 
     active_groups = dict()
     for group_id in active_group_ids:
