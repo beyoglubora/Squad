@@ -24,5 +24,6 @@ urlpatterns = [
     path('explore/', include('explore.urls')),
     path('myclasses/', include('myclasses.urls')),
     path('accountprofile/', include('accountprofile.urls')),
-    path('groups/', include('groups.urls'))
+    path('groups/', include('groups.urls')),
+    path('class/', include('class.urls'))
 ]

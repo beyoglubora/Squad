@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
     path('', views.display_groups),
-    path('group_detail', views.group_detail, name="group_detail")
+    re_path(r'[0-9]+', views.group_detail)
 ]

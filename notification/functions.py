@@ -33,6 +33,11 @@ def is_all_read(account_instance):
     1: invitation accepted
     2: invitation declined
     3: others
+    
+    todo: 
+    3: application pending/ 
+    4: application/accepted 
+    5: application/declined
 '''
 
 

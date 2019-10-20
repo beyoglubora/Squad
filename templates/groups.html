@@ -5,6 +5,7 @@
     <title>Groups</title>
 </head>
 <body>
+    <h1>Active Groups</h1>
     <div>
         All Groups: {{ groups }}
     </div>
@@ -12,9 +13,16 @@
     <div>
 {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
         {% for group_id, group_name in groups.items %}
-            <h2><a href="{% url 'group_detail' %}">{{ group_name }}</a></h2>
+            <h2><a href="{{ group_id }}">{{ group_name }}</a></h2>
         {% endfor %}
     </div>
 
+    <h1>Active Students</h1>
+    <div>
+        {% for student in active_students %}
+            <h2><a href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
+        {% endfor %}
+
+    </div>
 </body>
 </html>

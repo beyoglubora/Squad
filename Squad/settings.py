@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'data',
     'myclasses',
     'accountprofile',
-    'groups'
+    'groups',
+    'class'
 ]
 
 MIDDLEWARE = [
