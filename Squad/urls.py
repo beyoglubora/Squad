@@ -25,5 +25,6 @@ urlpatterns = [
     path('myclasses/', include('myclasses.urls')),
     path('accountprofile/', include('accountprofile.urls')),
     path('groups/', include('groups.urls')),
-    path('class/', include('class.urls'))
+    path('class/', include('class.urls')),
+    path('notification/', include('notification.urls'))
 ]

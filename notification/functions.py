@@ -42,7 +42,7 @@ def is_all_read(account_instance):
 '''
 
 
-def decline_invitation(current_account: data.models.Account, notification_instance: data.models.Notification):
+def decline_invitation(current_account, notification_instance):
     sender = notification_instance.sender_instance
     receiver = notification_instance.receiver_instance
     status = notification_instance.status
@@ -105,7 +105,16 @@ def add_group_name(group_id:int):
     new_group.save()
 
 
-def accept_invitation(current_account: data.models.Account, notification_instance: data.models.Notification):
+def accept_invitation(current_account, notification_instance):
+    """
+    Logic now:
+    both have a group: error
+    One has a group: let the other in
+    Neither has a group: make a new group for them to let them in
+    :param current_account:
+    :param notification_instance:
+    :return:
+    """
     sender = notification_instance.sender_instance
     receiver = notification_instance.receiver_instance
     temp_class = notification_instance.class_instance
@@ -123,32 +132,43 @@ def accept_invitation(current_account: data.models.Account, notification_instanc
     sender_in_class = is_in_class(sender, temp_class)
     if not sender_in_class:
         print("sender not in class")
-        notification_instance.status = 3
+        notification_instance.status = -3
         notification_instance.save()
         return False
     # check if receiver still in class
     receiver_in_class = is_in_class(receiver, temp_class)
     if not receiver_in_class:
         print("receiver not in class")
-        notification_instance.status = 3
+        notification_instance.status = -3
         notification_instance.save()
         return False
     # check if receiver have a group in that class
     receiver_have_group = have_group_class(receiver, temp_class)
-    if receiver_have_group:
-        print("receiver already have a group in that class")
-        return False
     sender_have_group = have_group_class(sender, temp_class)
+    if receiver_have_group and sender_have_group:
+        print("You and sender both have group")
+        return False
+
     if sender_have_group:
-        # if sender have a group
+        # if sender have a group, receiver don't
+        # receiver join sender's group
         group_num = sender_have_group
         join_group(receiver, temp_class, group_num)
         notification_instance.status = 1
         notification_instance.read = True
         notification_instance.save()
         return True
+    elif receiver_have_group:
+        # sender join receiver's group
+        group_num = receiver_have_group
+        join_group(sender, temp_class, group_num)
+        notification_instance.status = 1
+        notification_instance.read = True
+        notification_instance.save()
+        return True
     else:
-        # if sender don't have a group
+        # if both don't have a group
+        # make a new group for them by the notification_id
         group_num = notification_instance.notification_id
         join_group(receiver, temp_class, group_num)
         join_group(sender, temp_class, group_num)
