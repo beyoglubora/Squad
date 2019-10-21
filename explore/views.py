@@ -13,7 +13,7 @@ def create_class(request):
         form = CreateClassForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.instructor = request.user
+            instance.instructor_instance = request.user
             instance.save()
             return HttpResponseRedirect('/explore/')
     else:
