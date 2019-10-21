@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <form method="post" style="margin-left: 20%">
+        {% csrf_token %}
+        <div>Rename the Group</div><input name="group-name" value="{{ group.group_name }}">
+        <button type="submit">Save Name</button>
+    </form>
+{% endblock %}

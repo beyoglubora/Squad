@@ -53,7 +53,13 @@ def group_detail(request):
 
 
 def edit_group_name(request):
-    return
+    group_id = request.get_full_path().split('/')[-1]
+    group = DataModel.Group.objects.filter(group_id=group_id).first()
+    if request.method == 'POST':
+        group.group_name = request.POST['group-name']
+        group.save()
+        return HttpResponseRedirect("/groups/"+group_id)
+    return render(request, 'edit_group_name.html', context={'group': group})
 
 
 def leave_group(request):

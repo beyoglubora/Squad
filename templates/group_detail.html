@@ -9,7 +9,7 @@
         <div>
             <h1>Group Name: {{ group_name }}</h1>
             {% if user.pk in group_members %}
-                <button onclick="location.href='{% url 'edit-group-name' %}'">EDIT</button>
+                <a href="/groups/edit_group_name/{{ group_id }}">Edit Group Name</a>
             {% endif %}
             {% for student_id, student_name in group_members.items %}
                 <h2><a href="/account/{{ student_id }}"> {{ student_name }}</a></h2>
