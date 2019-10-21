@@ -25,6 +25,5 @@ urlpatterns = [
     path('dashboard/', include('myclasses.urls')),
     path('account/', include('accountprofile.urls')),
     path('groups/', include('groups.urls')),
-    path('class/', include('class.urls')),
     path('notification/', include('notification.urls'))
 ]

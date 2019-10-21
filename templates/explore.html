@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href = "../static/css/explore.css">
 <link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 {% extends 'base.html' %}
 
 {% block title %}Home{% endblock %}
@@ -17,7 +18,8 @@
             <li class="class-list-item">
                 <div class="class-container">
                 <div class="title-container">
-                    <h3 id="class-name">{{ class.class_name }}</h3>
+                    <a id="class-name" href="/groups/class/{{ class.class_id }}">{{ class.class_name }}</a>
+{#                    <h3 id="class-name">{{ class.class_name }}</h3>#}
                 </div>
                 <div class="description-container">
                     <p id="class-description">{{ class.description }}</p>

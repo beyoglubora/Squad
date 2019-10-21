@@ -8,17 +8,29 @@
     <div style="margin-left: 20%">
         <div>
             <h1>Group Name: {{ group_name }}</h1>
+            {% if user.pk in group_members %}
+                <button onclick="location.href='{% url 'edit-group-name' %}'">EDIT</button>
+            {% endif %}
             {% for student_id, student_name in group_members.items %}
-                <h2><a href="/accountprofile/{{ student_id }}"> {{ student_name }}</a></h2>
+                <h2><a href="/account/{{ student_id }}"> {{ student_name }}</a></h2>
             {% endfor %}
         </div>
 
         <div>
-            <form action="join-group" method="POST">
+            {% if in_group %}
+            <form action="leave-group" method="POST">
+                <input type="hidden" name="group_id" value="{{ group_id }}" />
+                {% csrf_token %}
+                <input type="submit" value="Leave Group">
+            </form>
+            {% else %}
+                <form action="join-group" method="POST">
                 <input type="hidden" name="group_members" value="{{ group_members }}" />
+                <input type="hidden" name="group_id" value="{{ group_id }}" />
                 {% csrf_token %}
                 <input type="submit" value="Join Group">
             </form>
+            {% endif %}
         </div>
 
     </div>

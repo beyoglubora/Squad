@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'myclasses',
     'accountprofile',
     'groups',
-    'class',
     'notification'
 ]
 
