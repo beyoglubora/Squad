@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <form method="post" style="margin-left: 20%">
+        {% csrf_token %}
+        <h1>Enrolling in {{ class.class_name }}</h1>
+        <div>Describe your Interests in this Course</div><input name="description" value="{{ user.first_name }}">
+        <div>What is your skill set?</div><input name="skill_set" value="{{ user.last_name }}">
+        <button type="submit">Enroll</button>
+    </form>
+{% endblock %}
