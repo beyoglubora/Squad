@@ -1,40 +1,47 @@
-{% extends 'base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dash Board</title>
+</head>
+<body>
 {% include 'navbar.html' %}
-<div id="enrolled_classes" style="margin-left:20%">
-<h1>Your Enrolled Classes: </h1>
-<button onclick="location.href='{% url 'edit_class_page' %}'">EDIT</button>
+<div style="margin-left: 20%">
+<h1>Your classes: </h1>
 <br>
-{% for class, value in skills_descriptions_groups_by_class.items %}
-    <a href="/class/{{ class.class_name }}">{{ class.class_name }}</a>
-    <p>Description: {{ value.description.description }}</p>
-    <p>Skills: {{ value.skills.label }}</p>
-    {% if value.group %}
-        <p>Group: {{ value.group.group_name }}</p>
+<script>
+    function confirm_delete(str) {
+        var boo = prompt("Type DELETE to confirm");
+        if (boo === "DELETE") {
+            var s = "/dashboard/del";
+            s+=str;
+            window.location.href=s;
+        }
+    }
+</script>
+{% if user_is_instructor %}
+    <h3>You are instructor of : </h3>
+    {% for c in is_instructor_of %}
+    <a href="/class/{{ c.class_id }}">{{ c.class_name }}</a>
+    &nbsp;&nbsp<button onClick="confirm_delete({{ c.class_id }})">DELETE</button>
+{% endfor %}
+{% endif %}
+<h3>You enroll in : </h3>
+{% for c in myclasslist %}
+    <a href="/class/{{ c.class_id }}">{{ c.class_name }}</a>
+    &nbsp;&nbsp
+{% endfor %}
+<h3>You are in group : </h3>
+{% for gins in groups %}
+    {% if gins.group_id != -1 %}
+        <a href="/groups/{{ gins.group_id }}">Group{{ gins.group_id }}</a>
     {% else %}
-        <p>Group: {{ user.first_name }} is not in a group for this class</p>
+        <a>You have no groups</a>
     {% endif %}
+    in
+    <a href="/class/{{ gins.class_instance.class_id }}">{{ gins.class_instance.class_name }}</a>
+    <br>
 {% endfor %}
 </div>
-{% if user.is_instructor %}
-    <div id="created_classes" style="margin-left:20%">
-    <h1>Your Created Classes:</h1>
-    {% for c in created_class_list %}
-        <a href="/class/{{ c.class_name }}">{{ c.class_name }}</a>
-        <button onClick="confirm_delete({{ c.class_id }})">DELETE</button>
-    {% endfor %}
-    </div>
-{% endif %}
-
-<script>
-function confirm_delete(str) {
-    var boo = prompt("Type DELETE to confirm");
-    if (boo === "DELETE") {
-        var s = "/dashboard/del";
-        s+=str;
-        window.location.href=s;
-    }
-}
-</script>
-
-{% endblock %}
+</body>
+</html>

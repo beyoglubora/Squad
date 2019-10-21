@@ -68,7 +68,7 @@ class Class(models.Model):
     class_id = models.BigAutoField(primary_key=True)
     class_name = models.CharField(max_length=200, unique=True, default=None)
     description = models.TextField()
-    instructor = models.ForeignKey('Account', on_delete=models.CASCADE)
+    instructor_instance = models.ForeignKey('Account', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Classes"

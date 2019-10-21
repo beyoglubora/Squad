@@ -1,25 +1,31 @@
-{% extends 'base.html' %}
-{% block content %}
-{% include 'navbar.html'%}
-<div style=margin-left:20%>
-    <form method="post">
-        {% csrf_token %}
-        <h3>User Information</h3>
-        <div>First Name</div><input name="new_first_name" value="{{ user.first_name }}">
-        <div>Last Name</div><input name="new_last_name" value="{{ user.last_name }}">
-        <div>Email Address</div><input name="new_email" value="{{ user.email }}">
-        <div>Photo</div>
-        <img src="{{ user.profile_photo }}" alt="{{ photo.name }}">
-        <input type="file" name="new_photo" value="{{ user.profile_photo }}">
-{#        <h3>Edit Class Descriptions and Skills</h3>#}
-{#        {% for class, values in skills_and_description_by_class.items %}#}
-{#            <div>#}
-{#                {{ class.class_name }}#}
-{#                Describe Yourself: <input name="new_description_{{ class.class_name }}" value="{{ values.description.description }}">#}
-{#                List Your Skills<input name="new_skills_{{ class.class_name }}" value="{{ values.skills.label }}">#}
-{#            </div>#}
-{#        {% endfor %}#}
-        <button type="submit">Save Changes</button>
-    </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+{% include 'navbar.html' %}
+<div style="margin-left: 20%">
+<form method="post">
+    {% csrf_token %}
+    <h3>User Information</h3>
+    <div>First Name</div><input name="newfname" value="{{ fname }}">
+    <div>Last Name</div><input name="newlname" value="{{ lname }}">
+    <div>Photo</div>
+    <img src="{{ photo }}" alt="{{ photo.name }}">
+    <input type="file" name="newphoto" value="{{ photo }}">
+    <h3>Descriptions for Classes</h3>
+    {% for dc in desins %}
+        <div>{{ dc.class_instance.class_name }}</div><input name="new{{ dc.class_instance.class_name }}" value="{{ dc.description }}">
+    {% endfor %}
+    <h3>Skills for Classes</h3>
+    {% for tc in sins %}
+        <div>{{ tc.class_instance.class_name }}</div><input name="new{{ tc.class_instance.class_name }}" value="{{ tc.label }}">
+    {% endfor %}
+    <br>
+    <button type="submit">Save Changes</button>
+</form>
 </div>
-{% endblock %}
+</body>
+</html>
