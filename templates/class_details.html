@@ -1,0 +1,44 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href = "../static/css/group.css">
+<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="margin-left: 20%">
+        <h1>{{ class.class_name }}</h1>
+        {% if enrolled %}
+            <a href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
+        {% else %}
+            <a href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+        {% endif %}
+        {% if message %}
+            <script>
+                alert('{{ message }}');
+            </script>
+        {% endif %}
+
+        <h1>Active Groups</h1>
+        <div>
+        {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
+            {% for group_id, group_name in groups.items %}
+                <h2><a href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
+            {% endfor %}
+        </div>
+
+        <h1>Active Students</h1>
+        <div>
+            {% for student in active_students %}
+                <h2><a href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
+                {% if enrolled and user.pk == student.pk%}
+                    <form action="invite" method="POST">
+                        <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
+                        <input type="hidden" name="class_id" value="{{ class.class_id }}" />
+                        {% csrf_token %}
+                        <input type="submit" value="Invite">
+                    </form>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{%endblock %}
