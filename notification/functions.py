@@ -46,6 +46,8 @@ def decline_invitation(current_account, notification_instance):
     sender = notification_instance.sender_instance
     receiver = notification_instance.receiver_instance
     status = notification_instance.status
+    notification_instance.read = True
+    notification_instance.save()
     if current_account != receiver:
         print("you're processing others notification, strange here")
         return False
@@ -53,7 +55,6 @@ def decline_invitation(current_account, notification_instance):
         print("notification has been processed, strange here")
         return False
     notification_instance.status = 2
-    notification_instance.read = True
     notification_instance.save()
     # maybe you need to notify sender
     return sender
@@ -101,7 +102,7 @@ def add_group_name(group_id:int):
     if temp_obj:
         # already have that group_id
         return False
-    new_group = data.models.Group(group_id=group_id)
+    new_group = data.models.Group(group_id=group_id, group_name='Group'+str(group_id))
     new_group.save()
 
 
@@ -119,6 +120,8 @@ def accept_invitation(current_account, notification_instance):
     receiver = notification_instance.receiver_instance
     temp_class = notification_instance.class_instance
     status = notification_instance.status
+    notification_instance.read = True
+    notification_instance.save()
     if current_account != receiver:
         print("you're processing others notification, strange here")
         return False
@@ -155,7 +158,6 @@ def accept_invitation(current_account, notification_instance):
         group_num = sender_have_group
         join_group(receiver, temp_class, group_num)
         notification_instance.status = 1
-        notification_instance.read = True
         notification_instance.save()
         return True
     elif receiver_have_group:
@@ -163,7 +165,6 @@ def accept_invitation(current_account, notification_instance):
         group_num = receiver_have_group
         join_group(sender, temp_class, group_num)
         notification_instance.status = 1
-        notification_instance.read = True
         notification_instance.save()
         return True
     else:
@@ -174,7 +175,6 @@ def accept_invitation(current_account, notification_instance):
         join_group(sender, temp_class, group_num)
         add_group_name(group_num)
         notification_instance.status = 1
-        notification_instance.read = True
         notification_instance.save()
         return True
 

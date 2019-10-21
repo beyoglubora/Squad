@@ -63,6 +63,14 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    def is_all_read(self):
+        # account_instance is an object of data.models.Account
+        temp_notification_objects = Notification.objects.filter(receiver_instance=self).filter(read=False)
+        if not temp_notification_objects:
+            return True
+        else:
+            return False
+
 
 class Class(models.Model):
     class_id = models.BigAutoField(primary_key=True)

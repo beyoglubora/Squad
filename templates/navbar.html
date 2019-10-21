@@ -25,9 +25,15 @@
   <li class="nav-item">
     <a class="nav-link" href="/dashboard">My Classes & Groups</a>
   </li>
+  {% if user.is_all_read %}
   <li class="nav-item">
-    <a class="nav-link" href="#">Notifications</a>
+    <a class="nav-link" href="{% url 'notification' %}">Notifications</a>
   </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'notification' %}">Notifications(New unread)</a>
+  </li>
+  {% endif %}
 </ul>
     <p><a id="logout" href="{% url 'logout' %}">logout</a></p>
 </nav>
