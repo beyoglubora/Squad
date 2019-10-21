@@ -33,6 +33,7 @@ def class_details(request, message=None, class_id=None):
     active_students = set()
     for relation in student_relations:
         active_students.add(relation.student_instance.first_name + " " + relation.student_instance.last_name)
+    print(student_relations)
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'active_students': student_relations,
                                                   'enrolled': enrolled, 'message': message})
 

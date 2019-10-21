@@ -29,7 +29,7 @@
         <div>
             {% for student in active_students %}
                 <h2><a href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
-                {% if enrolled and user.pk == student.pk%}
+                {% if enrolled and user.pk != student.student_instance.account_id %}
                     <form action="invite" method="POST">
                         <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
                         <input type="hidden" name="class_id" value="{{ class.class_id }}" />
