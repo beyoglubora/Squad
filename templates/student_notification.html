@@ -17,7 +17,7 @@
             {% elif notification.status < 6 and notification.status > -2 %}
                 wants to group with you in
             {% endif %}
-            <a href="/class/{{ notification.class_instance.class_id}}">
+            <a href="/groups/class/{{ notification.class_instance.class_id}}">
                 {{ notification.class_instance.class_name }}
             </a>
             &nbsp;&nbsp;
