@@ -53,7 +53,7 @@ def listRequested(request):
     explorer_id = getIDInstance(request).account_id
     uid = request.get_full_path().split('/account/')[-1]
     is_same_one = (str(explorer_id) == uid)
-    list_eclass_and_iclass = True
+    list_eclass_and_iclass = (str(explorer_id) != uid)
     u_ins = DataModel.Account.objects.filter(account_id=uid)
     if (not u_ins):
         messages.info(request, "No Such User")

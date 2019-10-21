@@ -22,13 +22,13 @@
 {% if user_is_instructor %}
     <h3>You are instructor of : </h3>
     {% for c in is_instructor_of %}
-    <a href="/class/{{ c.class_id }}">{{ c.class_name }}</a>
+    <a href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a>
     &nbsp;&nbsp<button onClick="confirm_delete({{ c.class_id }})">DELETE</button>
 {% endfor %}
 {% endif %}
 <h3>You enroll in : </h3>
 {% for c in myclasslist %}
-    <a href="/class/{{ c.class_id }}">{{ c.class_name }}</a>
+    <a href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a>
     &nbsp;&nbsp
 {% endfor %}
 <h3>You are in group : </h3>
@@ -39,7 +39,7 @@
         <a>You have no groups</a>
     {% endif %}
     in
-    <a href="/class/{{ gins.class_instance.class_id }}">{{ gins.class_instance.class_name }}</a>
+    <a href="/groups/class/{{ gins.class_instance.class_id }}">{{ gins.class_instance.class_name }}</a>
     <br>
 {% endfor %}
 </div>
