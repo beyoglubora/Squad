@@ -6,10 +6,12 @@
     {% include 'navbar.html' %}
     <div style="margin-left: 20%">
         <h1>{{ class.class_name }}</h1>
-        {% if enrolled %}
-            <a href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
-        {% else %}
-            <a href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+        {% if user.account_id != class.instructor_instance_id  %}
+            {% if enrolled %}
+                <a href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
+            {% else %}
+                <a href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+            {% endif %}
         {% endif %}
         {% if message %}
             <script>
