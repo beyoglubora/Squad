@@ -29,8 +29,18 @@ def listRequested(request):
     :return: a html contains a list of class
     """
     s_ins = getIDInstance(request)
-    group_instance = DataModel.Relationship.objects.filter(student_instance=s_ins)
+    relationship_instance = DataModel.Relationship.objects.filter(student_instance=s_ins)
+    group_list = []
     is_instructor_of = DataModel.Class.objects.filter(instructor_instance=s_ins)
+    for re in relationship_instance:
+        group_ins = DataModel.Group.objects.filter(group_id=re.group_id)
+        if not group_ins:
+            group_name = ""
+        else:
+            group_name = group_ins[0].group_name
+
+        group_list.append((re, group_name))
+
     if request.method == 'POST':
         pass
     else:
@@ -38,7 +48,7 @@ def listRequested(request):
                     {'myclasslist': getMyClass(s_ins),
                     'user_is_instructor': s_ins.is_instructor,
                     'is_instructor_of': is_instructor_of,
-                    'groups':group_instance})
+                    'groups':group_list})
 
 def classDelete(request):
     """

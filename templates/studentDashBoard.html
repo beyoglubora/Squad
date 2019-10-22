@@ -32,9 +32,9 @@
     &nbsp;&nbsp
 {% endfor %}
 <h3>You are in group : </h3>
-{% for gins in groups %}
+{% for gins, group_name in groups %}
     {% if gins.group_id != -1 %}
-        <a href="/groups/{{ gins.group_id }}">Group{{ gins.group_id }}</a>
+        <a href="/groups/{{ gins.group_id }}">{{ group_name }}</a>
     {% else %}
         <a>You have no groups</a>
     {% endif %}
