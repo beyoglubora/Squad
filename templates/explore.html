@@ -10,26 +10,59 @@
 {% if user.is_authenticated %}
     <h1 id="explore-title">Explore</h1>
     {% include 'navbar.html' %}
-    {% if user.is_instructor %}
-        <a id="add_class" href="/explore/create">+ Add a Class</a>
-    {% endif %}
-    <ul class="class-list">
+
+    <div style="margin-right:auto; width: 1100px;">
+        <input type="text" id="class-search" onkeyup="classSearch()" placeholder="Search for a Class!">
+
+
+    <ul id="classes-list" class="class-list">
+        {% if user.is_instructor %}
+            <a id="add_class" href="/explore/create">+ Add a Class</a>
+        {% endif %}
         {% for class in classes %}
             <li class="class-list-item">
-                <div class="class-container">
-                <div class="title-container">
-                    <a id="class-name" href="/groups/class/{{ class.class_id }}">{{ class.class_name }}</a>
+                <div class="class-container" onclick="redirectToClass('{{ class.class_id }}')">
+                    <div class="title-container">
+                        <p id="class-name">{{ class.class_name }}</p>
 {#                    <h3 id="class-name">{{ class.class_name }}</h3>#}
-                </div>
-                <div class="description-container">
-                    <p id="class-description">{{ class.description }}</p>
-                </div>
+                    </div>
+                    <div class="description-container">
+                        <p id="class-description">{{ class.description }}</p>
+                    </div>
                 </div>
             </li>
     {% endfor %}
     </ul>
+    </div>
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>
 {% endif %}
+
+<script>
+function classSearch() {
+  // Declare variables
+  var input, filter, ul, li, a, i, txtValue;
+  input = document.getElementById('class-search');
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("classes-list");
+  li = ul.getElementsByTagName('li');
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("p")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
+function redirectToClass(class_id) {
+    window.location.href = "/groups/class/" + class_id;
+}
+</script>
+
 {% endblock %}
