@@ -23,11 +23,19 @@
     <img src="{{ photo.name }}" alt="{{ photo.name }}">
     <p>Name:{{ fname }}&nbsp;{{ lname }}&nbsp;Email:{{ email }}</p>
 {% if listclass %}
-<div>Your are instructor(s) of the following classes</div>
+    {% if same_one %}
+        <div>Your are instructor(s) of the following classes</div>
+    {% else %}
+        <div>This user is instructor(s) of the following classes</div>
+    {% endif %}
 {% for ic in incins %}
     <b>{{ ic.class_name }}</b>&nbsp;
 {% endfor %}
-<div>You enroll in these classes</div>
+    {% if same_one %}
+        <div>You enroll in these classes</div>
+        {% else %}
+        <div>This user enrolls in these classes</div>
+    {% endif %}
 {% for ec in encins %}
     <b>{{ ec.class_name }}</b>&nbsp;
 {% endfor %}
@@ -38,8 +46,12 @@
     <p>{{ dc.class_instance.class_name }}:{{ dc.description }}</p>
 {% endfor %}
 <div>tags for every class</div>
-{% for tc in sins %}
-    <b>{{ tc.class_instance.class_name }}:{{ tc.label }}</b>
+{% for key, values in sins.items %}
+    <a>{{ key }}:</a>
+    {% for value in values %}
+        <b>{{ value }}</b>
+    {% endfor %}
+    <br>
 {% endfor %}
 </div>
 </body>

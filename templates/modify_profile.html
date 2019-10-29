@@ -17,11 +17,16 @@
     <input type="file" name="newphoto" value="{{ photo }}">
     <h3>Descriptions for Classes</h3>
     {% for dc in desins %}
-        <div>{{ dc.class_instance.class_name }}</div><input name="new{{ dc.class_instance.class_name }}" value="{{ dc.description }}">
+        <div>{{ dc.class_instance.class_name }}</div><input name="des{{ dc.class_instance.class_name }}" value="{{ dc.description }}">
     {% endfor %}
     <h3>Skills for Classes</h3>
-    {% for tc in sins %}
-        <div>{{ tc.class_instance.class_name }}</div><input name="new{{ tc.class_instance.class_name }}" value="{{ tc.label }}">
+    {% for key, values in sins.items %}
+        <div>{{ key }}</div>
+        <div id="container{{ key }}">
+        {% for value in values %}
+            <input name="tags{{ value }}" value="{{ value }}">
+        {% endfor %}
+        </div>
     {% endfor %}
     <br>
     <button type="submit">Save Changes</button>
