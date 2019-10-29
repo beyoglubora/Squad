@@ -102,7 +102,7 @@ def changProfile(request):
         dict_skills = list[7]
         for key in dict_skills:
             for value in dict_skills[key]:
-                skill_ins = DataModel.Skill_label.objects.filter(class_instance__class_name=key, label=value)[0]
+                skill_ins = DataModel.Skill_label.objects.filter(student_instance=s_ins,class_instance__class_name=key, label=value)[0]
                 skill_ins.label = request.POST["tags"+value]
                 skill_ins.save()
 
