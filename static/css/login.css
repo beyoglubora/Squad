@@ -1,11 +1,43 @@
 body{
-    background-color: #fca103;
+    background-color: white;
     text-align: center;
+    margin: 0;
 }
 #login-title{
     text-align: center;
+    margin-top: 10%;
+    color: white;
+    font-size: 1000%;
+}
+
+#login-text{
+    text-align: center;
+    margin-top: 10%;
+    color: darkorange;
+    font-size: 1000%;
 }
 
 form {
     display: inline-block;
+}
+#left-half{
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    background-color: darkorange;
+}
+
+#right-half{
+    position: absolute;
+    margin-left: 50%;
+    width: 50%;
+    height: 100%;
+}
+
+#sign-up-text{
+    margin-top: 5%;
+}
+
+#sign-up-link{
+    color: darkorange;
 }

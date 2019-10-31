@@ -2,14 +2,22 @@
 <link rel="stylesheet" type="text/css" href = "../../static/css/login.css">
 {% extends "base.html" %}
 {% block content %}
-    <h2 id="login-title">Squad</h2>
     <body>
-        <form method="post" id="login-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Login</button>
-        </form>
-        <a href="../signup">Sign Up</a>
+    <div id="left-half">
+        <h2 id="login-title">Squad</h2>
+        <p style="color:white; margin-top:-15%;">Connect with students in your class <br> and form amazing groups!</p>
+    </div>
+    <div id="right-half">
+        <h2 id="login-text">Login</h2>
+        <div id="login-form">
+            <form method="post" id="login-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Login</button>
+            </form>
+            <p id="sign-up-text">Don't have an account? <a href="../signup" id="sign-up-link">Sign Up</a></p>
+        </div>
+    </div>
     </body>
 {% endblock %}
 

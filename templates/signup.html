@@ -1,13 +1,23 @@
 <!-- templates/signup.html -->
-{% extends 'base.html' %}
 <link rel="stylesheet" type="text/css" href = "../static/css/signup.css">
-{% block title %}Sign Up{% endblock %}
+
+{% extends "base.html" %}
 
 {% block content %}
-  <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
-  </form>
+    <body style="margin: 0;">
+    <div id="left-half" style="height:100%; width: 50%; background-color: darkorange; position:absolute; text-align: center;">
+        <h2 style = "text-align: center; margin-top: 10%; color: white; font-size: 1000%;" id="login-title">Squad</h2>
+        <p style="color:white; margin-top:-15%;">Connect with students in your class <br> and form amazing groups!</p>
+    </div>
+    <div id="right-half" style="height: 100%; width: 50%; background-color: white; margin-left: 50%; position:absolute;">
+        <div id="sign-up-form" style="margin-left: 5%">
+            <h2 style="font-size: 500%; color:darkorange; margin-left:5%">Sign up</h2>
+            <form method="post" style="margin-left:5%">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Sign up</button>
+            </form>
+        </div>
+    </div>
+    <body>
 {% endblock %}
