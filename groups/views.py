@@ -33,7 +33,6 @@ def class_details(request, message=None, class_id=None):
     active_students = set()
     for relation in student_relations:
         active_students.add(relation.student_instance.first_name + " " + relation.student_instance.last_name)
-    print(student_relations)
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'active_students': student_relations,
                                                   'enrolled': enrolled, 'message': message})
 
@@ -113,14 +112,37 @@ def enroll_form(request):
     class_id = request.get_full_path().split('/')[-1]
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
     student_instance = request.user
+    invalid = False
     if request.method == "POST":
-        enroll(class_instance, student_instance)
-        DataModel.Description.objects.create(class_instance=class_instance, student_instance=student_instance,
-                                             description=request.POST["description"])
-        DataModel.Skill_label.objects.create(student_instance=student_instance, class_instance=class_instance,
-                                             label=request.POST["skill_set"])
-        return HttpResponseRedirect('/groups/class/' + class_id)
-    return render(request, 'enroll_form.html', context={'class': class_instance})
+        skill_set = ""
+        for key in request.POST:
+            if "skill_set" in key:
+                skill_set += request.POST[key] + ";"
+        skill_set = skill_set[:-1]
+        description = request.POST["description"]
+        if check_enroll(skill_set, description):
+            enroll(class_instance, student_instance)
+            DataModel.Skill_label.objects.create(student_instance=student_instance, class_instance=class_instance,
+                                                 label=skill_set)
+            DataModel.Description.objects.create(class_instance=class_instance, student_instance=student_instance,
+                                                 description=description)
+            return HttpResponseRedirect('/groups/class/' + class_id)
+        else:
+            invalid = True
+
+    return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid})
+
+
+def check_enroll(skill_set, description):
+    if len(description) == 0 or len(description) > 100:
+        return False
+    skills = skill_set.split(';')
+    if skills == ['']:
+        return False
+    for skill in skills:
+        if not skill or len(skill) > 20:
+            return False
+    return True
 
 
 def enroll(class_instance, student_instance):
