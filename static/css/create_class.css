@@ -1,0 +1,44 @@
+textarea:focus {outline: none;}
+input:focus {outline: none;}
+
+label{
+    visibility: hidden;
+}
+
+button {
+   border:none;
+   background-color:transparent;
+   outline:none;
+    color: darkorange;
+}
+
+button:hover{
+    text-decoration: underline;
+}
+
+#id_description{
+    position:absolute;
+    padding: 10px;
+    border-radius: 25px;
+    border-color: darkorange;
+    height: 200px;
+    width: 500px;
+    border-style: solid;
+    margin-top:50px;
+    resize: none;
+    border-width: 2px;
+}
+
+#id_class_name{
+    position: absolute;
+    text-indent: 10px;
+    border-radius: 25px;
+    border-color: darkorange;
+    width: 500px;
+    border-style: solid;
+}
+
+#create_class_button{
+    position:relative;
+    margin-top: 270px;
+}

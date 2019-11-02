@@ -1,13 +1,21 @@
+<link rel="stylesheet" type="text/css" href="../static/css/create_class.css">
 {% extends 'base.html' %}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
 
 {% block content %}
     {% include 'navbar.html' %}
-    <h3 id="add-a-class" style="position: absolute; color:darkorange; font-family: 'Oleo Script Swash Caps', cursive; font-size: 30px; margin-left:25%; margin-top:3.5%">Add a Class</h3>
-<form id="create-class-form" method="post" style="position:absolute; margin-left:25%; margin-top:10%">
+    <div style=" position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+        <h1 id="add-a-class" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Add a Class</h1>
+    </div>
+
+    {% if invalid %}
+        <p style="color: red; margin-top: 160px; margin-left:350px; position: absolute;">**Please enter a valid class name and description. Class names must be unique.**</p>
+    {% endif %}
+<form id="create-class-form" method="post" style="position:absolute; margin-left:350px; margin-top:200px">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Class</button>
+    <input id="id_class_name" name="class_name" placeholder="Class name (e.g. CSE131, etc). Max char 10.">
+    <textarea id="id_description" name="description" placeholder="Give your class a useful description! Max char 50."></textarea>
+    <button id="create_class_button" type="submit">+ Create Class</button>
 </form>
 {% endblock %}
