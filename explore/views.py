@@ -9,6 +9,7 @@ def explore_page(request):
 
 
 def create_class(request):
+    invalid = False
     if request.method == 'POST':
         form = CreateClassForm(request.POST)
         if form.is_valid():
@@ -16,7 +17,9 @@ def create_class(request):
             instance.instructor_instance = request.user
             instance.save()
             return HttpResponseRedirect('/explore/')
+        else:
+            invalid = True
     else:
         form = CreateClassForm()
 
-    return render(request, 'create_class.html', {'form': form})
+    return render(request, 'create_class.html', {'form': form, 'invalid': invalid})

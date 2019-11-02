@@ -74,8 +74,8 @@ class Account(AbstractBaseUser):
 
 class Class(models.Model):
     class_id = models.BigAutoField(primary_key=True)
-    class_name = models.CharField(max_length=200, unique=True, default=None)
-    description = models.TextField()
+    class_name = models.CharField(max_length=10, unique=True, default=None)
+    description = models.TextField(max_length=50)
     instructor_instance = models.ForeignKey('Account', on_delete=models.CASCADE)
 
     class Meta:
