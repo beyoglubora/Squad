@@ -10,32 +10,31 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<link rel="stylesheet" type="text/css" href = "../static/css/navbar.css">
 <nav class="navbar navbar-dark" style="width:250px; height:100%; background-color: darkorange; position:fixed; z-index: 5">
 <ul class="nav flex-column">
     <li class="nav-item">
-        <h3 id="greeting"> Hi, {{ user.first_name }}!</h3>
+        <h3 style = "color:white; margin-bottom: 30px; margin-left: 18px;" id="greeting"> Hi, {{ user.first_name }}!</h3>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/explore">Explore</a>
+        <a class="nav-link" href="/explore" style = "color:white; margin-bottom: 30px;">Explore</a>
     </li>
   <li class="nav-item">
-    <a class="nav-link active" href="/account">My Account</a>
+    <a class="nav-link active" href="/account" style = "color:white; margin-bottom: 30px;">My Account</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="/dashboard">My Classes & Groups</a>
+    <a class="nav-link" href="/dashboard" style = "color:white; margin-bottom: 30px;">My Classes & Groups</a>
   </li>
   {% if user.is_all_read %}
   <li class="nav-item">
-    <a class="nav-link" href="{% url 'notification' %}">Notifications</a>
+    <a class="nav-link" style = "color:white; margin-bottom: 30px;" href="{% url 'notification' %}">Notifications</a>
   </li>
   {% else %}
   <li class="nav-item">
-    <a class="nav-link" href="{% url 'notification' %}">Notifications(New unread)</a>
+    <a class="nav-link" style = "color:white; margin-bottom: 30px;" href="{% url 'notification' %}">Notifications(New unread)</a>
   </li>
   {% endif %}
 </ul>
-    <p><a id="logout" href="{% url 'logout' %}">logout</a></p>
+    <p><a id="logout" href="{% url 'logout' %}" style = "color:white; margin-left: 18px">Logout</a></p>
 </nav>
 </body>
 </html>
