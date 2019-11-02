@@ -24,7 +24,6 @@
                 <div class="class-container" onclick="redirectToClass('{{ class.class_id }}')">
                     <div class="title-container">
                         <p id="class-name">{{ class.class_name }}</p>
-{#                    <h3 id="class-name">{{ class.class_name }}</h3>#}
                     </div>
                     <div class="description-container">
                         <p id="class-description">{{ class.description }}</p>
@@ -42,7 +41,7 @@
 <script>
 function classSearch() {
   // Declare variables
-  var input, filter, ul, li, a, i, txtValue;
+  var input, filter, ul, li, a, i, b, txtValue, txtValue2;
   input = document.getElementById('class-search');
   filter = input.value.toUpperCase();
   ul = document.getElementById("classes-list");
@@ -51,10 +50,16 @@ function classSearch() {
   // Loop through all list items, and hide those who don't match the search query
   for (i = 0; i < li.length; i++) {
     a = li[i].getElementsByTagName("p")[0];
+    b = li[i].getElementsByTagName("p")[1];
     txtValue = a.textContent || a.innerText;
+    txtValue2 = b.textContent || b.innerText;
     if (txtValue.toUpperCase().indexOf(filter) > -1) {
       li[i].style.display = "";
-    } else {
+    }
+    else if(txtValue2.toUpperCase().indexOf(filter) > -1){
+        li[i].style.display = "";
+    }
+    else {
       li[i].style.display = "none";
     }
   }
