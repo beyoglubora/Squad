@@ -1,16 +1,17 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href = "../static/css/group.css">
 <link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
 {% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
-    <div style="margin-left: 20%">
-        <h1>{{ class.class_name }}</h1>
+
+    <div id="class-name-area" style="height:100pt; margin-left:20em">
+        <h1 style="color: darkorange; font-family: sans-serif; font-size: 4em; display:inline-block; margin-top: 0.5em">{{ class.class_name }}</h1>
+        <h2 style="display:inline-block; margin-left: 1em"><a style="color: gray" href="/account/{{ class.instructor_instance.account_id }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a></h2>
         {% if user.account_id != class.instructor_instance_id  %}
             {% if enrolled %}
-                <a href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
+                <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
             {% else %}
-                <a href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+                <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
             {% endif %}
         {% endif %}
         {% if message %}
@@ -18,28 +19,47 @@
                 alert('{{ message }}');
             </script>
         {% endif %}
+    </div>
 
-        <h1>Active Groups</h1>
-        <div>
-        {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
-            {% for group_id, group_name in groups.items %}
-                <h2><a href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
-            {% endfor %}
+    <hr style="border-bottom: 5px solid orange; margin-bottom: 0;">
+
+    <div style="margin-left:18em">
+
+        <div id="active-students-area" style="width: 50%; float: left; clear: none;">
+            <h1 style="margin-left: 2em; color: darkorange">Active Students</h1>
+                {% for student in active_students %}
+                    {% if student.student_instance.profile_photo %}
+                        <img src="{{ student.student_instance.profile_photo }}" style="border-radius: 50%; width:40px;">
+                    {% else %}
+                        <img src="../../static/default.png" style="border-radius: 50%; width:40px;">
+                    {% endif %}
+                    <h2 style="display: inline-block;"><a style="color: gray" href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }} {{ student.student_instance.last_name }}</a></h2>
+                    {% if enrolled and user.pk != student.student_instance.account_id %}
+                        <form style="display: inline-block" action="invite" method="POST">
+                            <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
+                            <input type="hidden" name="class_id" value="{{ class.class_id }}" />
+                            {% csrf_token %}
+                            <input style="background-color: darkorange; color: #fff; border-radius: 10px;" type="submit" value="Invite">
+                        </form>
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </div>
         </div>
 
-        <h1>Active Students</h1>
-        <div>
-            {% for student in active_students %}
-                <h2><a href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
-                {% if enrolled and user.pk != student.student_instance.account_id %}
-                    <form action="invite" method="POST">
-                        <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
-                        <input type="hidden" name="class_id" value="{{ class.class_id }}" />
-                        {% csrf_token %}
-                        <input type="submit" value="Invite">
-                    </form>
-                {% endif %}
-            {% endfor %}
+        <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
+
+        <div id="active-groups-area" style="float: left; clear: none;">
+                <h1 style="color: darkorange; margin-left: 4em">Active Groups</h1>
+                <div>
+                {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
+                    {% for group_id, group_name in groups.items %}
+                        <div style="margin-left: 3em; width: 30em; border-radius: 25px; background-color: white; border:1px solid darkorange;">
+                            <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 
