@@ -21,8 +21,8 @@
         <br>
         <p style="margin-top: 20px; color: darkorange">Add skills you think are useful for the course (Max char 20)</p>
         <ul id="skill_list" style="list-style: none"><li style="margin-left:-40px" id="skill_0">
-                {% for skill in skill_ins %}
-                    <input value="{{ skill.label }}" style="border-color: darkorange; border-radius: 25px; text-indent: 10px; outline: none; border-style: solid; margin-bottom:10px;" name="skill_set_0">
+                {% for skill in skill_strings %}
+                    <input value="{{ skill }}" style="border-color: darkorange; border-radius: 25px; text-indent: 10px; outline: none; border-style: solid; margin-bottom:10px;" name="skill_set_'{{ forloop.counter }}'">
                 {% endfor %}
                 <div style="color:darkorange; margin-bottom:10px; font-size: 13px" onclick="deleteSkill(this)">- Delete Skill</div></li></ul>
         <div onclick="addSkill()"><p style="color:darkorange">+ Add Another Skill</p></div>
@@ -31,7 +31,7 @@
     </form>
 
     <script>
-    var skill_num = 1;
+    var skill_num = 100;
     function addSkill(){
         let ul, li;
         ul = document.getElementById("skill_list");

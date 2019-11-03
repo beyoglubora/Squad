@@ -158,11 +158,22 @@ def changebyclass(request):
             return HttpResponseRedirect('/account/')
         else:
             invalid = True
+            des_string = des_ins[0].description
+            multi_string = skill_ins[0].label.split(";")
+            return render(request, 'changebyclass.html', {
+                'rel_ins': Relation_ins,
+                'des_string': des_string,
+                'skill_ins': skill_ins,
+                'invalid': invalid,
+                'skill_strings': multi_string
+            })
     else:
         des_string = des_ins[0].description
+        multi_string = skill_ins[0].label.split(";")
         return render(request, 'changebyclass.html', {
             'rel_ins':Relation_ins,
             'des_string':des_string,
             'skill_ins':skill_ins,
-            'invalid': invalid
+            'invalid': invalid,
+            'skill_strings':multi_string
         })
