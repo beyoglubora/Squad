@@ -10,6 +10,7 @@ def class_details(request, message=None, class_id=None):
         class_id = request.get_full_path().split('/')[-1]
     group_relations = DataModel.Relationship.objects.filter(class_instance=class_id)
     c = DataModel.Class.objects.filter(class_id=class_id).first()
+    print(c.instructor_instance.first_name)
     # Get unique active group ids for a class_temp
     relationships_in_class = DataModel.Relationship.objects.filter(class_instance=c)
     students_in_class_pks = []
