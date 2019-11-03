@@ -83,11 +83,13 @@ def decline_nofitication(request):
         print("ERROR: cant find the notification")
         return False
     notification_instance = temp_obj[0]
-    flag_success = decline_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
+    flag_success, message = decline_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
-        return HttpResponseRedirect('/notification')
+        return render(request, 'student_notification.html',
+                      {'message': message})
     else:
-        return False
+        return render(request, 'student_notification.html',
+                      {'message': message})
 
 
 def show_error(request):

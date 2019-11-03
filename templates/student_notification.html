@@ -34,7 +34,7 @@
             <br>
             <div class="notification-actions">
                 {% if not notification.read %}
-                    <button location.href='{% url 'globalread' %}{{ notification.notification_id }}'">
+                    <button onclick="location.href='/notification/read/{{ notification.notification_id }}'">
                         READ
                     </button>
                 {% endif %}

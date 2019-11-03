@@ -48,16 +48,20 @@ def decline_invitation(current_account, notification_instance):
     status = notification_instance.status
     notification_instance.read = True
     notification_instance.save()
+    message = ''
     if current_account != receiver:
         print("you're processing others notification, strange here")
-        return False
+        message = "you're processing others notification, strange here"
+        return False, message
     if status != -1 and status != 3:
         print("notification has been processed, strange here")
-        return False
+        message = "notification has been processed, strange here"
+        return False, message
     notification_instance.status = 2
     notification_instance.save()
     # maybe you need to notify sender
-    return sender
+    message = "You declined it"
+    return sender, message
 
 
 def is_in_class(student_instance, class_instance):
