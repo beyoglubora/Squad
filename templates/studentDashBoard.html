@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="../static/css/create_class.css">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +7,9 @@
 </head>
 <body>
 {% include 'navbar.html' %}
-<div style="margin-left: 20%">
-<h1>Your classes: </h1>
-<br>
+<div style=" position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+    <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Classes and Groups</h1>
+</div>
 <script>
     function confirm_delete(str) {
         var boo = prompt("Type DELETE to confirm");
@@ -19,29 +20,44 @@
         }
     }
 </script>
+<div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 1000px">
 {% if user_is_instructor %}
-    <h3>You are instructor of : </h3>
-    {% for c in is_instructor_of %}
-    <a href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a>
-    &nbsp;&nbsp<button onClick="confirm_delete({{ c.class_id }})">DELETE</button>
-{% endfor %}
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+    <h3 style="color:darkorange;">Instructor of classes:</h3>
+    <ul id="classes-list" class="class-list">
+        {% for c in is_instructor_of %}
+        <li class="class-list-item" style="list-style-type: none;">
+        <div class="class-container">
+            <div style="float: left; width: 50%;"><a style="position: center;color: darkorange" href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a></div>
+            <div style="float: left; width: 50%; margin-bottom:10px;"><button onClick="confirm_delete({{ c.class_id }})" style="border: 1px solid darkorange; border-radius: 4px">DELETE</button></div>
+        </div>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
 {% endif %}
-<h3>You enroll in : </h3>
-{% for c in myclasslist %}
-    <a href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a>
-    &nbsp;&nbsp
-{% endfor %}
-<h3>You are in group : </h3>
-{% for gins, group_name in groups %}
-    {% if gins.group_id != -1 %}
-        <a href="/groups/{{ gins.group_id }}">{{ group_name }}</a>
-    {% else %}
-        <a>You have no groups</a>
-    {% endif %}
-    in
-    <a href="/groups/class/{{ gins.class_instance.class_id }}">{{ gins.class_instance.class_name }}</a>
-    <br>
-{% endfor %}
+
+<div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+    <h3 style="color:darkorange;">Enrolled classes:</h3>
+    <ul id="classes-list" class="class-list">
+        {% for gins, group_name in groups %}
+        <li class="class-list-item" style="list-style-type: none;">
+        <div class="class-container">
+            <div style="float: left; width: 50%;">
+                <a href="/groups/class/{{ gins.class_instance.class_id }}" style="color: darkorange;">{{ gins.class_instance.class_name }}</a>
+            </div>
+            <div style="float: left; width: 50%; margin-bottom:10px;">
+                {% if gins.group_id != -1 %}
+                    <a href="/groups/{{ gins.group_id }}" style="color: darkorange">{{ group_name }}</a>
+                {% else %}
+                    <a style="color: darkorange">You have no groups</a>
+                {% endif %}
+            </div>
+        </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 </div>
 </body>
 </html>

@@ -2,35 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile</title>
+    <title>User Profile</title>
+    <style>
+    button {
+    color: darkorange;
+    border: 1px solid darkorange;
+    border-radius: 4px;
+    background-color:transparent;
+    }
+    button:hover{
+        text-decoration: underline;
+    }
+    ul.class-list{
+    margin-bottom: 0;
+    padding: 0;
+    }
+    li.class-list-item{
+    padding: 0;
+    border: 0;
+    margin-bottom: 1px;
+    margin-left: -3%;
+    }
+    .class-container{
+    margin-top:10px;
+    margin-left: 50px;
+    height: 10%;
+    width: 40%;
+    border-radius: 20px;
+}
+    .class-container:hover{
+        border-radius: 5px;
+        border:3px solid darkorange;
+    }
+    .title-container{
+    margin-top: 15px;
+    background-color: white;
+    border-radius: 20px;
+    border:3px solid darkorange;
+}
+    </style>
 </head>
 <body>
 {% include 'navbar.html' %}
-<div style="margin-left: 20%">
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
+<div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+    <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">{{ fname }} {{ lname }}'s profile</h1>
+</div>
+<div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 1000px">
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+    <div style="float: left; width: 50%;"><h3 style="color:darkorange;">Personal information</h3></div>
+    {% if same_one %}
+        <div style="float: left; width: 50%;">
+        <button onclick="location.href='{% url 'profedit' %}'" style="border: 1px solid darkorange; border-radius: 4px">EDIT</button>
+        </div>
+    {% endif %}
+    </div>
 <form method="post">
     {% csrf_token %}
-    <h3>User Information</h3>
-    <div>First Name</div><input name="newfname" value="{{ fname }}">
-    <div>Last Name</div><input name="newlname" value="{{ lname }}">
-    <div>Photo</div>
-    <img src="{{ photo }}" alt="{{ photo.name }}">
-    <input type="file" name="newphoto" value="{{ photo }}">
-    <h3>Descriptions for Classes</h3>
-    {% for dc in desins %}
-        <div>{{ dc.class_instance.class_name }}</div><input name="des{{ dc.class_instance.class_name }}" value="{{ dc.description }}">
-    {% endfor %}
-    <h3>Skills for Classes</h3>
-    {% for key, values in sins.items %}
-        <div>{{ key }}</div>
-        <div id="container{{ key }}">
-        {% for value in values %}
-            <input name="tags{{ value }}" value="{{ value }}">
-        {% endfor %}
-        </div>
-    {% endfor %}
-    <br>
-    <button type="submit">Save Changes</button>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        {% load static %}
+        <div><img src="{{ photo.name }}" alt="{{ photo.name }}"><input type="file" name="newphoto" value="{{ photo }}"></div>
+        <br>
+        <div><p>First Name</p><input name="newfname" value="{{ fname }}"><p>Last Name</p><input name="newlname" value="{{ lname }}"></div>
+    </div>
+    <div style="margin-top: 5px; margin-left: 50px"><button type="submit">Save Changes</button></div>
 </form>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        {% if listclass %}
+            {% if same_one %}
+                <div><a style="color: darkorange;font-size: large">Your are instructor of the following classes</a></div>
+            {% else %}
+                <div><a style="color: darkorange;font-size: large">This user is instructor of the following classes</a></div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        <h3 style="color:darkorange;">Enrolled classes</h3>
+    <ul class="class-list">
+        {% for key, tuples in aggregator.items %}
+        <li class="class-list-item" style="list-style-type: none">
+        <div class="class-container">
+            <div><a style="color: darkorange;">{{ key }}</a>
+                <button onclick="location.href='../account/{{ key }}'">edit</button>
+            </div>
+            <div><a style="margin-left: 5px">{{ tuples.0 }}</a></div>
+            {% for value in tuples.1 %}
+                <div><a style="margin-left: 5px">Skills:{{ value }}</a></div>
+            {% endfor %}
+        </div>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
 </div>
 </body>
 </html>

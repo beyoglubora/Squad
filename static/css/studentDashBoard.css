@@ -1,0 +1,31 @@
+button {
+    color: darkorange;
+    border: 1px solid darkorange;
+    border-radius: 4px;
+    background-color:transparent;
+}
+
+button:hover{
+    text-decoration: underline;
+}
+
+ul.class-list{
+    margin-bottom: 0;
+    padding: 0;
+}
+li.class-list-item{
+    padding: 0;
+    border: 0;
+    margin-bottom: 1px;
+    margin-left: -3%;
+}
+.class-container{
+    margin-top:120px;
+    margin-left: 35%;
+    height: 10%;
+    width: 25%;
+    border-radius: 20px;
+}
+.class-container:hover{
+    opacity: .7;
+}

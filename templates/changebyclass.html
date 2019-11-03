@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+        <h1 id="add-a-class" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Edit{{ rel_ins.class_instance.class_name }}</h1>
+    </div>
+    {% if invalid %}
+        <p style="color: red; position: absolute; margin-top: 150px; margin-left:350px;">** Please make sure you have entered a valid description and skill set (you must include at least one skill). **</p>
+    {% endif %}
+    <form method="post" style="margin-left: 350px; margin-top: 175px; position: absolute;">
+        {% csrf_token %}
+        <p style="color: darkorange">Description (Max char 100)</p>
+        <textarea style="height: 250px; width: 500px; border-color: darkorange; border-radius: 25px; padding: 10px; resize: none; outline: none; border-width: 2px" id="description_box" name="description" placeholder="Let your classmates know why you're interested in the course!">{{ des_string }}</textarea>
+        <br>
+        <p style="margin-top: 20px; color: darkorange">Add skills you think are useful for the course (Max char 20)</p>
+        <ul id="skill_list" style="list-style: none"><li style="margin-left:-40px" id="skill_0">
+                {% for skill in skill_ins %}
+                    <input value="{{ skill.label }}" style="border-color: darkorange; border-radius: 25px; text-indent: 10px; outline: none; border-style: solid; margin-bottom:10px;" name="skill_set_0">
+                {% endfor %}
+                <div style="color:darkorange; margin-bottom:10px; font-size: 13px" onclick="deleteSkill(this)">- Delete Skill</div></li></ul>
+        <div onclick="addSkill()"><p style="color:darkorange">+ Add Another Skill</p></div>
+        <br>
+        <button style="border: none; color: darkorange; font-size: 30px;" type="submit">Click to Save</button>
+    </form>
+
+    <script>
+    var skill_num = 1;
+    function addSkill(){
+        let ul, li;
+        ul = document.getElementById("skill_list");
+        li = document.createElement('li');
+        li.id = "skill_" + skill_num;
+        li.innerHTML = "<input style='border-color: darkorange; border-radius: 25px; text-indent: 10px; outline: none; border-style: solid; margin-bottom: 10px; margin-left: -40px;' name='skill_set_" + skill_num + "'> <div style=\"color:darkorange; margin-bottom:10px; margin-left:-40px; font-size: 13px\" onclick=\"deleteSkill(this)\">- Delete Skill</div>";
+        ul.appendChild(li);
+        skill_num++;
+    }
+    function deleteSkill(elem){
+        let ul, id;
+        id = elem.parentElement.id;
+        ul = document.getElementById("skill_list");
+        ul.removeChild(document.getElementById(id));
+    }
+    </script>
+{% endblock %}
