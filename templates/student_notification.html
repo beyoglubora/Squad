@@ -1,15 +1,26 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href = "../static/css/group.css">
+<link rel="stylesheet" type="text/css" href = "../static/css/student_notification.css">
 <link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 {% extends 'base.html' %}
 
 {% block content %}
     {% include 'navbar.html' %}
+
+    {% if message %}
+        <script>
+            alert('{{ message }}');
+            location.href="/notification"
+        </script>
+    {% endif %}
+
     <div style="margin-left: 275px">
+    <h1 id="explore-title">Notification</h1>
     <P> is all read : {{ current_user.is_all_read }}</P>
     {% for notification in list_notification %}
         {% if notification.status != -3 %}
-            <a href="/account/{{ notification.sender_instance.account_id }}">
+            <div class="notification-container">
+            <a class="color-orange" href="/account/{{ notification.sender_instance.account_id }}">
                 {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}
             </a>
             {% if notification.status == -2 %}
@@ -17,27 +28,30 @@
             {% elif notification.status < 6 and notification.status > -2 %}
                 wants to group with you in
             {% endif %}
-            <a href="/groups/class/{{ notification.class_instance.class_id}}">
+            <a class="color-orange" href="/groups/class/{{ notification.class_instance.class_id}}">
                 {{ notification.class_instance.class_name }}
             </a>
-            &nbsp;&nbsp;
-            {% if not notification.read %}
-                <button onclick="location.href='{% url 'globalread' %}{{ notification.notification_id }}'">
-                    READ
-                </button>
-            {% endif %}
-            {% if notification.status == 1 or notification.status == 4 %}
-                | you have accepted
-            {% elif notification.status == 2 or notification.status == 5 %}
-                | you have declined
-            {% elif notification.status == -1 or notification.status == 3 %}
-                <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">
-                    ACCEPT
-                </button>
-                <button onclick="location.href='/notification/decline/{{ notification.notification_id }}'">
-                    DECLINE
-                </button>
-            {% endif %}
+            <br>
+            <div class="notification-actions">
+                {% if not notification.read %}
+                    <button location.href='{% url 'globalread' %}{{ notification.notification_id }}'">
+                        READ
+                    </button>
+                {% endif %}
+                {% if notification.status == 1 or notification.status == 4 %}
+                    You have accepted
+                {% elif notification.status == 2 or notification.status == 5 %}
+                    You have declined
+                {% elif notification.status == -1 or notification.status == 3 %}
+                    <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">
+                        ACCEPT
+                    </button>
+                    <button onclick="location.href='/notification/decline/{{ notification.notification_id }}'">
+                        DECLINE
+                    </button>
+                {% endif %}
+            </div>
+            </div>
             <br>
 
         {% endif %}

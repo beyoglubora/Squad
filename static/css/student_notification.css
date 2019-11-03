@@ -1,0 +1,110 @@
+#add_class{
+    position: relative;
+    top: -28px;
+    margin-left: 1000px;
+    color: darkorange;
+}
+
+#explore-title{
+    margin-left: 0;
+    font-family: 'Oleo Script Swash Caps', cursive;
+    color: darkorange;
+}
+
+button {
+    background-color:transparent;
+    outline:none;
+    border: 1px solid darkorange;
+    border-radius: 10px;
+    color: darkorange;
+}
+
+.color-orange {
+    color: darkorange;
+}
+
+.color-orange:hover {
+    color: darkorange;
+}
+
+.notification-actions{
+    float:right;
+}
+.notification-container{
+    margin-top:20px;
+    margin-left:0;
+    max-width: 800px;
+    min-width: 500px;
+    height: 10%;
+    min-height: 75px;
+    background-color: white;
+    border-radius: 20px;
+    border:3px solid darkorange;
+}
+
+.class-container{
+    margin-top:120px;
+    margin-left: 35%;
+    height: 10%;
+    width: 25%;
+    border-radius: 20px;
+}
+
+.class-container:hover{
+    opacity: .7;
+}
+.title-container{
+    position:relative;
+    height: 100px;
+    width: 400px;
+    margin-top: -60px;
+    background-color: white;
+    border-radius: 20px;
+    border:3px solid darkorange;
+}
+.description-container{
+    position: relative;
+    height:100px;
+    width: 500px;
+    margin-top: -100px;
+    margin-left:75%;
+    background-color: darkorange;
+    border-radius: 20px;
+}
+
+#class-search{
+    margin-left:33%;
+    margin-top: 12%;
+    position:relative;
+}
+
+ul.class-list{
+    margin-bottom: 0;
+    padding: 0;
+}
+li.class-list-item{
+    padding: 0;
+    border: 0;
+    margin-bottom: 0px;
+    margin-left: -3%;
+}
+#class-name{
+    word-wrap: break-word;
+    margin-left: 15%;
+    margin-top: 6%;
+    color: #cc7a00
+}
+#class-description{
+    word-wrap: break-word;
+    margin-left: 5%;
+    color: white;
+    padding-top:10px;
+}
+
+#class-search{
+    border: 1px solid darkorange;
+    border-radius: 20px;
+    width: 400px;
+    outline: none;
+    text-indent: 10px;
+}

@@ -13,7 +13,7 @@ notification3 = data.models.Notification.objects.all()[2]
 
 def account_get_notification(account_instance):
     temp_notification_objects = data.models.Notification.objects.filter(receiver_instance=account_instance)
-    return temp_notification_objects
+    return temp_notification_objects[::-1]
 
 
 def is_all_read(account_instance):
@@ -120,37 +120,46 @@ def accept_invitation(current_account, notification_instance):
     receiver = notification_instance.receiver_instance
     temp_class = notification_instance.class_instance
     status = notification_instance.status
+    message = ''
     notification_instance.read = True
     notification_instance.save()
     if current_account != receiver:
         print("you're processing others notification, strange here")
-        return False
+        message = "you're processing others notification, strange here"
+        return False, message
     if status != -1 and status != 3:
         print("notification has been processed, strange here")
-        return False
+        message = "notification has been processed, strange here"
+        return False, message
     if receiver.is_instructor:
         print("invitation from an instructor, strange here")
-        return False
+        message = "invitation from an instructor, strange here"
+        return False, message
     # check if sender still in class
     sender_in_class = is_in_class(sender, temp_class)
     if not sender_in_class:
         print("sender not in class")
+        message = "sender is not in this class now"
         notification_instance.status = -3
         notification_instance.save()
-        return False
+        return False, message
     # check if receiver still in class
     receiver_in_class = is_in_class(receiver, temp_class)
     if not receiver_in_class:
         print("receiver not in class")
+        message = "you are not in this class now"
         notification_instance.status = -3
         notification_instance.save()
-        return False
+        return False, message
     # check if receiver have a group in that class
     receiver_have_group = have_group_class(receiver, temp_class)
     sender_have_group = have_group_class(sender, temp_class)
     if receiver_have_group and sender_have_group:
         print("You and sender both have group")
-        return False
+        message = "You and sender both already have group now"
+        notification_instance.status = -3
+        notification_instance.save()
+        return False, message
 
     if sender_have_group:
         # if sender have a group, receiver don't
@@ -159,14 +168,16 @@ def accept_invitation(current_account, notification_instance):
         join_group(receiver, temp_class, group_num)
         notification_instance.status = 1
         notification_instance.save()
-        return True
+        message = "You joined sender's group"
+        return True, message
     elif receiver_have_group:
         # sender join receiver's group
         group_num = receiver_have_group
         join_group(sender, temp_class, group_num)
         notification_instance.status = 1
         notification_instance.save()
-        return True
+        message = "Sender joined your group"
+        return True, message
     else:
         # if both don't have a group
         # make a new group for them by the notification_id
@@ -176,7 +187,8 @@ def accept_invitation(current_account, notification_instance):
         add_group_name(group_num)
         notification_instance.status = 1
         notification_instance.save()
-        return True
+        message = "You made a new group now"
+        return True, message
 
 
 if __name__ == '__main__':
