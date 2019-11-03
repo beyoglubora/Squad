@@ -64,9 +64,11 @@ def accept_nofitication(request):
     notification_instance = temp_obj[0]
     flag_success, message = accept_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
-        return HttpResponseRedirect('/notification')
+        return render(request, 'student_notification.html',
+                      {'message': message})
     else:
-        return render(request, 'notification_error.html', {'message': message})
+        return render(request, 'student_notification.html',
+                      {'message': message})
 
 
 def decline_nofitication(request):

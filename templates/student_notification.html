@@ -7,6 +7,12 @@
 {% block content %}
     {% include 'navbar.html' %}
 
+    {% if message %}
+        <script>
+            alert('{{ message }}');
+            location.href="/notification"
+        </script>
+    {% endif %}
 
     <div style="margin-left: 275px">
     <h1 id="explore-title">Notification</h1>
