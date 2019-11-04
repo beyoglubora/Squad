@@ -52,7 +52,6 @@
         <div id="active-groups-area" style="float: left; clear: none;">
                 <h1 style="color: darkorange; margin-left: 4em">Active Groups</h1>
                 <div>
-                {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
                     {% for group_id, group_name in groups.items %}
                         <div style="margin-left: 3em; width: 30em; border-radius: 25px; background-color: white; border:1px solid darkorange;">
                             <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
