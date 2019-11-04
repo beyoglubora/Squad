@@ -3,10 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
+    <style>
+    button {
+    color: darkorange;
+    border: 1px solid darkorange;
+    border-radius: 4px;
+    background-color:transparent;
+    }
+    button:hover{
+        text-decoration: underline;
+    }
+    ul.class-list{
+    margin-bottom: 0;
+    padding: 0;
+    }
+    li.class-list-item{
+    padding: 0;
+    border: 0;
+    margin-bottom: 1px;
+    margin-left: -3%;
+    }
+    .class-container{
+    margin-top:10px;
+    margin-left: 50px;
+    height: 10%;
+    width: 40%;
+    border-radius: 20px;
+}
+    .class-container:hover{
+        border-radius: 5px;
+        border:3px solid darkorange;
+    }
+    .title-container{
+    margin-top: 15px;
+    background-color: white;
+    border-radius: 20px;
+    border:3px solid darkorange;
+}
+    </style>
 </head>
 <body>
 {% include 'navbar.html' %}
-<div style="margin-left: 20%">
 {% if messages %}
         <script>
             {% for msg in messages %}
@@ -14,45 +51,50 @@
             {% endfor %}
         </script>
 {% endif %}
-<h1>{{ fname }} {{ lname }}'s Profile</h1>
-{% if same_one %}
-    <button onclick="location.href='{% url 'profedit' %}'">EDIT</button>
-{% endif %}
-<h3>Personal information</h3>
-    {% load static %}
-    <img src="{{ photo.name }}" alt="{{ photo.name }}">
-    <p>Name:{{ fname }}&nbsp;{{ lname }}&nbsp;Email:{{ email }}</p>
-{% if listclass %}
+<div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+    <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">{{ fname }} {{ lname }}'s profile</h1>
+</div>
+<div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 1000px">
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+    <div style="float: left; width: 50%;"><h3 style="color:darkorange;">Personal information</h3></div>
     {% if same_one %}
-        <div>Your are instructor(s) of the following classes</div>
-    {% else %}
-        <div>This user is instructor(s) of the following classes</div>
+        <div style="float: left; width: 50%;">
+        <button onclick="location.href='{% url 'profedit' %}'" style="border: 1px solid darkorange; border-radius: 4px">EDIT</button>
+        </div>
     {% endif %}
-{% for ic in incins %}
-    <b>{{ ic.class_name }}</b>&nbsp;
-{% endfor %}
-    {% if same_one %}
-        <div>You enroll in these classes</div>
-        {% else %}
-        <div>This user enrolls in these classes</div>
-    {% endif %}
-{% for ec in encins %}
-    <b>{{ ec.class_name }}</b>&nbsp;
-{% endfor %}
-{% endif %}
-<h3>Description and Skills</h3>
-<div>description for every class</div>
-{% for dc in desins %}
-    <p>{{ dc.class_instance.class_name }}:{{ dc.description }}</p>
-{% endfor %}
-<div>tags for every class</div>
-{% for key, values in sins.items %}
-    <a>{{ key }}:</a>
-    {% for value in values %}
-        <b>{{ value }}</b>
-    {% endfor %}
-    <br>
-{% endfor %}
+    </div>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        {% load static %}
+        <div><img src="{{ photo.name }}" alt="{{ photo.name }}"></div>
+        <br>
+        <div><p>First Name:&nbsp;{{ fname }}&nbsp;&nbsp;Last Name:&nbsp;{{ lname }}</p></div>
+        <div><p>Email:{{ email }}</p></div>
+    </div>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        {% if listclass %}
+            {% if same_one %}
+                <div><a style="color: darkorange;font-size: large">Your are instructor of the following classes</a></div>
+            {% else %}
+                <div><a style="color: darkorange;font-size: large">This user is instructor of the following classes</a></div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
+        <h3 style="color:darkorange;">Enrolled classes</h3>
+    <ul class="class-list">
+        {% for key, tuples in aggregator.items %}
+        <li class="class-list-item" style="list-style-type: none">
+        <div class="class-container" onclick="redir">
+            <div><a style="color: darkorange;">{{ key }}</a></div>
+            <div><a style="margin-left: 5px">{{ tuples.0 }}</a></div>
+            {% for value in tuples.1 %}
+                <div><a style="margin-left: 5px">Skills:{{ value }}</a></div>
+            {% endfor %}
+        </div>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
 </div>
 </body>
 </html>

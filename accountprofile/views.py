@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data import models as DataModel
 from myclasses.views import getMyClass
+from groups.views import enroll, check_enroll
 
 
 def getIDInstance(request):
@@ -27,18 +28,24 @@ def getAllProfile(s_ins):
     descrip_by_class = DataModel.Description.objects.filter(student_instance=s_ins)
     class_enroll = getMyClass(s_ins)
     skill = DataModel.Skill_label.objects.filter(student_instance=s_ins)
+    skill2 = skill
     group_by_list = {}
     for tc in skill:
         cname = tc.class_instance.class_name
         if not cname in group_by_list.keys():
             group_by_list[cname] = []
-            group_by_list[cname].append(tc.label)
+            group_by_list[cname].append(str(tc.label))
         else:
-            group_by_list[cname].append(tc.label)
+            group_by_list[cname].append(str(tc.label))
     skill = group_by_list
+    des_tag_aggby_class = {}
+    for tc in descrip_by_class:
+        cname = tc.class_instance.class_name
+        t = ()
+        des_tag_aggby_class[cname] = t + (tc.description,) + (group_by_list[cname],)
     list = [fname, lname, email, is_instructor_of,
             photo, descrip_by_class, class_enroll,
-            skill]
+            skill, des_tag_aggby_class]
     return list
 
 
@@ -59,7 +66,8 @@ def listRequestedmine(request):
         'encins': list[6],
         'sins': list[7],
         'same_one': same_one,
-        'listclass': list_eclass_and_iclass
+        'listclass': list_eclass_and_iclass,
+        'aggregator': list[8]
     })
 
 
@@ -73,6 +81,7 @@ def listRequested(request):
         messages.info(request, "No Such User")
         return HttpResponseRedirect('/account/')
     list = getAllProfile(u_ins[0])
+
     return render(request, 'userprofile.html', {
         'fname': list[0],
         'lname': list[1],
@@ -83,7 +92,9 @@ def listRequested(request):
         'encins': list[6],
         'sins': list[7],
         'same_one': is_same_one,
-        'listclass': list_eclass_and_iclass
+        'listclass': list_eclass_and_iclass,
+        'u_ins':u_ins,
+        'aggregator': list[8]
     })
 
 
@@ -96,6 +107,7 @@ def changProfile(request):
         if (request.POST['newphoto']):
             s_ins.profile_photo = request.POST['newphoto']
         s_ins.save()
+        '''
         for dc in list[5]:
             dc.description = request.POST["des" + dc.class_instance.class_name]
             dc.save()
@@ -105,7 +117,7 @@ def changProfile(request):
                 skill_ins = DataModel.Skill_label.objects.filter(student_instance=s_ins,class_instance__class_name=key, label=value)[0]
                 skill_ins.label = request.POST["tags"+value]
                 skill_ins.save()
-
+        '''
         return HttpResponseRedirect('/account')
 
     else:
@@ -116,5 +128,52 @@ def changProfile(request):
             'photo': list[4],
             'desins': list[5],
             'encins': list[6],
-            'sins': list[7]
+            'sins': list[7],
+            'aggregator': list[8]
+        })
+
+def changebyclass(request):
+    class_name = request.get_full_path().split('/account/')[-1]
+    Relation_ins = DataModel.Relationship.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
+    invalid = False
+    if not Relation_ins:
+        messages.info(request, "You are not in this class")
+        return HttpResponseRedirect('/account/')
+    des_ins = DataModel.Description.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
+    skill_ins = DataModel.Skill_label.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
+    if request.method == 'POST':
+        skill_set = ""
+        for key in request.POST:
+            if "skill_set" in key:
+                skill_set += request.POST[key] + ";"
+        skill_set = skill_set[:-1]
+        description = request.POST["description"]
+        if check_enroll(skill_set, description):
+            des_first = des_ins[0]
+            s_first = skill_ins[0]
+            des_first.description = description
+            des_first.save()
+            s_first.label = skill_set
+            s_first.save()
+            return HttpResponseRedirect('/account/')
+        else:
+            invalid = True
+            des_string = des_ins[0].description
+            multi_string = skill_ins[0].label.split(";")
+            return render(request, 'changebyclass.html', {
+                'rel_ins': Relation_ins,
+                'des_string': des_string,
+                'skill_ins': skill_ins,
+                'invalid': invalid,
+                'skill_strings': multi_string
+            })
+    else:
+        des_string = des_ins[0].description
+        multi_string = skill_ins[0].label.split(";")
+        return render(request, 'changebyclass.html', {
+            'rel_ins':Relation_ins,
+            'des_string':des_string,
+            'skill_ins':skill_ins,
+            'invalid': invalid,
+            'skill_strings':multi_string
         })

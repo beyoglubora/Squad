@@ -4,5 +4,6 @@ from accountprofile import views
 urlpatterns = [
     path('', views.listRequestedmine),
     path('edit', views.changProfile, name='profedit'),
-    re_path(r'[0-9]+', views.listRequested)
+    re_path(r'[a-zA-Z][\s\S]*', views.changebyclass),
+    re_path(r'[0-9]+', views.listRequested),
 ]
