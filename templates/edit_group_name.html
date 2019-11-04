@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
-    <form method="post" style="margin-left: 20%">
-        {% csrf_token %}
-        <div>Rename the Group</div><input name="group-name" value="{{ group.group_name }}">
-        <button type="submit">Save Name</button>
-    </form>
+
+    <div style="height:100pt; margin-left:20em">
+        <h1 style="margin-bottom: 1em; color: darkorange; font-family: sans-serif; font-size: 4em; display:inline-block; margin-top: 0.5em">Rename the Group</h1>
+        <form method="post">
+            {% csrf_token %}
+            <input style=" width: 10em; border-radius: 25px; background-color: white; border:1px solid darkorange;" name="group-name" value="{{ group.group_name }}">
+            <button style="color: darkorange" type="submit">Save Name</button>
+        </form>
+    </div>
+
+
 {% endblock %}
