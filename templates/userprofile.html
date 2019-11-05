@@ -84,7 +84,7 @@
     <ul class="class-list">
         {% for key, tuples in aggregator.items %}
         <li class="class-list-item" style="list-style-type: none">
-        <div class="class-container" onclick="redir">
+        <div class="class-container">
             <div><a style="color: darkorange;">{{ key }}</a></div>
             <div><a style="margin-left: 5px">{{ tuples.0 }}</a></div>
             {% for value in tuples.1 %}
