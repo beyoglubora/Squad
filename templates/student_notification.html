@@ -14,9 +14,10 @@
         </script>
     {% endif %}
 
-    <div style="margin-left: 275px">
-    <h1 id="explore-title">Notification</h1>
-    <P> is all read : {{ current_user.is_all_read }}</P>
+    <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+        <h1 id="explore-title" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Notification</h1>
+    </div>
+    <div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 90%">
     {% for notification in list_notification %}
         {% if notification.status != -3 %}
             <div class="notification-container">
