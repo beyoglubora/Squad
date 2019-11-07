@@ -12,7 +12,7 @@
     <div id="right-half" style="height: 100%; width: 50%; background-color: white; margin-left: 50%; position:absolute;">
         <div id="sign-up-form" style="margin-left: 5%">
             <h2 style="font-size: 500%; color:darkorange; margin-left:5%">Sign up</h2>
-            <form method="post" style="margin-left:5%">
+            <form method="post" enctype="multipart/form-data" style="margin-left:5%">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit">Sign up</button>

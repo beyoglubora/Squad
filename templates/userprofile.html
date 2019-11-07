@@ -34,6 +34,12 @@
         border-radius: 5px;
         border:3px solid darkorange;
     }
+    #profile-photo{
+        border-radius: 50%;
+        height: 300px;
+        width: 300px;
+        margin-left: 30px;
+    }
     .title-container{
     margin-top: 15px;
     background-color: white;
@@ -65,9 +71,16 @@
     </div>
     <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
         {% load static %}
-        <div><img src="{{ photo.name }}" alt="{{ photo.name }}"></div>
+        <div>
+            {% if photo %}
+                <img id="profile-photo" src="{{ photo.url }}">
+            {% else %}
+                <img id ="profile-photo" src="../media/default.jpg">
+            {% endif %}
+
+        </div>
         <br>
-        <div><p>First Name:&nbsp;{{ fname }}&nbsp;&nbsp;Last Name:&nbsp;{{ lname }}</p></div>
+        <div style="margin-top:-280px"><p>First Name:&nbsp;{{ fname }}&nbsp;&nbsp;Last Name:&nbsp;{{ lname }}</p></div>
         <div><p>Email:{{ email }}</p></div>
     </div>
     <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">

@@ -18,9 +18,9 @@
 
         {% for student_id, student_name in group_members.items %}
             {% if student.student_instance.profile_photo %}
-                <img src="{{ student.student_instance.profile_photo }}" style="border-radius: 50%; width:40px;">
+                <img src="{{ student.student_instance.profile_photo.url }}" style="border-radius: 50%; width:40px;">
             {% else %}
-                <img src="../../static/default.png" style="border-radius: 50%; width:40px;">
+                <img src="../media/default.jpg" style="border-radius: 50%; width:40px;">
             {% endif %}
             <h2 style="display: inline-block; margin-top: 0.5em"><a style="color: gray" href="/account/{{ student_id }}">{{ student_name }}</a></h2>
         {% endfor %}

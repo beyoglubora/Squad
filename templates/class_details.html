@@ -24,14 +24,13 @@
     <hr style="border-bottom: 5px solid orange; margin-bottom: 0;">
 
     <div style="margin-left:18em">
-
         <div id="active-students-area" style="width: 50%; float: left; clear: none;">
             <h1 style="margin-left: 2em; color: darkorange">Active Students</h1>
                 {% for student in active_students %}
                     {% if student.student_instance.profile_photo %}
-                        <img src="{{ student.student_instance.profile_photo }}" style="border-radius: 50%; width:40px;">
+                        <img src="{{ student.student_instance.profile_photo.url }}" style="border-radius: 50%; width:40px;"/>
                     {% else %}
-                        <img src="../../static/default.png" style="border-radius: 50%; width:40px;">
+                        <img src="../../media/default.jpg" style="border-radius: 50%; width:40px;"/>
                     {% endif %}
                     <h2 style="display: inline-block;"><a style="color: gray" href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }} {{ student.student_instance.last_name }}</a></h2>
                     {% if enrolled and user.pk != student.student_instance.account_id %}
@@ -44,8 +43,8 @@
                     {% endif %}
                     <br>
                 {% endfor %}
-            </div>
         </div>
+    </div>
 
         <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
 
@@ -58,8 +57,6 @@
                         </div>
                     {% endfor %}
                 </div>
-            </div>
         </div>
-    </div>
 
 {%endblock %}

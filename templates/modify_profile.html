@@ -63,11 +63,17 @@
         </div>
     {% endif %}
     </div>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
         {% load static %}
-        <div><img src="{{ photo.name }}" alt="{{ photo.name }}"><input type="file" name="newphoto" value="{{ photo }}"></div>
+        <div>
+            {% if photo %}
+                <input type="file" accept=".jpg, .jpeg, .png" name="newphoto" value="{{ photo.url }}">
+            {% else %}
+                <input type="file" accept=".jpg, .jpeg, .png" name="newphoto">
+            {% endif %}
+        </div>
         <br>
         <div><p>First Name</p><input name="newfname" value="{{ fname }}"><p>Last Name</p><input name="newlname" value="{{ lname }}"></div>
     </div>

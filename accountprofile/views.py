@@ -105,8 +105,8 @@ def changProfile(request):
     if request.method == 'POST':
         s_ins.first_name = request.POST["newfname"]
         s_ins.last_name = request.POST["newlname"]
-        if (request.POST['newphoto']):
-            s_ins.profile_photo = request.POST['newphoto']
+        if 'newphoto' in request.FILES:
+            s_ins.profile_photo = request.FILES['newphoto']
         s_ins.save()
         '''
         for dc in list[5]:

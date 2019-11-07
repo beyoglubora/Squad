@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 class MyAccountManager(BaseUserManager):
@@ -34,6 +36,9 @@ class MyAccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
+    def get_image_path(self, filename):
+        account_id = Account.objects.last().pk + 1
+        return 'profile_photos/'+str(account_id)
     account_id = models.BigAutoField(primary_key=True)
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     first_name = models.CharField(max_length=30)
@@ -45,7 +50,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
-    profile_photo = models.FileField(default=None, blank=True)
+    profile_photo = models.ImageField(upload_to=get_image_path)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]

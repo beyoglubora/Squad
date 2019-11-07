@@ -19,7 +19,7 @@
         <p style="color: darkorange">Description (Max char 100)</p>
         <textarea style="height: 250px; width: 500px; border-color: darkorange; border-radius: 25px; padding: 10px; resize: none; outline: none; border-width: 2px" id="description_box" name="description" placeholder="Let your classmates know why you're interested in the course!">{{ des_string }}</textarea>
         <br>
-        <p style="margin-top: 20px; color: darkorange">Add skills you think are useful for the course (Max char 20)</p>
+        <p style="margin-top: 20px; color: darkorange">Add skills you think are useful for the course (Max char 20 - no semicolon)</p>
         <ul id="skill_list" style="list-style: none">
                 {% for skill in skill_strings %}
                     <li style="margin-left:-40px" id="skill_{{ forloop.counter }}">
