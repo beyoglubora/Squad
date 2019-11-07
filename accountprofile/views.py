@@ -68,7 +68,7 @@ def listRequestedmine(request):
         'sins': list[7],
         'same_one': same_one,
         'listclass': list_eclass_and_iclass,
-        'aggregator': list[8]
+        'aggregator': list[8],
     })
 
 
@@ -78,11 +78,14 @@ def listRequested(request):
     is_same_one = (str(explorer_id) == uid)
     list_eclass_and_iclass = (str(explorer_id) != uid)
     u_ins = DataModel.Account.objects.filter(account_id=uid)
+    is_instructor = DataModel.Account.objects.filter(account_id=uid)[0].is_instructor
     if (not u_ins):
         messages.info(request, "No Such User")
         return HttpResponseRedirect('/account/')
     list = getAllProfile(u_ins[0])
-
+    icins_empty = False
+    if not list[3]:
+        icins_empty = True
     return render(request, 'userprofile.html', {
         'fname': list[0],
         'lname': list[1],
@@ -95,7 +98,9 @@ def listRequested(request):
         'same_one': is_same_one,
         'listclass': list_eclass_and_iclass,
         'u_ins':u_ins,
-        'aggregator': list[8]
+        'aggregator': list[8],
+        'is_instructor':is_instructor,
+        'instruct_null':icins_empty
     })
 
 
