@@ -94,6 +94,7 @@ class Notification(models.Model):
     receiver_instance = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='receiver_Account')
     status = models.IntegerField()
     read = models.BooleanField()
+    group_id = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
 
 class Group(models.Model):
@@ -128,5 +129,12 @@ class Description(models.Model):
     student_instance = models.ForeignKey('Account', on_delete=models.CASCADE)
     class_instance = models.ForeignKey('Class', on_delete=models.CASCADE, related_name='+')
     description = models.TextField()
+
+
+class Messages(models.Model):
+    message_id = models.BigAutoField(primary_key=True)
+    group_id = models.ForeignKey('Group', on_delete=models.CASCADE)
+    subject = models.TextField(max_length=20)
+    body = models.TextField(max_length=300)
 
 
