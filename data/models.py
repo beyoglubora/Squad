@@ -92,6 +92,10 @@ class Notification(models.Model):
     receiver_instance = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='receiver_Account')
     status = models.IntegerField()
     read = models.BooleanField()
+    # -2: instructor deleting you
+    # -1: invitation pending
+    # 1: invitation accepted
+    # 2 invitation declined
     group_id = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
 
