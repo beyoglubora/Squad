@@ -100,15 +100,28 @@ def invite(request):
     return class_details(request, message, class_id)
 
 
-def create_notification(class_id, sender, receiver, read, status):
+def create_notification(class_id, sender, receiver, read, status, group_id=None):
     notification = DataModel.Notification()
     notification.class_instance_id = class_id
     notification.sender_instance_id = sender
     notification.receiver_instance_id = receiver
     notification.read = read
     notification.status = status
-    notification.save()
+    if group_id:
+        notification.group_id = group_id
+    if check_notification(notification):
+        notification.save()
     return
+
+
+def check_notification(notification):
+    invites = DataModel.Notification.objects.filter(class_instance_id=notification.class_instance_id,
+                                                    sender_instance=notification.sender_instance,
+                                                    receiver_instance=notification.receiver_instance,
+                                                    status=-1)
+    if not notification.group_id and not invites:
+        return True
+    return False
 
 
 def enroll_form(request):
