@@ -30,10 +30,7 @@
     width: 40%;
     border-radius: 20px;
 }
-    .class-container:hover{
-        border-radius: 5px;
-        border:3px solid darkorange;
-    }
+
     .title-container{
     margin-top: 15px;
     background-color: white;
@@ -80,8 +77,8 @@
      var reader = new FileReader();
      reader.readAsDataURL(file);
      reader.onload = function(e){
-         var pic = document.getElementById("preview");
-         pic.src=this.result;
+         var pic0 = document.getElementById("preview0");
+         pic0.src = this.result;
      }
  }
 </script>
@@ -114,12 +111,13 @@
             {% if photo %}
                 <div>
                 <input onchange="change()" type="file" accept=".jpg, .jpeg, .png" name="newphoto" value="{{ photo.url }}" id="imgPicker">
-                    <img src="{{ photo.url }}" style="max-height: 100px; max-width: 100px">
-                    <img id="preview" style="max-height: 100px; max-width: 100px">
+                    <br>
+                    <img src="{{ photo.url }}" style="margin-top: 50px;margin-right:150px;position: absolute; max-height: 300px; max-width: 300px" id="preview0">
                 </div>
             {% else %}
                 <input onchange="change()" type="file" accept=".jpg, .jpeg, .png" name="newphoto" id="imgPicker">
-                <img id="preview" style="max-height: 100px; max-width: 100px">
+                <br>
+                <img id="preview0" style="margin-top:50px;margin-right:150px; position: absolute; max-height: 300px; max-width: 300px">
             {% endif %}
         </div>
         <br>
