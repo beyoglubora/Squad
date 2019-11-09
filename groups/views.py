@@ -45,7 +45,9 @@ def group_detail(request):
     for relation in group_member_relations:
         group_members[relation.student_instance.account_id] = relation.student_instance.first_name + " " + relation.student_instance.last_name
     in_group = request.user.pk in group_members
-    messages = get_group_message(group_id)
+    messages = list(get_group_message(group_id))
+    messages.reverse()
+
     return render(request, 'group_detail.html', {'group_id': group_id,
                                                  'group_name': group_name,
                                                  'group_members': group_members,
