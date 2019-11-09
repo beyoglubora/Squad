@@ -95,7 +95,7 @@ def invite(request):
     # push notifications to the invited people
     invited_id = int(request.POST.get('invited_id'))
     class_id = int(request.POST.get('class_id'))
-    create_notification(1, sender_id, invited_id, False, -1)
+    create_notification(class_id, sender_id, invited_id, False, -1)
     message = "Successfully sent invite notifications. Waiting for responses..."
     return class_details(request, message, class_id)
 
