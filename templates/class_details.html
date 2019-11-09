@@ -53,7 +53,7 @@
                 <h1 style="color: darkorange; margin-left: 4em">Active Groups</h1>
                 <div>
                     {% for group_id, group_name in groups.items %}
-                        <div style="margin-left: 3em; width: 30em; border-radius: 25px; background-color: white; border:1px solid darkorange;">
+                        <div style="word-wrap: break-word;margin-left: 3em; width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
                             <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
                         </div>
                     {% endfor %}
