@@ -10,14 +10,12 @@ def class_details(request, message=None, class_id=None):
         class_id = request.get_full_path().split('/')[-1]
     group_relations = DataModel.Relationship.objects.filter(class_instance=class_id)
     c = DataModel.Class.objects.filter(class_id=class_id).first()
-    print(c.instructor_instance.first_name)
     # Get unique active group ids for a class_temp
     relationships_in_class = DataModel.Relationship.objects.filter(class_instance=c)
     students_in_class_pks = []
     for relationship in relationships_in_class:
         students_in_class_pks.append(relationship.student_instance.pk)
     enrolled = request.user.pk in students_in_class_pks
-    print(enrolled)
     active_group_ids = set()
     for relation in group_relations:
         active_group_ids.add(relation.group_id)
@@ -56,11 +54,15 @@ def group_detail(request):
 def edit_group_name(request):
     group_id = request.get_full_path().split('/')[-1]
     group = DataModel.Group.objects.filter(group_id=group_id).first()
+    invalid = False
     if request.method == 'POST':
-        group.group_name = request.POST['group-name']
-        group.save()
-        return HttpResponseRedirect("/groups/"+group_id)
-    return render(request, 'edit_group_name.html', context={'group': group})
+        if len(request.POST['group-name']) < 20:
+            group.group_name = request.POST['group-name']
+            group.save()
+            return HttpResponseRedirect("/groups/"+group_id)
+        else:
+            invalid = True
+    return render(request, 'edit_group_name.html', context={'group': group, 'invalid': invalid})
 
 
 def leave_group(request):
@@ -98,15 +100,28 @@ def invite(request):
     return class_details(request, message, class_id)
 
 
-def create_notification(class_id, sender, receiver, read, status):
+def create_notification(class_id, sender, receiver, read, status, group_id=None):
     notification = DataModel.Notification()
     notification.class_instance_id = class_id
     notification.sender_instance_id = sender
     notification.receiver_instance_id = receiver
     notification.read = read
     notification.status = status
-    notification.save()
+    if group_id:
+        notification.group_id = group_id
+    if check_notification(notification):
+        notification.save()
     return
+
+
+def check_notification(notification):
+    invites = DataModel.Notification.objects.filter(class_instance_id=notification.class_instance_id,
+                                                    sender_instance=notification.sender_instance,
+                                                    receiver_instance=notification.receiver_instance,
+                                                    status=-1)
+    if not notification.group_id and not invites:
+        return True
+    return False
 
 
 def enroll_form(request):
@@ -141,7 +156,7 @@ def check_enroll(skill_set, description):
     if skills == ['']:
         return False
     for skill in skills:
-        if not skill or len(skill) > 20:
+        if not skill or len(skill) > 20 or ";" in skill:
             return False
     return True
 

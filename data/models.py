@@ -34,6 +34,9 @@ class MyAccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
+    def get_image_path(self, filename):
+        account_id = Account.objects.last().pk + 1
+        return 'profile_photos/'+str(account_id)
     account_id = models.BigAutoField(primary_key=True)
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     first_name = models.CharField(max_length=30)
@@ -45,7 +48,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
-    profile_photo = models.FileField(default=None, blank=True)
+    profile_photo = models.ImageField(upload_to=get_image_path)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -89,6 +92,11 @@ class Notification(models.Model):
     receiver_instance = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='receiver_Account')
     status = models.IntegerField()
     read = models.BooleanField()
+    # -2: instructor deleting you
+    # -1: invitation pending
+    # 1: invitation accepted
+    # 2 invitation declined
+    group_id = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
 
 class Group(models.Model):
@@ -123,5 +131,12 @@ class Description(models.Model):
     student_instance = models.ForeignKey('Account', on_delete=models.CASCADE)
     class_instance = models.ForeignKey('Class', on_delete=models.CASCADE, related_name='+')
     description = models.TextField()
+
+
+class Messages(models.Model):
+    message_id = models.BigAutoField(primary_key=True)
+    group_id = models.ForeignKey('Group', on_delete=models.CASCADE)
+    subject = models.TextField(max_length=20)
+    body = models.TextField(max_length=300)
 
 

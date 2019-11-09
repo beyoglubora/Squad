@@ -4,6 +4,7 @@ from django.shortcuts import render
 from data import models as DataModel
 from myclasses.views import getMyClass
 from groups.views import enroll, check_enroll
+import html
 
 
 def getIDInstance(request):
@@ -42,7 +43,7 @@ def getAllProfile(s_ins):
     for tc in descrip_by_class:
         cname = tc.class_instance.class_name
         t = ()
-        des_tag_aggby_class[cname] = t + (tc.description,) + (group_by_list[cname],)
+        des_tag_aggby_class[cname] = t + (tc.description,) + (group_by_list[cname],) + (tc.class_instance.class_id,)
     list = [fname, lname, email, is_instructor_of,
             photo, descrip_by_class, class_enroll,
             skill, des_tag_aggby_class]
@@ -67,7 +68,7 @@ def listRequestedmine(request):
         'sins': list[7],
         'same_one': same_one,
         'listclass': list_eclass_and_iclass,
-        'aggregator': list[8]
+        'aggregator': list[8],
     })
 
 
@@ -77,11 +78,14 @@ def listRequested(request):
     is_same_one = (str(explorer_id) == uid)
     list_eclass_and_iclass = (str(explorer_id) != uid)
     u_ins = DataModel.Account.objects.filter(account_id=uid)
+    is_instructor = DataModel.Account.objects.filter(account_id=uid)[0].is_instructor
     if (not u_ins):
         messages.info(request, "No Such User")
         return HttpResponseRedirect('/account/')
     list = getAllProfile(u_ins[0])
-
+    icins_empty = False
+    if not list[3]:
+        icins_empty = True
     return render(request, 'userprofile.html', {
         'fname': list[0],
         'lname': list[1],
@@ -94,7 +98,9 @@ def listRequested(request):
         'same_one': is_same_one,
         'listclass': list_eclass_and_iclass,
         'u_ins':u_ins,
-        'aggregator': list[8]
+        'aggregator': list[8],
+        'is_instructor':is_instructor,
+        'instruct_null':icins_empty
     })
 
 
@@ -104,8 +110,8 @@ def changProfile(request):
     if request.method == 'POST':
         s_ins.first_name = request.POST["newfname"]
         s_ins.last_name = request.POST["newlname"]
-        if (request.POST['newphoto']):
-            s_ins.profile_photo = request.POST['newphoto']
+        if 'newphoto' in request.FILES:
+            s_ins.profile_photo = request.FILES['newphoto']
         s_ins.save()
         '''
         for dc in list[5]:
@@ -133,14 +139,14 @@ def changProfile(request):
         })
 
 def changebyclass(request):
-    class_name = request.get_full_path().split('/account/')[-1]
-    Relation_ins = DataModel.Relationship.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
+    class_id = request.get_full_path().split('/account/class/')[-1]
+    Relation_ins = DataModel.Relationship.objects.filter(class_instance__class_id=class_id, student_instance=request.user)
     invalid = False
     if not Relation_ins:
         messages.info(request, "You are not in this class")
         return HttpResponseRedirect('/account/')
-    des_ins = DataModel.Description.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
-    skill_ins = DataModel.Skill_label.objects.filter(class_instance__class_name=class_name, student_instance=request.user)
+    des_ins = DataModel.Description.objects.filter(class_instance__class_id=class_id, student_instance=request.user)
+    skill_ins = DataModel.Skill_label.objects.filter(class_instance__class_id=class_id, student_instance=request.user)
     if request.method == 'POST':
         skill_set = ""
         for key in request.POST:

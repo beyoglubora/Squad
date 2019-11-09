@@ -34,6 +34,12 @@
         border-radius: 5px;
         border:3px solid darkorange;
     }
+    #profile-photo{
+        border-radius: 50%;
+        height: 300px;
+        width: 300px;
+        margin-left: 30px;
+    }
     .title-container{
     margin-top: 15px;
     background-color: white;
@@ -42,6 +48,11 @@
 }
     </style>
 </head>
+<script>
+    function redirectToClass(class_id) {
+    window.location.href = "/groups/class/" + class_id;
+}
+</script>
 <body>
 {% include 'navbar.html' %}
 {% if messages %}
@@ -65,17 +76,38 @@
     </div>
     <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
         {% load static %}
-        <div><img src="{{ photo.name }}" alt="{{ photo.name }}"></div>
+        <div>
+            {% if photo %}
+                <img id="profile-photo" src="{{ photo.url }}">
+            {% else %}
+                <img id ="profile-photo" src="../media/default.jpg">
+            {% endif %}
+
+        </div>
         <br>
-        <div><p>First Name:&nbsp;{{ fname }}&nbsp;&nbsp;Last Name:&nbsp;{{ lname }}</p></div>
+        <div style="margin-top:-280px"><p>First Name:&nbsp;{{ fname }}&nbsp;&nbsp;Last Name:&nbsp;{{ lname }}</p></div>
         <div><p>Email:{{ email }}</p></div>
     </div>
     <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
-        {% if listclass %}
+        {% if is_instructor %}
             {% if same_one %}
                 <div><a style="color: darkorange;font-size: large">Your are instructor of the following classes</a></div>
+                {% if not instruct_null %}
+                    {% for ic in incins %}
+                    <div>{{ ic.class_name }}</div>
+                    {% endfor %}
+                {% else %}
+                    <div>Currently you have no class to instruct</div>
+                {% endif %}
             {% else %}
                 <div><a style="color: darkorange;font-size: large">This user is instructor of the following classes</a></div>
+                {% if not instruct_null %}
+                    {% for ic in incins %}
+                    <div>{{ ic.class_name }}</div>
+                    {% endfor %}
+                {% else %}
+                    <div>Currently This user have no class to instruct</div>
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>
@@ -84,7 +116,7 @@
     <ul class="class-list">
         {% for key, tuples in aggregator.items %}
         <li class="class-list-item" style="list-style-type: none">
-        <div class="class-container" onclick="redir">
+        <div class="class-container" onclick="redirectToClass('{{ tuples.2 }}')">
             <div><a style="color: darkorange;">{{ key }}</a></div>
             <div><a style="margin-left: 5px">{{ tuples.0 }}</a></div>
             {% for value in tuples.1 %}
