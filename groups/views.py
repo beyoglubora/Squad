@@ -183,11 +183,11 @@ def add_message(request):
     return render(request, 'new_message.html', context={'group_id': group_id})
 
 def add_msg_to_DB(request):
+    sender_name = "[%s %s]:"%(DataModel.Account.objects.filter(account_id=request.user.account_id).first().first_name, DataModel.Account.objects.filter(account_id=request.user.account_id).first().last_name)
+
     group_id = int(request.POST.get('group_id', False))
     subject = request.POST.get('msg_subject', False)
     body = request.POST.get('msg_body', False)
-
-    # create_notification(class_id, sender, receiver, read, status, group_id=None)
 
     # Get class id from group id
     class_id = DataModel.Relationship.objects.filter(group_id=group_id).first().class_instance.class_id
@@ -199,16 +199,17 @@ def add_msg_to_DB(request):
     receivers_obj = DataModel.Relationship.objects.filter(group_id=group_id)
     for obj in receivers_obj:
         receiver_id = obj.student_instance.account_id
-        create_notification(class_id, request.user.account_id, receiver_id, False, STATUS_CODE, group_id=group_id)
+        if request.user.account_id != receiver_id:
+            create_notification(class_id, request.user.account_id, receiver_id, False, STATUS_CODE, group_id=group_id)
 
     # Create new message
     message = DataModel.Messages()
     message.group_id_id = group_id
     message.subject = subject
-    message.body = body
+    message.body = sender_name + body
     message.save()
 
-    return render(request, 'new_message.html')
+    return HttpResponseRedirect(str(group_id))
 
 
 def get_group_message(group_id):
