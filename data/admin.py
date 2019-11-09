@@ -9,6 +9,7 @@ from .models import Group
 from .models import Relationship
 from .models import Skill_label
 from .models import Description
+from .models import Messages
 
 admin.site.register(Account)
 admin.site.register(Class)
@@ -17,3 +18,4 @@ admin.site.register(Group)
 admin.site.register(Relationship)
 admin.site.register(Skill_label)
 admin.site.register(Description)
+admin.site.register(Messages)

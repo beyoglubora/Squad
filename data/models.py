@@ -96,8 +96,8 @@ class Notification(models.Model):
     # -1: invitation pending
     # 1: invitation accepted
     # 2 invitation declined
-    group_id = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
-
+    # 5 group message
+    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
 class Group(models.Model):
     group_id = models.BigIntegerField(primary_key=True)  # It's a sql type ForeignKey referred to notification_id
