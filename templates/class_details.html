@@ -25,7 +25,7 @@
 
     <div style="margin-left:18em">
         <div id="active-students-area" style="width: 50%; float: left; clear: none;">
-            <h1 style="margin-left: 2em; color: darkorange">Active Students</h1>
+            <h1 style="margin-top: 1em; margin-left: 2em; color: darkorange">Active Students</h1>
                 {% for student in active_students %}
                     {% if student.student_instance.profile_photo %}
                         <img src="{{ student.student_instance.profile_photo.url }}" style="border-radius: 50%; width:40px;"/>
@@ -49,10 +49,10 @@
         <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
 
         <div id="active-groups-area" style="float: left; clear: none;">
-                <h1 style="color: darkorange; margin-left: 4em">Active Groups</h1>
+                <h1 style="margin-bottom: 1em; margin-top: 1em; color: darkorange; margin-left: 4em">Active Groups</h1>
                 <div>
                     {% for group_id, group_name in groups.items %}
-                        <div style="word-wrap: break-word;margin-left: 3em; width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
+                        <div style="word-wrap: break-word;margin-left: 3em; margin-bottom: 1em;width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
                             <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
                         </div>
                     {% endfor %}

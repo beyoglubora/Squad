@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 {% extends 'base.html' %}
 
 {% block content %}
@@ -40,9 +41,14 @@
 
         .collapsible:focus {
             outline: none;
-}
+        }
+
+        .w3-button:focus {
+            outline: none;
+        }
 
     </style>
+
 
     {% include 'navbar.html' %}
     <div style="height:100pt; margin-left:20em">
@@ -64,49 +70,50 @@
                 <img src="../media/default.jpg" style="border-radius: 50%; width:40px;">
             {% endif %}
             <h2 style="display: inline-block; margin-top: 0.5em"><a style="color: gray" href="/account/{{ student_id }}">{{ student_name }}</a></h2>
+            <br>
         {% endfor %}
     </div>
 
     {#    source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible#}
-    <div id="message-area" style="margin-left:20em">
-        <h1 style="color: darkorange; font-family: sans-serif; font-size: 2em; display:inline-block; margin-top: 0.5em; margin-bottom: 0.5em">Group Messages:</h1>
-{#        <h1 class="msg-subject" style=" width: 10em; background-color: orange; color: darkblue; font-family: sans-serif; font-size: 20px;">Group Messages</h1>#}
+    {% if in_group %}
+        <div id="message-area" style="margin-left:20em">
+            <div style="width:80%;">
+                <h1 style="color: darkorange; font-family: sans-serif; font-size: 2em; display:inline-block; margin-top: 0.5em; margin-bottom: 0.5em">Group Messages </h1>
+                <form style="position: relative;float: right"; action="add_message" method="POST">
+                    <input type="hidden" name="group_id" value="{{ group_id }}" />
+                    {% csrf_token %}
+                    <input class="w3-button w3-xlarge w3-circle w3-orange" type="submit" value="+">
+                </form>
+            </div>
 
-        <button type="button" class="collapsible msg-subject">Hi Team! Welcome!</button>
-        <div class="content msg-subject">
-          <p>The body of this message.</p>
+            {% for msg in messages %}
+                <button type="button" class="collapsible msg-subject">{{ msg.subject }}</button>
+                    <div class="content msg-subject">
+                        <p>{{ msg.body }}</p>
+                    </div>
+            {% endfor %}
+
         </div>
 
-        <button type="button" class="collapsible msg-subject">Hi Team! Welcome!</button>
-        <div class="content msg-subject">
-          <p>The body of this message.</p>
-        </div>
-
-        <button type="button" class="collapsible msg-subject">Hi Team! Welcome!</button>
-        <div class="content msg-subject">
-          <p>The body of this message.</p>
-        </div>
-
-    </div>
-
-
+    {% endif %}
 
     <div>
         {% if in_group %}
-        <form action="leave-group" method="POST">
-            <input type="hidden" name="group_id" value="{{ group_id }}" />
-            {% csrf_token %}
-            <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Leave Group">
-        </form>
+            <form action="leave-group" method="POST">
+                <input type="hidden" name="group_id" value="{{ group_id }}" />
+                {% csrf_token %}
+                <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Leave Group">
+            </form>
         {% else %}
             <form action="join-group" method="POST">
-            <input type="hidden" name="group_members" value="{{ group_members }}" />
-            <input type="hidden" name="group_id" value="{{ group_id }}" />
-            {% csrf_token %}
-            <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Join Group">
-        </form>
+                <input type="hidden" name="group_members" value="{{ group_members }}" />
+                <input type="hidden" name="group_id" value="{{ group_id }}" />
+                {% csrf_token %}
+                <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Join Group">
+            </form>
         {% endif %}
     </div>
+
 
     <script>
          function hi() {

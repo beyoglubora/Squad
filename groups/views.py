@@ -45,10 +45,12 @@ def group_detail(request):
     for relation in group_member_relations:
         group_members[relation.student_instance.account_id] = relation.student_instance.first_name + " " + relation.student_instance.last_name
     in_group = request.user.pk in group_members
+    messages = get_group_message(group_id)
     return render(request, 'group_detail.html', {'group_id': group_id,
                                                  'group_name': group_name,
                                                  'group_members': group_members,
-                                                 'in_group': in_group})
+                                                 'in_group': in_group,
+                                                 'messages': messages})
 
 
 def edit_group_name(request):
@@ -108,7 +110,7 @@ def create_notification(class_id, sender, receiver, read, status, group_id=None)
     notification.read = read
     notification.status = status
     if group_id:
-        notification.group_id = group_id
+        notification.group_instance_id = group_id
     if check_notification(notification):
         notification.save()
     return
@@ -119,7 +121,8 @@ def check_notification(notification):
                                                     sender_instance=notification.sender_instance,
                                                     receiver_instance=notification.receiver_instance,
                                                     status=-1)
-    if not notification.group_id and not invites:
+    # if not notification.group_instance_id and not invites:
+    if not invites:
         return True
     return False
 
@@ -173,3 +176,39 @@ def unenroll(request):
     DataModel.Description.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     return HttpResponseRedirect('/groups/class/'+class_id)
 
+def add_message(request):
+    group_id = request.POST.get('group_id', False)
+    return render(request, 'new_message.html', context={'group_id': group_id})
+
+def add_msg_to_DB(request):
+    group_id = int(request.POST.get('group_id', False))
+    subject = request.POST.get('msg_subject', False)
+    body = request.POST.get('msg_body', False)
+
+    # create_notification(class_id, sender, receiver, read, status, group_id=None)
+
+    # Get class id from group id
+    class_id = DataModel.Relationship.objects.filter(group_id=group_id).first().class_instance.class_id
+
+    # Set status code as -5 to indicate it's a group message in the notification.
+    STATUS_CODE = -5
+
+    # Get receiver
+    receivers_obj = DataModel.Relationship.objects.filter(group_id=group_id)
+    for obj in receivers_obj:
+        receiver_id = obj.student_instance.account_id
+        create_notification(class_id, request.user.account_id, receiver_id, False, STATUS_CODE, group_id=group_id)
+
+    # Create new message
+    message = DataModel.Messages()
+    message.group_id_id = group_id
+    message.subject = subject
+    message.body = body
+    message.save()
+
+    return render(request, 'new_message.html')
+
+
+def get_group_message(group_id):
+    messages = DataModel.Messages.objects.filter(group_id=group_id)
+    return messages

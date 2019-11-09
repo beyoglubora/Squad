@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
+        <h1 id="add-a-class" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">New Message</h1>
+    </div>
+    {% if invalid %}
+        <p style="color: red; position: absolute; margin-top: 150px; margin-left:350px;">** Please make sure you have entered a valid description and skill set (you must include at least one skill). **</p>
+    {% endif %}
+    <form id="msg-form" method="post" action="add_msg_to_DB" style="margin-left: 350px; margin-top: 175px; position: absolute;">
+        <input type="hidden" name="group_id" value="{{ group_id }}" />
+
+        {% csrf_token %}
+        <p style="color: darkorange">Subject (Max char 20)</p>
+        <textarea style="width: 80%; border-color: darkorange; border-radius: 25px; padding: 10px; resize: none; outline: none; border-width: 2px" id="subject_box" name="msg_subject" placeholder="Type in the subject here."></textarea>
+        <br>
+
+        <p style="margin-top: 20px; color: darkorange">Message Body (Max char 400)</p>
+        <textarea style="height: 250px; width: 500px; border-color: darkorange; border-radius: 25px; padding: 10px; resize: none; outline: none; border-width: 2px" id="body_box" name="msg_body" placeholder="Type in the message body here."></textarea>
+
+        <br>
+        <button type="button" onclick="check_msg()" style="border: none; color: darkorange; font-size: 30px;">Done</button>
+    </form>
+
+    <script>
+        function check_msg() {
+            let subject = document.getElementById("subject_box").value;
+            let body = document.getElementById("body_box").value;
+
+            if (subject.length > 20) {
+                alert(`Maximum number of characters of subject is 20, you have ${subject.length}`);
+                return
+            }
+
+            if (body.length > 400) {
+                alert(`Maximum number of characters of body is 400, you have ${body.length}`);
+                return
+            }
+
+            document.getElementById("msg-form").submit();
+        }
+    </script>
+{% endblock %}

@@ -10,4 +10,6 @@ urlpatterns = [
     re_path('join-group', views.join_group, name='join-group'),
     re_path('leave-group', views.leave_group, name='leave-group'),
     re_path('invite', views.invite, name='invite'),
+    re_path('add_message', views.add_message),
+    re_path('add_msg_to_DB', views.add_msg_to_DB),
 ]
