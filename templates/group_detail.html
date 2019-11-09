@@ -82,7 +82,8 @@
                 <form style="position: relative;float: right"; action="add_message" method="POST">
                     <input type="hidden" name="group_id" value="{{ group_id }}" />
                     {% csrf_token %}
-                    <input class="w3-button w3-xlarge w3-circle w3-orange" type="submit" value="+">
+{#                    <input style="display:block;height: 10px;width: 10px;border-radius: 50%;border: 1px solid red;" class="w3-button w3-xlarge w3-orange" type="submit" value="+">#}
+                    <input style="display: inline-block;height: 50px;width: 50px;border-radius: 50%;border: 1px solid darkorange; color: darkorange" class="w3-button" type="submit" value="+">
                 </form>
             </div>
 
