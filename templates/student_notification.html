@@ -28,10 +28,18 @@
                 DELETED you from
             {% elif notification.status < 6 and notification.status > -2 %}
                 wants to group with you in
+            {% elif notification.status == -5 %}
+                sent you a message in
             {% endif %}
             <a class="color-orange" href="/groups/class/{{ notification.class_instance.class_id}}">
                 {{ notification.class_instance.class_name }}
             </a>
+            {% if notification.status == -5 %}
+                group:
+                <a class="color-orange" href="/groups/{{ notification.group_instance.group_id}}">
+                {{ notification.group_instance.group_name }}
+                </a>
+            {% endif %}
             <br>
             <div class="notification-actions">
                 {% if not notification.read %}

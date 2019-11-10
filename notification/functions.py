@@ -172,7 +172,7 @@ def accept_invitation(current_account, notification_instance):
         join_group(receiver, temp_class, group_num)
         notification_instance.status = 1
         notification_instance.save()
-        message = "You joined sender's group"
+        message = "Sender has a group so you joined that group"
         return True, message
     elif receiver_have_group:
         # sender join receiver's group
