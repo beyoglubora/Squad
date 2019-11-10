@@ -4,11 +4,11 @@
 
     <div style="height:100pt; margin-left:20em">
         <h1 style="margin-bottom: 1em; color: darkorange; font-family: sans-serif; font-size: 4em; display:inline-block; margin-top: 0.5em">Rename the Group</h1>
+
+        <div id="error-area" style="margin-bottom: 1em">
+        </div>
         <form id="group-name-form" method="post">
             {% csrf_token %}
-            {% if invalid %}
-                <p style="color: red; position: absolute; margin-top: -40px;">** Please make sure you have entered a valid group name. **</p>
-            {% endif %}
             <p style="color: gray">Max Char 20</p>
                 <input id="new-group-name" style="text-indent: 10px; outline:none; width: 300px; border-radius: 25px; background-color: white; border:1px solid darkorange;" name="group-name" value="{{ group.group_name }}">
             <button onclick="check_name()" style="color: darkorange; background: none; border:none;" type="button">Save Name</button>
@@ -17,10 +17,24 @@
 
     <script>
         function check_name() {
+
+            var error_area = document.getElementById("error-area");
             let group_name = document.getElementById("new-group-name").value;
 
+            if (group_name.length == 0) {
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `** Your groop name is empty **`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
+                return
+            }
             if (group_name.length > 20) {
-                alert(`Maximum number of characters of group name is 20, you have ${group_name.length}`);
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `Maximum number of characters of group name is 20, you have ${group_name.length}`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
                 return
             }
             document.getElementById("group-name-form").submit();
