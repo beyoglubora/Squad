@@ -78,10 +78,10 @@ def listRequested(request):
     is_same_one = (str(explorer_id) == uid)
     list_eclass_and_iclass = (str(explorer_id) != uid)
     u_ins = DataModel.Account.objects.filter(account_id=uid)
-    is_instructor = DataModel.Account.objects.filter(account_id=uid)[0].is_instructor
     if (not u_ins):
         messages.info(request, "No Such User")
         return HttpResponseRedirect('/account/')
+    is_instructor = u_ins[0].is_instructor
     list = getAllProfile(u_ins[0])
     icins_empty = False
     if not list[3]:
