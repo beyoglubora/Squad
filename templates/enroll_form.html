@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
+    {% if class_invalid %}
+        <p style="margin-left: 300px; margin-top: 80px; position:absolute">This class does not exist.</p>
+    {% else %}
     <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
         <h1 id="add-a-class" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Enroll in {{ class.class_name }}</h1>
     </div>
@@ -39,4 +42,5 @@
         ul.removeChild(document.getElementById(id));
     }
     </script>
+    {% endif %}
 {% endblock %}
