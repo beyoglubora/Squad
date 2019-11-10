@@ -6,8 +6,14 @@ import re
 
 def class_details(request, message=None, class_id=None):
     # The class_id should be retrieved from the sent request displaying the class_temp detail page.
+    invalid = False
     if class_id is None:
         class_id = request.get_full_path().split('/')[-1]
+        class_instance = DataModel.Class.objects.filter(class_id=class_id)
+        if len(class_instance) == 0:
+            invalid = True
+            render(request, 'class_details.html', {'invalid': invalid})
+
     group_relations = DataModel.Relationship.objects.filter(class_instance=class_id)
     c = DataModel.Class.objects.filter(class_id=class_id).first()
     # Get unique active group ids for a class_temp
@@ -33,13 +39,17 @@ def class_details(request, message=None, class_id=None):
     for relation in student_relations:
         active_students.add(relation.student_instance.first_name + " " + relation.student_instance.last_name)
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'active_students': student_relations,
-                                                  'enrolled': enrolled, 'message': message})
+                                                  'enrolled': enrolled, 'message': message, 'invalid': invalid})
 
 
 def group_detail(request):
+    invalid = False
     group_id = request.get_full_path().split('/')[-1]
+    group = DataModel.Group.objects.filter(group_id=group_id)
+    if len(group) == 0:
+        invalid = True
+        return render(request, 'group_detail.html', {'invalid': invalid})
     group_name = DataModel.Group.objects.filter(group_id=group_id)[0].group_name
-
     group_members = dict()
     group_member_relations = DataModel.Relationship.objects.filter(group_id=group_id)
     for relation in group_member_relations:
@@ -52,7 +62,8 @@ def group_detail(request):
                                                  'group_name': group_name,
                                                  'group_members': group_members,
                                                  'in_group': in_group,
-                                                 'messages': messages})
+                                                 'messages': messages,
+                                                 'invalid': invalid})
 
 
 def edit_group_name(request):
@@ -132,8 +143,12 @@ def check_notification(notification):
 def enroll_form(request):
     class_id = request.get_full_path().split('/')[-1]
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    student_instance = request.user
+    class_invalid = False
     invalid = False
+    if not class_instance:
+        class_invalid = True
+        return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid, 'class_invalid': class_invalid})
+    student_instance = request.user
     if request.method == "POST":
         skill_set = ""
         for key in request.POST:
@@ -151,7 +166,8 @@ def enroll_form(request):
         else:
             invalid = True
 
-    return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid})
+    return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid,
+                                                        'class_invalid': class_invalid})
 
 
 def check_enroll(skill_set, description):

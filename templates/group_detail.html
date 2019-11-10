@@ -4,6 +4,9 @@
 
 {% block content %}
     {% include 'navbar.html' %}
+    {% if invalid %}
+        <p style="margin-left: 300px; margin-top: 80px; position:absolute">This group does not exist</p>
+    {% else %}
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
     <style>
@@ -136,5 +139,6 @@
               });
 }
     </script>
+    {% endif %}
 
 {% endblock %}
