@@ -4,9 +4,10 @@
     <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
         <h1 id="add-a-class" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">New Message</h1>
     </div>
-    {% if invalid %}
-        <p style="color: red; position: absolute; margin-top: 150px; margin-left:350px;">** Please make sure you have entered a valid description and skill set (you must include at least one skill). **</p>
-    {% endif %}
+
+    <div id="error-area" style="margin-left: 350px; margin-top: 150px; position: absolute; margin-bottom: 1em;">
+    </div>
+
     <form id="msg-form" method="post" action="add_msg_to_DB" style="margin-left: 350px; margin-top: 175px; position: absolute;">
         <input type="hidden" name="group_id" value="{{ group_id }}" />
 
@@ -23,21 +24,50 @@
     </form>
 
     <script>
+
         function check_msg() {
             let subject = document.getElementById("subject_box").value;
             let body = document.getElementById("body_box").value;
+            var error_area = document.getElementById("error-area");
+
+            if (subject.length == 0) {
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `** Your subject is empty **`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
+                return
+            }
 
             if (subject.length > 20) {
-                alert(`Maximum number of characters of subject is 20, you have ${subject.length}`);
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `** Maximum number of characters of subject is 20, you have ${subject.length} **`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
                 return
             }
 
             if (body.length > 400) {
-                alert(`Maximum number of characters of body is 400, you have ${body.length}`);
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `** Maximum number of characters of body is 400, you have ${body.length} **`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
+                return
+            }
+
+            if (body.length == 0) {
+                error_area.querySelectorAll('*').forEach(n => n.remove());
+                let error_msg = document.createElement("p");
+                error_msg.innerText = `** Your body is empty **`;
+                error_msg.style.cssText = "color: red";
+                error_area.append(error_msg);
                 return
             }
 
             document.getElementById("msg-form").submit();
         }
+
     </script>
 {% endblock %}

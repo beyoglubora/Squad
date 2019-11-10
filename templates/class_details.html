@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
+{#<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">#}
+{#<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">#}
 {% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
@@ -46,17 +46,17 @@
         </div>
     </div>
 
-        <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
+    <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
 
-        <div id="active-groups-area" style="float: left; clear: none;">
-                <h1 style="margin-bottom: 1em; margin-top: 1em; color: darkorange; margin-left: 4em">Active Groups</h1>
-                <div>
-                    {% for group_id, group_name in groups.items %}
-                        <div style="word-wrap: break-word;margin-left: 3em; margin-bottom: 1em;width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
-                            <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
-                        </div>
-                    {% endfor %}
-                </div>
-        </div>
+    <div id="active-groups-area" style="float: left; clear: none;">
+            <h1 style="margin-bottom: 1em; margin-top: 1em; color: darkorange; margin-left: 4em">Active Groups</h1>
+            <div>
+                {% for group_id, group_name in groups.items %}
+                    <div style="word-wrap: break-word;margin-left: 3em; margin-bottom: 1em;width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
+                        <h2><a style="margin-left: 1em; color: gray;" href="/groups/{{ group_id }}">{{ group_name }}</a></h2>
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
 
 {%endblock %}
