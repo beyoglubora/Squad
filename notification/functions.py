@@ -26,6 +26,19 @@ def is_all_read(account_instance):
         return False
 
 
+def read_all(account_instance):
+    """
+    Read all notification
+    :param account_instance:
+    :return:
+    """
+    temp_notification_objects = data.models.Notification.objects.filter(receiver_instance=account_instance) \
+        .filter(read=False)
+    for notification_instance in temp_notification_objects:
+        notification_instance.read = True
+        notification_instance.save()
+
+
 '''
     assume that Notification. status is enum
     -2: instructor deleting you  notification
