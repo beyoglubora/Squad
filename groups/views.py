@@ -58,12 +58,21 @@ def group_detail(request):
     messages = list(get_group_message(group_id))
     messages.reverse()
 
+    # Check if enrolled
+    class_id = DataModel.Relationship.objects.filter(group_id=group_id)[0].class_instance.class_id;
+    relationships_in_class = DataModel.Relationship.objects.filter(class_instance_id=class_id);
+    students_in_class_pks = []
+    for relationship in relationships_in_class:
+        students_in_class_pks.append(relationship.student_instance.pk)
+    enrolled = request.user.pk in students_in_class_pks
+
     return render(request, 'group_detail.html', {'group_id': group_id,
                                                  'group_name': group_name,
                                                  'group_members': group_members,
                                                  'in_group': in_group,
                                                  'messages': messages,
-                                                 'invalid': invalid})
+                                                 'invalid': invalid,
+                                                 'enrolled': enrolled})
 
 
 def edit_group_name(request):

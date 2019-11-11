@@ -4,53 +4,54 @@
     {% if invalid %}
         <p style="margin-left: 300px; margin-top: 80px; position:absolute">This class does not exist.</p>
     {% else %}
-    <div id="class-name-area" style="height:100pt; margin-left:20em">
-        <h1 style="color: darkorange; font-family: sans-serif; font-size: 4em; display:inline-block; margin-top: 0.5em">{{ class.class_name }}</h1>
-        <h2 style="display:inline-block; margin-left: 1em"><a style="color: gray" href="/account/{{ class.instructor_instance.account_id }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a></h2>
-        {% if user.account_id != class.instructor_instance_id  %}
-            {% if enrolled %}
-                <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
-            {% else %}
-                <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+        <div id="class-name-area" style="height:100pt; margin-left:20em">
+            <h1 style="color: darkorange; font-family: sans-serif; font-size: 4em; display:inline-block; margin-top: 0.5em">{{ class.class_name }}</h1>
+            <h2 style="display:inline-block; margin-left: 1em"><a style="color: gray" href="/account/{{ class.instructor_instance.account_id }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a></h2>
+            {% if user.account_id != class.instructor_instance_id  %}
+                {% if enrolled %}
+                    <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="/groups/class/unenroll/{{ class.pk }}">Unenroll from Class</a>
+                {% else %}
+                    <a id="enroll-button" style="position:absolute; top:1em; right:1em; color: darkorange" href="groups/class/enroll/{{ class.pk }}">Enroll in Class</a>
+                {% endif %}
             {% endif %}
-        {% endif %}
-        {% if message %}
-            <script>
-                alert('{{ message }}');
-            </script>
-        {% endif %}
-    </div>
-
-    <hr style="border-bottom: 5px solid orange; margin-bottom: 0;">
-
-    <div style="margin-left:18em">
-        <div id="active-students-area" style="width: 50%; float: left; clear: none;">
-            <h1 style="margin-top: 1em; margin-left: 2em; color: darkorange">Active Students</h1>
-                {% for student in active_students %}
-                    {% if student.student_instance.profile_photo %}
-                        <img src="{{ student.student_instance.profile_photo.url }}" style="border-radius: 50%; width:40px;"/>
-                    {% else %}
-                        <img src="../../media/default.jpg" style="border-radius: 50%; width:40px;"/>
-                    {% endif %}
-                    <h2 style="display: inline-block;"><a style="color: gray" href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }} {{ student.student_instance.last_name }}</a></h2>
-                    {% if enrolled and user.pk != student.student_instance.account_id %}
-                        <form style="display: inline-block" action="invite" method="POST">
-                            <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
-                            <input type="hidden" name="class_id" value="{{ class.class_id }}" />
-                            {% csrf_token %}
-                            <input style="background-color: darkorange; color: #fff; border-radius: 10px;" type="submit" value="Invite">
-                        </form>
-                    {% endif %}
-                    <br>
-                {% endfor %}
+            {% if message %}
+                <script>
+                    alert('{{ message }}');
+                </script>
+            {% endif %}
         </div>
-    </div>
 
-    <div class="verticalLine" style="border-left: thick solid orange; height: 100%; float: left; clear: none;"></div>
+        <hr style="border-bottom: 5px solid orange; margin-bottom: 0;">
 
+        <div style="margin-left:18em">
+            <div id="active-students-area" style="width: 45%; float: left; clear: none;">
+                <h1 style="margin-top: 1em; text-align: center; color: darkorange"; >Active Students</h1>
+                    {% for student in active_students %}
+                        {% if student.student_instance.profile_photo %}
+                            <img src="{{ student.student_instance.profile_photo.url }}" style="border-radius: 50%; width:40px;"/>
+                        {% else %}
+                            <img src="../../media/default.jpg" style="border-radius: 50%; width:40px;"/>
+                        {% endif %}
+                        <h2 style="display: inline-block;"><a style="color: gray" href="/account/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }} {{ student.student_instance.last_name }}</a></h2>
+                        {% if enrolled and user.pk != student.student_instance.account_id %}
+                            <form style="display: inline-block" action="invite" method="POST">
+                                <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
+                                <input type="hidden" name="class_id" value="{{ class.class_id }}" />
+                                {% csrf_token %}
+                                <input style="background-color: darkorange; color: #fff; border-radius: 10px;" type="submit" value="Invite">
+                            </form>
+                        {% endif %}
+                        <br>
+                    {% endfor %}
+            </div>
+        </div>
 
-        <div id="active-groups-area" style="float: left; clear: none;">
-                <h1 style="margin-bottom: 1em; margin-top: 1em; color: darkorange; margin-left: 4em">Active Groups</h1>
+        <div class="verticalLine" style="border-left: thick solid orange; height: 55em; float: left; clear: none; width: 1em;">
+        </div>
+{#        <div style="width: 0.5em;  background-color: darkorange; /* Line color */ height: 55em; /* Override in-line if you want specific height. */float: left;"></div>#}
+
+        <div id="active-groups-area" style="float: left; clear: none; width: 35%;">
+                <h1 style="margin-bottom: 1em; margin-top: 1em; color: darkorange; text-align: center">Active Groups</h1>
                 <div>
                     {% for group_id, group_name in groups.items %}
                         <div style="word-wrap: break-word;margin-left: 3em; margin-bottom: 1em;width: 80%; border-radius: 25px; background-color: white; border:1px solid darkorange;">
