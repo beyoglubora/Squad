@@ -47,6 +47,7 @@ def read_all(account_instance):
     2: invitation declined
     
     -3: others
+    -5: group message
     
     todo: 
     3:application pending/ 
@@ -148,10 +149,10 @@ def accept_invitation(current_account, notification_instance):
         print("notification has been processed, strange here")
         message = "notification has been processed, strange here"
         return False, message
-    if receiver.is_instructor:
-        print("invitation from an instructor, strange here")
-        message = "invitation from an instructor, strange here"
-        return False, message
+    # if sender.is_instructor:
+    #     print("invitation from an instructor, strange here")
+    #     message = "invitation from an instructor, strange here"
+    #     return False, message
     # check if sender still in class
     sender_in_class = is_in_class(sender, temp_class)
     if not sender_in_class:
