@@ -43,14 +43,25 @@ def read_notification(request):
     temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
     if not temp_obj:
         print("ERROR: cant find the notification")
-        return False
+        return HttpResponseRedirect('/notification')
     else:
         temp_obj[0].read = True
         temp_obj[0].save()
         return HttpResponseRedirect('/notification')
 
 
-def accept_nofitication(request):
+def read_all_notifications(request):
+    """
+    Read all
+    :param request:
+    :return:
+    """
+    read_all(get_current_account(request))
+    return HttpResponseRedirect('/notification')
+
+
+
+def accept_notification(request):
     """
     :param request:
     :return:
@@ -71,7 +82,7 @@ def accept_nofitication(request):
                       {'message': message})
 
 
-def decline_nofitication(request):
+def decline_notification(request):
     """
         :param request:
         :return:

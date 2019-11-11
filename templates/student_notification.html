@@ -18,6 +18,11 @@
         <h1 id="explore-title" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Notification</h1>
     </div>
     <div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 90%">
+    {% if not user.is_all_read %}
+        <a class="color-orange" href="/notification/readall">
+            Read All
+        </a>
+    {% endif %}
     {% for notification in list_notification %}
         {% if notification.status != -3 %}
             <div class="notification-container">
@@ -28,10 +33,18 @@
                 DELETED you from
             {% elif notification.status < 6 and notification.status > -2 %}
                 wants to group with you in
+            {% elif notification.status == -5 %}
+                sent you a message in
             {% endif %}
             <a class="color-orange" href="/groups/class/{{ notification.class_instance.class_id}}">
                 {{ notification.class_instance.class_name }}
             </a>
+            {% if notification.status == -5 %}
+                group:
+                <a class="color-orange" href="/groups/{{ notification.group_instance.group_id}}">
+                {{ notification.group_instance.group_name }}
+                </a>
+            {% endif %}
             <br>
             <div class="notification-actions">
                 {% if not notification.read %}
