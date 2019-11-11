@@ -101,19 +101,21 @@
     {% endif %}
 
     <div>
-        {% if in_group %}
-            <form action="leave-group" method="POST">
-                <input type="hidden" name="group_id" value="{{ group_id }}" />
-                {% csrf_token %}
-                <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Leave Group">
-            </form>
-        {% else %}
-            <form action="join-group" method="POST">
-                <input type="hidden" name="group_members" value="{{ group_members }}" />
-                <input type="hidden" name="group_id" value="{{ group_id }}" />
-                {% csrf_token %}
-                <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Join Group">
-            </form>
+        {% if enrolled %}
+            {% if in_group %}
+                <form action="leave-group" method="POST">
+                    <input type="hidden" name="group_id" value="{{ group_id }}" />
+                    {% csrf_token %}
+                    <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Leave Group">
+                </form>
+            {% else %}
+                <form action="join-group" method="POST">
+                    <input type="hidden" name="group_members" value="{{ group_members }}" />
+                    <input type="hidden" name="group_id" value="{{ group_id }}" />
+                    {% csrf_token %}
+                    <input style="position:absolute; top:1em; right:1em; color: darkorange" type="submit" value="Join Group">
+                </form>
+            {% endif %}
         {% endif %}
     </div>
 

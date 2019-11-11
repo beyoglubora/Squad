@@ -17,7 +17,6 @@
 
         <h1>Active Groups</h1>
         <div>
-        {# TODO: HyperLink to the group detail page. In that group detail page, users can modify the group name if they are members. #}
             {% for group_id, group_name in groups.items %}
                 <h2><a href="{{ group_id }}">{{ group_name }}</a></h2>
             {% endfor %}
@@ -27,7 +26,6 @@
         <div>
             {% for student in active_students %}
                 <h2><a href="/accountprofile/{{ student.student_instance.account_id }}">{{ student.student_instance.first_name }}</a></h2>
-                {# TODO: Add invite buttons next to each name so user can invite them to group. If user is not in a group, a popup should tell them to create a group before inviting someone #}
                 <form action="invite" method="POST">
                     <input type="hidden" name="invited_id" value="{{ student.student_instance_id }}" />
                     {% csrf_token %}
