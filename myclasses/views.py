@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data import models as DataModel
-
+from django.contrib import messages
 
 def getIDInstance(request):
     """
@@ -57,8 +57,15 @@ def classDelete(request):
     """
     str = request.get_full_path()
     class_id = str.split("del")[-1]
-    if getIDInstance(request).is_instructor:
+    class_instance = DataModel.Class.objects.filter(class_id=class_id)
+    if not class_instance:
+        messages.info(request, "No Such Class to Delete")
+        return HttpResponseRedirect('/dashboard/')
+    is_instructor_of_the_class = class_instance[0].instructor_instance == request.user
+    print(is_instructor_of_the_class)
+    if getIDInstance(request).is_instructor and is_instructor_of_the_class:
         DataModel.Class.objects.filter(class_id=class_id).delete()
         return HttpResponseRedirect('/dashboard/')
     else:
+        messages.info(request, "You are not the instructor of this class")
         return HttpResponseRedirect('/dashboard')

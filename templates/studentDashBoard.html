@@ -7,6 +7,13 @@
 </head>
 <body>
 {% include 'navbar.html' %}
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
 <div style=" position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
     <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Classes and Groups</h1>
 </div>
