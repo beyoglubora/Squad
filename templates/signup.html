@@ -1,23 +1,133 @@
 <!-- templates/signup.html -->
-<link rel="stylesheet" type="text/css" href = "../static/css/signup.css">
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 
 {% extends "base.html" %}
 
 {% block content %}
-    <body style="margin: 0;">
-    <div id="left-half" style="height:100%; width: 50%; background-color: darkorange; position:absolute; text-align: center;">
-        <h2 style = "text-align: center; margin-top: 10%; color: white; font-size: 1000%;" id="login-title">Squad</h2>
-        <p style="color:white; margin-top:-15%;">Connect with students in your class <br> and form amazing groups!</p>
-    </div>
-    <div id="right-half" style="height: 100%; width: 50%; background-color: white; margin-left: 50%; position:absolute;">
-        <div id="sign-up-form" style="margin-left: 5%">
-            <h2 style="font-size: 500%; color:darkorange; margin-left:5%">Sign up</h2>
-            <form method="post" enctype="multipart/form-data" style="margin-left:5%">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Sign up</button>
-            </form>
+    <style>
+    body{
+       background-color: lightskyblue;
+    }
+
+    #sign-up-box{
+        position: absolute;
+        width: 450px;
+        height: 850px;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin: 5% auto;
+        top:0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+        display: inline-block;
+    }
+
+    #banner{
+        position: absolute;
+        background-color: lightblue;
+        height: 18%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #title{
+        margin-top: 45px;
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    #sign-up-form{
+        height: 100%;
+        width: 100%;
+        text-align: center;
+        z-index: 1;
+        display: inline-block;
+        margin-top: 40%;
+    }
+    .form-control{
+        background-color: whitesmoke;
+        height: 50px;
+        width: 285px;
+        border: none;
+        text-indent: 5px;
+    }
+    #login-text{
+        font-family: 'Montserrat', sans-serif;
+        font-size: x-small;
+        color: gray;
+    }
+    #login-link{
+        font-family: 'Montserrat', sans-serif;
+        text-decoration: none;
+        color: lightskyblue;
+    }
+    #login-link:hover{
+        text-decoration: underline;
+    }
+    #sign-up-button{
+        width: 285px;
+        height: 50px;
+        background-color: lightblue;
+        font-family: 'Montserrat', sans-serif;
+        border: none;
+    }
+    #instructor-text{
+        display: inline;
+        font-family: 'Montserrat', sans-serif;
+        font-size: x-small;
+        color: gray;
+    }
+    #help-text{
+        list-style-type: none;
+        font-size: x-small;
+        color: gray;
+        font-family: 'Montserrat', sans-serif;
+    }
+    ul.errorlist{
+        list-style-type: none;
+        font-size: x-small;
+        color: darkred;
+        font-family: 'Montserrat', sans-serif;
+        margin-top: -10px;
+    }
+    li{
+        list-style-type: none;
+    }
+    </style>
+    <div id="sign-up-box">
+        <div id="banner">
+            <h1 id="title">Sign Up</h1>
         </div>
+        <form id="sign-up-form" method="post" action="{% url 'signup' %}">
+            {% csrf_token %}
+            {% for field in form %}
+                {{ field.errors }}
+                {% if field.id_for_label == "id_password1" %}
+                    <div id="help-text">{{ field.help_text }}</div>
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="password" placeholder="{{ field.label }}"/>
+                {% elif field.id_for_label == "id_password2" %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="password" placeholder="{{ field.label }}"/>
+                {% elif field.id_for_label == "id_profile_photo" %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control-photo" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="file" placeholder="{{ field.label }}"/>
+                {% elif field.id_for_label == "id_is_instructor" %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <p id="instructor-text">Are you an instructor?</p>
+                    <input class="form-control-photo" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="checkbox" placeholder="{{ field.label }}"/>
+                {% else %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="text" placeholder="{{ field.label }}"/>
+                {% endif %}
+                <br>
+                <br>
+            {% endfor %}
+            <input id="sign-up-button" type="submit" class="btn btn-primary" value="Sign Up" />
+            <br>
+            <br>
+            <p id="login-text">Already have an account? <a id="login-link" href="../login">Login</a></p>
+        </form>
     </div>
-    <body>
 {% endblock %}

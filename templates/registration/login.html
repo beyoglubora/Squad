@@ -1,5 +1,3 @@
-{#<!-- templates/registration/login.html -->#}
-{#<link rel="stylesheet" type="text/css" href = "../../static/css/login.css">#}
 <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 {% extends "base.html" %}
 {% block content %}
@@ -110,39 +108,5 @@
 
         </form>
     </div>
-
-{#    <form role="form" class="form-horizontal" method="post" >#}
-{#    action="{% url 'django.contrib.auth.views.login' %}#}
-{#        {% csrf_token %}#}
-{#        #}
-{#        <div class="form-group">#}
-{#            {% for field in form %}#}
-{#                <div class="input-group">#}
-{#                    <span class="input-group-addon" style="background-color:#b77b48; color:white"><span class="glyphicon glyphicon-user"></span></span>#}
-{#                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" value="{{ field.value }}" type="text" />#}
-{#                    {{ field.errors }}#}
-{#                </div>#}
-{#            {% endfor %}#}
-{#            <input type="submit" class="btn btn-primary" value="login" />#}
-{#            <input type="hidden" name="next" value="{{ next }}" />#}
-{#        </div>#}
-{#    </form>#}
-{#    <body>#}
-{#    <div id="left-half">#}
-{#        <h2 id="login-title">Squad</h2>#}
-{#        <p style="color:white; margin-top:-15%;">Connect with students in your class <br> and form amazing groups!</p>#}
-{#    </div>#}
-{#    <div id="right-half">#}
-{#        <h2 id="login-text">Login</h2>#}
-{#        <div id="login-form">#}
-{#            <form method="post" id="login-form">#}
-{#                {% csrf_token %}#}
-{#                {{ form.as_p }}#}
-{#                <button type="submit">Login</button>#}
-{#            </form>#}
-{#            <p id="sign-up-text">Don't have an account? <a href="../signup" id="sign-up-link">Sign Up</a></p>#}
-{#        </div>#}
-{#    </div>#}
-{#    </body>#}
 {% endblock %}
 

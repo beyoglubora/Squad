@@ -3,6 +3,7 @@ from django.views import generic
 from accounts.forms import CustomRegistrationForm
 from django.http import HttpResponseRedirect
 
+
 class SignUp(generic.CreateView):
     form_class = CustomRegistrationForm
     success_url = reverse_lazy('login')
