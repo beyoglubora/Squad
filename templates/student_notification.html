@@ -10,9 +10,9 @@
     {% if messages %}
         {% for msg in messages %}
         <script>
-            $(document).ready(function () {
-            alert('{{ msg }}');
-            });
+            window.onload = function() {
+                alert('{{ msg }}');
+            }
         </script>
         {% endfor %}
     {% endif %}
