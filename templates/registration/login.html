@@ -1,23 +1,112 @@
-{#<!-- templates/registration/login.html -->#}
-<link rel="stylesheet" type="text/css" href = "../../static/css/login.css">
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 {% extends "base.html" %}
 {% block content %}
-    <body>
-    <div id="left-half">
-        <h2 id="login-title">Squad</h2>
-        <p style="color:white; margin-top:-15%;">Connect with students in your class <br> and form amazing groups!</p>
-    </div>
-    <div id="right-half">
-        <h2 id="login-text">Login</h2>
-        <div id="login-form">
-            <form method="post" id="login-form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Login</button>
-            </form>
-            <p id="sign-up-text">Don't have an account? <a href="../signup" id="sign-up-link">Sign Up</a></p>
+    <style>
+    body{
+       background-color: lightskyblue;
+    }
+    #login-box{
+        position: absolute;
+        height: 500px;
+        width: 450px;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin: auto;
+        top:0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+    }
+
+    #banner{
+        position: absolute;
+        background-color: lightblue;
+        height: 25%;
+        width: 100%;
+        text-align: center;
+    }
+
+
+    #title{
+        margin-top: 45px;
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    #login-form{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding-top: 40%;
+        text-align: center;
+        z-index: 1;
+    }
+
+    .form-control{
+        background-color: whitesmoke;
+        height: 50px;
+        width: 285px;
+        border: none;
+        text-indent: 5px;
+    }
+    #login-button{
+        width: 285px;
+        height: 50px;
+        background-color: lightblue;
+        font-family: 'Montserrat', sans-serif;
+        border: none;
+    }
+
+    #sign-up-text{
+        font-family: 'Montserrat', sans-serif;
+        font-size: x-small;
+        color: gray;
+    }
+    #sign-up-link{
+        font-family: 'Montserrat', sans-serif;
+        text-decoration: none;
+        color: lightskyblue;
+    }
+    #sign-up-link:hover{
+        text-decoration: underline;
+    }
+    li{
+        margin-top:-30px;
+        margin-left:7px;
+        width: 350px;
+        list-style-type: none;
+        font-size: x-small;
+        color: darkred;
+        font-family: 'Montserrat', sans-serif;
+    }
+    </style>
+
+    <div id="login-box">
+        <div id="banner">
+            <h1 id="title">Squad</h1>
         </div>
+        <form id="login-form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                {% if field.id_for_label == "id_password" %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="password" placeholder="{{ field.label }}"/>
+                {% else %}
+                    <label for="{{ field.id_for_label }}"></label>
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="text" placeholder="{{ field.label }}"/>
+                {% endif %}
+
+                <br>
+                <br>
+            {% endfor %}
+            <input id="login-button" type="submit" class="btn btn-primary" value="login" />
+            <br>
+            <br>
+            <p id="sign-up-text">Don't have an account? <a id="sign-up-link" href="../signup">Sign up</a></p>
+
+        </form>
     </div>
-    </body>
 {% endblock %}
 
