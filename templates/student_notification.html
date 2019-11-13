@@ -7,11 +7,14 @@
 {% block content %}
     {% include 'navbar.html' %}
 
-    {% if message %}
+    {% if messages %}
+        {% for msg in messages %}
         <script>
-            alert('{{ message }}');
-            location.href="/notification"
+            $(document).ready(function () {
+            alert('{{ msg }}');
+            });
         </script>
+        {% endfor %}
     {% endif %}
 
     <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
