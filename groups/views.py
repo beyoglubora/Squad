@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from data import models as DataModel
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 import re
 
 
@@ -30,16 +30,33 @@ def class_details(request, message=None, class_id=None):
 
     active_groups = dict()
     for group_id in active_group_ids:
-        group_name = DataModel.Group.objects.filter(group_id=group_id)[0].group_name
-        active_groups[group_id] = group_name
+        group = DataModel.Group.objects.filter(group_id=group_id).first()
+        students = DataModel.Relationship.objects.filter(group_id=group_id)
+        student_names = []
+        for student in students:
+            student_names.append(student.student_instance.first_name + " " + student.student_instance.last_name)
+        active_groups[group] = ", ".join(student_names)
 
-    # Get active students
-    student_relations = DataModel.Relationship.objects.filter(class_instance=class_id, group_id=-1)
-    active_students = set()
-    for relation in student_relations:
-        active_students.add(relation.student_instance.first_name + " " + relation.student_instance.last_name)
-    return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'active_students': student_relations,
-                                                  'enrolled': enrolled, 'message': message, 'invalid': invalid})
+    student_relations = DataModel.Relationship.objects.filter(class_instance=class_id)
+    in_group = False
+    student_descriptions_skills = {}
+    own_group = None
+    for student in student_relations:
+        d = {}
+        d['description'] = DataModel.Description.objects.filter(student_instance=student.student_instance, class_instance=c).first().description
+        d['skills'] = DataModel.Skill_label.objects.filter(student_instance=student.student_instance, class_instance=c).first().label.split(";")
+        d['skills'] = ", ".join(d['skills'])
+        group = DataModel.Group.objects.filter(group_id=student.group_id).first()
+        if group:
+            if student.student_instance.account_id == request.user.pk:
+                in_group = True
+                own_group = group
+            d['group'] = group
+        student_descriptions_skills[student] = d
+    print(active_groups)
+    return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'enrolled': enrolled, 'invalid': invalid,
+                                                  'student_descriptions_skills': student_descriptions_skills, "in_group": in_group,
+                                                  "own_group": own_group})
 
 
 def group_detail(request):
@@ -73,6 +90,20 @@ def group_detail(request):
                                                  'messages': messages,
                                                  'invalid': invalid,
                                                  'enrolled': enrolled})
+
+
+def create_group(request):
+    print(request.POST)
+    group_name = request.POST.get('group_name')
+    print(group_name)
+    class_id = request.POST.get('class_id')
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    group = DataModel.Group.objects.create(group_name=group_name)
+    group.refresh_from_db()
+    relation = DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=request.user).first()
+    relation.group_id = group.group_id
+    relation.save()
+    return JsonResponse({"group_id": group.group_id})
 
 
 def edit_group_name(request):
@@ -150,33 +181,19 @@ def check_notification(notification):
 
 
 def enroll_form(request):
-    class_id = request.get_full_path().split('/')[-1]
+    description = request.POST.get('description', None)
+    skills = request.POST.getlist('skills[]', None)
+    skills = ", ".join(skills)
+    class_id = request.POST.get('class_id', None)
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    class_invalid = False
-    invalid = False
-    if not class_instance:
-        class_invalid = True
-        return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid, 'class_invalid': class_invalid})
-    student_instance = request.user
-    if request.method == "POST":
-        skill_set = ""
-        for key in request.POST:
-            if "skill_set" in key:
-                skill_set += request.POST[key] + ";"
-        skill_set = skill_set[:-1]
-        description = request.POST["description"]
-        if check_enroll(skill_set, description):
-            enroll(class_instance, student_instance)
-            DataModel.Skill_label.objects.create(student_instance=student_instance, class_instance=class_instance,
-                                                 label=skill_set)
-            DataModel.Description.objects.create(class_instance=class_instance, student_instance=student_instance,
-                                                 description=description)
-            return HttpResponseRedirect('/groups/class/' + class_id)
-        else:
-            invalid = True
-
-    return render(request, 'enroll_form.html', context={'class': class_instance, 'invalid': invalid,
-                                                        'class_invalid': class_invalid})
+    print(skills)
+    DataModel.Skill_label.objects.create(student_instance=request.user, class_instance=class_instance,
+                                         label=skills)
+    DataModel.Description.objects.create(class_instance=class_instance, student_instance=request.user,
+                                         description=description)
+    enroll(class_instance, request.user)
+    data={"message": "Successfully enrolled in class"}
+    return JsonResponse(data)
 
 
 def check_enroll(skill_set, description):
@@ -194,6 +211,29 @@ def check_enroll(skill_set, description):
 def enroll(class_instance, student_instance):
     DataModel.Relationship.objects.create(class_instance=class_instance, student_instance=student_instance)
 
+
+def remove_student(request):
+    class_id = request.POST.get("class_id")
+    student_id = request.POST.get("student_id")
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    student_instance = DataModel.Account.objects.filter(account_id=student_id).first()
+    DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
+    DataModel.Skill_label.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
+    DataModel.Description.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
+    return JsonResponse({'res:':"student removed successfully"})
+
+
+def remove_group(request):
+    class_id = request.POST.get("class_id")
+    group_id = request.POST.get("group_id")
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    students_in_group = DataModel.Relationship.objects.filter(class_instance=class_instance, group_id=group_id)
+    for student in students_in_group:
+        relationship = DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student.student_instance).first()
+        relationship.group_id = -1
+        relationship.save()
+    DataModel.Group.objects.filter(group_id=group_id).delete()
+    return JsonResponse({'result':"group removed successfully"})
 
 def unenroll(request):
     class_id = request.get_full_path().split('/')[-1]

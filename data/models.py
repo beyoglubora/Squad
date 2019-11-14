@@ -99,8 +99,9 @@ class Notification(models.Model):
     # 5 group message
     group_instance = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
+
 class Group(models.Model):
-    group_id = models.BigIntegerField(primary_key=True)  # It's a sql type ForeignKey referred to notification_id
+    group_id = models.BigAutoField(primary_key=True)  # It's a sql type ForeignKey referred to notification_id
     group_name = models.CharField(max_length=50, default='')
 
 
