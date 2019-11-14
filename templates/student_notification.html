@@ -7,7 +7,15 @@
 {% block content %}
     {% include 'navbar.html' %}
 
-
+    {% if messages %}
+        {% for msg in messages %}
+        <script>
+            window.onload = function() {
+                alert('{{ msg }}');
+            }
+        </script>
+        {% endfor %}
+    {% endif %}
 
     <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
         <h1 id="explore-title" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Notification</h1>
@@ -68,12 +76,3 @@
     </div>
 {% endblock %}
 
-{% if messages %}
-    {% for msg in messages %}
-    <script>
-        window.onload = function() {
-            alert('{{ msg }}');
-        }
-    </script>
-    {% endfor %}
-{% endif %}
