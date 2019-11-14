@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data.models import Class
 from explore.forms import CreateClassForm
+from django.http import JsonResponse
 
 
 def explore_page(request):
@@ -9,17 +10,17 @@ def explore_page(request):
 
 
 def create_class(request):
-    invalid = False
-    if request.method == 'POST':
-        form = CreateClassForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.instructor_instance = request.user
-            instance.save()
-            return HttpResponseRedirect('/explore/')
-        else:
-            invalid = True
-    else:
-        form = CreateClassForm()
-
-    return render(request, 'create_class.html', {'form': form, 'invalid': invalid})
+    class_name = request.POST.get('class_name', None)
+    class_description = request.POST.get('class_description', None)
+    class_instance = Class()
+    class_instance.class_name = class_name
+    class_instance.description = class_description
+    class_instance.instructor_instance = request.user
+    try:
+        class_instance.save()
+    except:
+        raise ValueError("This class already exists")
+    class_instance.save()
+    class_instance = Class.objects.last()
+    data = {'status': "../groups/class/" + str(class_instance.class_id)}
+    return JsonResponse(data)
