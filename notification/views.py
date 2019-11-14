@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 # Create your views here.
 from .functions import *
@@ -96,8 +97,8 @@ def decline_notification(request):
     notification_instance = temp_obj[0]
     flag_success, message = decline_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
-        return render(request, 'student_notification.html',
-                      {'message': message})
+        messages.info(request, message)
+        return HttpResponseRedirect('/notification')
     else:
         return render(request, 'student_notification.html',
                       {'message': message})
