@@ -37,6 +37,9 @@
             float:right;
             margin-right: 20px;
             margin-top: 20px;
+            border: none;
+            outline: none;
+            background: none;
         }
         #group-title{
             display: inline-block;
@@ -148,6 +151,12 @@
             padding-top: 30px;
             text-align: center;
         }
+        #request-to-join-text{
+            color: gray;
+            float:right;
+            margin-right: 20px;
+            margin-top: 20px;
+        }
     </style>
 
     {% if invalid %}
@@ -157,8 +166,8 @@
             <div id="banner-card">
                 {% if in_group %}
                     <button id="leave-group-link" onclick="leaveGroup()">Leave Group</button>
-                {% elif request.user.pk != class.instructor_instance.account_id %}
-                    <a id="request-to-join-link" href="#">Request to Join Group</a>
+                {% elif request.user.pk != class.instructor_instance.account_id and not has_group %}
+                    <button id="request-to-join-link" onclick="requestToJoinGroup(this)">Request to Join Group</button>
                 {% endif %}
                 <h1 id = "group-title">{{group_name}}</h1>
                 <br>
@@ -257,6 +266,28 @@
                     }
                   });
         }
+        function requestToJoinGroup(elem){
+            $.ajax({
+                    url: '/groups/requesttojoingroup/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'group_id': '{{ group_id }}',
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var parent = elem.parentElement;
+                        parent.removeChild(elem);
+                        let p = document.createElement('p');
+                        p.setAttribute("id", "request-to-join-text");
+                        p.innerHTML = "You have requested to join this group.";
+                        parent.prepend(p);
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+
     </script>
 
 {% endblock %}

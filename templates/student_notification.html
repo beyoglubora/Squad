@@ -70,6 +70,22 @@
             margin-top: 75px;
             margin-left: 250px;
         }
+        .accept-button{
+            background-color: dodgerblue;
+            border: none;
+            color: white;
+            height: 50px;
+            width: 100px;
+            margin-top:50px;
+        }
+        .decline-button{
+            background-color: darkred;
+            border: none;
+            color: white;
+            height: 50px;
+            width: 100px;
+            margin-top: 50px;
+        }
         .class_link{
             color: lightskyblue;
         }
@@ -77,19 +93,23 @@
             color: lightskyblue;
         }
         .read-button{
-            position:absolute;
             background-color: gray;
             border: none;
             color: white;
             height: 50px;
             width: 100px;
-            margin-top: 180px;
-            margin-left: 60px;
+            margin-top: 70px;
+            margin-bottom: 30px;
         }
-        #read-text{
-            position:absolute;
-            margin-top: 191px;
-            margin-left: 60px;
+        #dismiss-message-button{
+            background-color: gray;
+            border: none;
+            color: white;
+            height: 50px;
+            width: 100px;
+            margin-top: 90px;
+        }
+        .read-text{
             color: gray;
         }
         .enroll-modal-content{
@@ -184,6 +204,47 @@
             margin-top:15%;
             margin-left: 40%;
         }
+        #group-link{
+            color: lightskyblue;
+        }
+        #group-invite-processed-text{
+            position:absolute;
+            margin-top: 191px;
+            margin-left: 160px;
+            color: gray;
+        }
+        .process-invite-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 40%;
+            width: 30%;
+            margin: 20% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 850px;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top: 30px;
+            text-align: center;
+        }
+        #process-invite-text{
+            color: darkred;
+            font-size: 24px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #declined-invite-text{
+            color: darkred;
+            margin-top: 70px;
+        }
+        .group-link{
+            color: lightskyblue;
+        }
+        .group-link:hover{
+            color: lightskyblue;
+        }
     </style>
 
     <div id="wrapper">
@@ -195,31 +256,20 @@
 
         {% for notification in list_notification %}
             <div class="notification-container" id="{{ notification.notification_id }}">
-                {% if not notification.read %}
-                    <button class="read-button" onclick=readNotification(this)>Read</button>
-                {% else %}
-                    <p id="read-text">Marked as read</p>
-                {% endif %}
                 <a id="sender-name" href="/account/{{ notification.sender_instance.account_id }}">
                     {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}&nbsp
                 </a>
                 {% if notification.status == -1 %}
-                    <p>wants you to join their group</p>
-                    <button onclick="acceptGroupInvite()">
+                    <p id="action-text">wants you to join their <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <button class="accept-button" onclick="acceptGroupInvite(this)">
                         Accept
                     </button>
-                    <button onclick="rejectGroupInvite()">
+                    <button class="decline-button" onclick="rejectGroupInvite(this)">
                         Decline
                     </button>
-                {% elif notification.status == 1 %}
-                    <p id="action-text">wants you to join their group</p>
-                    <p>You have accepted this invitation</p>
-                {% elif notification.status == 2 %}
-                    <p id="action-text">wants you to join their group</p>
-                    <p>You have declined this invitation</p>
                 {% elif notification.status == 3 %}
                     <p id="action-text">wants you to enroll in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
-                    <button id="enroll-button" onclick="acceptGroupInvite()">
+                    <button id="enroll-button" onclick="showEnrollModal()">
                         Enroll
                     </button>
 
@@ -243,18 +293,39 @@
                 {% elif notification.status == 4 %}
                     <p id="action-text">has messaged your group</p>
                 {% elif notification.status == 5 %}
-                    <p id="action-text">has moved you into the following group for <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a>: <a href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a></p>
+                    <p id="action-text">has moved you into a new <a class="group-link" href="../groups/{{ notification.group_instance.group_id }}">group</a> for <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                 {% elif notification.status == 6 %}
-                    <p id="action-text">has removed you from your group in <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <p id="action-text">has removed you from your <a class="group-link" href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                 {% elif notification.status == 7 %}
-                    <p id="action-text">has placed you into the following group for <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a>: <a href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a></p>
+                    <p id="action-text">has placed you into the following <a class="group-link" href="../groups/{{ notification.group_instance.group_id }}">group</a> for <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% elif notification.status == 8 %}
+                    <p id="action-text">has removed you from <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                 {% elif notification.status == 9 %}
-                    <p id="action-text">has removed you from <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <p id="action-text">wants to join your <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <button class="accept-button" onclick="acceptJoinRequest(this)">
+                        Accept
+                    </button>
+                    <button class="decline-button" onclick="rejectJoinRequest(this)">
+                        Decline
+                    </button>
+                {% elif notification.status == 10 %}
+                    <p id="action-text">has accepted your request to join <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% endif %}
+
+
+                {% if not notification.read %}
+                    <button class="read-button" onclick=readNotification(this)>Read</button>
+                {% else %}
+                    <p class="read-text">Marked as read</p>
                 {% endif %}
             </div>
         {% endfor %}
 
-
+        <div id="process-invite-modal" class="modal">
+            <div id="process-invite-modal-body" class="process-invite-modal-content">
+                <button id="dismiss-message-button">Dismiss</button>
+            </div>
+        </div>
 
     </div>
     <script>
@@ -263,16 +334,39 @@
         //var span = document.getElementsByClassName("close")[0];
         let enrollModalBody = document.getElementById("enroll-modal-body");
         let enroll_message_error_displayed = false;
-        enrollButton.onclick = function() {
-              enrollModal.style.display = "block";
-            };
+
+        var processInviteModal = document.getElementById("process-invite-modal");
+        var dismissButton = document.getElementById("dismiss-message-button");
+        let processInviteModalBody = document.getElementById("process-invite-modal-body");
+        let process_invite_error_displayed = false;
+
+        function showEnrollModal(){
+            enrollModal.style.display = "block";
+        }
+
+        dismissButton.onclick = function(){
+            if (process_invite_error_displayed) {
+                processInviteModalBody.removeChild(document.getElementById("process-invite-text"));
+                process_invite_error_displayed = false;
+            }
+            processInviteModal.style.display = "none";
+        };
         window.onclick = function(event) {
+            console.log("HERE");
             if (event.target == enrollModal) {
                 if (enroll_message_error_displayed) {
                     enrollModalBody.removeChild(document.getElementById("enroll-class-error-message"));
                     enroll_message_error_displayed = false;
                 }
                 enrollModal.style.display = "none";
+            }
+            if (event.target == processInviteModal) {
+                console.log("here");
+                if (process_invite_error_displayed) {
+                    processInviteModalBody.removeChild(document.getElementById("process-invite-text"));
+                    process_invite_error_displayed = false;
+                }
+                processInviteModal.style.display = "none";
             }
         };
         function readNotification(elem){
@@ -358,6 +452,127 @@
                     }
                   });
             }
+        }
+
+        function acceptGroupInvite(elem){
+            var notification_id = elem.parentElement.id;
+            $.ajax({
+                    url: '/notification/accept/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'notification_id': notification_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href="/groups/" + data["group_id"];
+                    },
+                    error: function (data){
+                        console.log(data.responseJSON.message);
+                        let p = document.createElement('p');
+                        p.setAttribute("id", "process-invite-text");
+                        p.innerHTML = data.responseJSON.message;
+                        processInviteModalBody.prepend(p);
+                        processInviteModal.style.display = "block";
+                        process_invite_error_displayed = true;
+                    }
+                  });
+        }
+
+        function rejectGroupInvite(elem){
+            var notification_id = elem.parentElement.id;
+
+            $.ajax({
+                    url: '/notification/decline/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'notification_id': notification_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var parent = elem.parentElement;
+                        var ab = parent.getElementsByClassName("accept-button")[0];
+                        var db = parent.getElementsByClassName("decline-button")[0];
+                        ab.style.display = "none";
+                        db.style.display = "none";
+                        var rb = parent.getElementsByClassName("read-button");
+                        if (rb.length > 0){
+                            rb[0].style.display = "none";
+                        }
+                        else{
+                            var rt = parent.getElementsByClassName("read-text");
+                            rt[0].style.display = "none";
+                        }
+                        let p = document.createElement('p');
+                        p.setAttribute("id", "declined-invite-text");
+                        p.innerHTML = "You have declined their invitation";
+                        parent.appendChild(p);
+                    },
+                    error: function (data){
+
+                    }
+                  });
+        }
+        function acceptJoinRequest(elem){
+            var notification_id = elem.parentElement.id;
+            $.ajax({
+                    url: '/notification/acceptjoinrequest/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'notification_id': notification_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href="/groups/" + data["group_id"];
+                    },
+                    error: function (data){
+                        console.log(data.responseJSON.message);
+                        let p = document.createElement('p');
+                        p.setAttribute("id", "process-invite-text");
+                        p.innerHTML = data.responseJSON.message;
+                        processInviteModalBody.prepend(p);
+                        processInviteModal.style.display = "block";
+                        process_invite_error_displayed = true;
+                    }
+                  });
+
+        }
+        function rejectJoinRequest(elem){
+            var notification_id = elem.parentElement.id;
+
+            $.ajax({
+                    url: '/notification/declinejoinrequest/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'notification_id': notification_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var parent = elem.parentElement;
+                        var ab = parent.getElementsByClassName("accept-button")[0];
+                        var db = parent.getElementsByClassName("decline-button")[0];
+                        ab.style.display = "none";
+                        db.style.display = "none";
+                        var rb = parent.getElementsByClassName("read-button");
+                        if (rb.length > 0){
+                            rb[0].style.display = "none";
+                        }
+                        else{
+                            var rt = parent.getElementsByClassName("read-text");
+                            rt[0].style.display = "none";
+                        }
+                        let p = document.createElement('p');
+                        p.setAttribute("id", "declined-invite-text");
+                        p.innerHTML = "You have declined their request";
+                        parent.appendChild(p);
+                    },
+                    error: function (data){
+
+                    }
+                  });
         }
 
     </script>

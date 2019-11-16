@@ -60,26 +60,60 @@ def read_all_notifications(request):
     return HttpResponseRedirect('/notification')
 
 
-
 def accept_notification(request):
     """
     :param request:
     :return:
     """
-    temp_str = request.get_full_path()
-    notification_id = temp_str.split("accept/")[-1]
+    notification_id = request.POST.get("notification_id")
     temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
     if not temp_obj:
         print("ERROR: cant find the notification")
         return False
     notification_instance = temp_obj[0]
-    flag_success, message = accept_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
+    flag_success, message, is_actionable = accept_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
-        return render(request, 'student_notification.html',
-                      {'message': message})
+        data.models.Notification.objects.filter(notification_id=notification_id).delete()
+        return JsonResponse({"group_id": notification_instance.group_instance.group_id})
     else:
-        return render(request, 'student_notification.html',
-                      {'message': message})
+        response = JsonResponse({"message": message})
+        response.status_code = 403
+        return response
+
+def accept_join_notification(request):
+    notification_id = request.POST.get("notification_id")
+    temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
+    if not temp_obj:
+        print("ERROR: cant find the notification")
+        return False
+    notification_instance = temp_obj[0]
+    flag_success, message, is_actionable = accept_request(current_account=get_current_account(request),
+                                                             notification_instance=notification_instance)
+    if flag_success:
+        data.models.Notification.objects.filter(sender_instance=notification_instance.sender_instance, class_instance=notification_instance.class_instance, group_instance=notification_instance.group_instance, status=notification_instance.status).delete()
+        relation = data.models.Relationship.objects.filter(student_instance=notification_instance.sender_instance).first()
+        relation.group_id = notification_instance.group_instance.group_id
+        relation.save()
+        data.models.Notification.objects.create(sender_instance=notification_instance.receiver_instance, receiver_instance=notification_instance.sender_instance, class_instance=notification_instance.class_instance, group_instance=notification_instance.group_instance, status=10)
+        return JsonResponse({"group_id": notification_instance.group_instance.group_id})
+    else:
+        response = JsonResponse({"message": message})
+        response.status_code = 403
+        return response
+
+
+def decline_join_notification(request):
+    notification_id = request.POST.get("notification_id")
+    temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
+    if not temp_obj:
+        print("ERROR: cant find the notification")
+        return False
+    notification_instance = temp_obj[0]
+    flag_success, message = decline_invitation(current_account=get_current_account(request),
+                                               notification_instance=notification_instance)
+    if flag_success:
+        data.models.Notification.objects.filter(notification_id=notification_id).delete()
+        return JsonResponse({"message": "Successfully declined notification"})
 
 
 def decline_notification(request):
@@ -87,8 +121,7 @@ def decline_notification(request):
         :param request:
         :return:
         """
-    temp_str = request.get_full_path()
-    notification_id = temp_str.split("decline/")[-1]
+    notification_id = request.POST.get("notification_id")
     temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
     if not temp_obj:
         print("ERROR: cant find the notification")
@@ -97,10 +130,8 @@ def decline_notification(request):
     flag_success, message = decline_invitation(current_account=get_current_account(request), notification_instance=notification_instance)
     if flag_success:
         messages.info(request, message)
-        return HttpResponseRedirect('/notification')
-    else:
-        return render(request, 'student_notification.html',
-                      {'message': message})
+        data.models.Notification.objects.filter(notification_id=notification_id).delete()
+        return JsonResponse({"message": "Successfully declined notification"})
 
 
 def show_error(request):

@@ -49,6 +49,14 @@ def class_details(request, message=None, class_id=None):
     in_group = False
     student_descriptions_skills = {}
     own_group = None
+    relation = DataModel.Relationship.objects.filter(student_instance=request.user, class_instance=c)
+    if len(relation) != 0:
+        g_id = relation.first().group_id
+        if g_id != -1:
+            in_group = True
+            g_instance = DataModel.Group.objects.filter(group_id=g_id).first()
+            own_group = g_instance
+
     for student in student_relations:
         d = {}
         d['description'] = DataModel.Description.objects.filter(student_instance=student.student_instance, class_instance=c).first().description
@@ -56,11 +64,19 @@ def class_details(request, message=None, class_id=None):
         d['skills'] = ", ".join(d['skills'])
         group = DataModel.Group.objects.filter(group_id=student.group_id).first()
         if group:
-            if student.student_instance.account_id == request.user.pk:
-                in_group = True
-                own_group = group
             d['group'] = group
+        if in_group:
+            pending = DataModel.Notification.objects.filter(sender_instance=request.user, receiver_instance=student.student_instance, class_instance=c, status=-1, group_instance=g_instance)
+            if len(pending) > 0:
+                d['pending'] = True
+            else:
+                d['pending'] = False
+            if student.group_id == g_id:
+                d['accepted'] = True
+            else:
+                d['accepted'] = False
         student_descriptions_skills[student] = d
+
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'enrolled': enrolled, 'invalid': invalid,
                                                   'student_descriptions_skills': student_descriptions_skills, "in_group": in_group,
                                                   "own_group": own_group})
@@ -91,6 +107,12 @@ def group_detail(request):
         students_in_class_pks.append(relationship.student_instance.pk)
     enrolled = request.user.pk in students_in_class_pks
 
+    has_group = True
+    relationship = DataModel.Relationship.objects.filter(student_instance=request.user, class_instance=class_id)
+    if len(relationship) > 0:
+        relation = relationship.first()
+        if relation.group_id == -1:
+            has_group = False
 
     student_relations = DataModel.Relationship.objects.filter(group_id=group_id)
     class_instance = group.class_instance
@@ -111,8 +133,17 @@ def group_detail(request):
                                                  'invalid': invalid,
                                                  'enrolled': enrolled,
                                                  'student_descriptions_skills': student_descriptions_skills,
-                                                 'class': class_instance})
+                                                 'class': class_instance,
+                                                 'has_group': has_group})
 
+
+def request_to_join_group(request):
+    group_id = request.POST.get("group_id")
+    relations = DataModel.Relationship.objects.filter(group_id=group_id)
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+    for relation in relations:
+        DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=relation.student_instance, class_instance=relation.class_instance, group_instance=group_instance, status=9)
+    return JsonResponse({"message": "Successfully request to join group"})
 
 def create_group(request):
     group_name = request.POST.get('group_name')
@@ -131,6 +162,7 @@ def remove_student_from_group(request):
     group_id = request.POST.get("group_id")
     student_id = request.POST.get("student_id")
     relation = DataModel.Relationship.objects.filter(student_instance=student_id, group_id=group_id).first()
+    DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=relation.student_instance, class_instance=relation.class_instance, status=6)
     relation.group_id = -1
     relation.save()
     return JsonResponse({"message": "student successfully removed from group"})
@@ -226,8 +258,10 @@ def leave_group(request):
     relation.group_id = -1
     relation.save()
     relations = DataModel.Relationship.objects.filter(group_id=group_id)
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+    DataModel.Notification.objects.filter(sender_instance=request.user, class_instance=relation.class_instance, group_instance=group_instance).delete()
     if len(relations) == 0:
-        DataModel.Group.objects.filter(group_id=group_id).delete()
+        group_instance.delete()
         return JsonResponse({"message": "deleted group"})
     return JsonResponse({"message": "successfully left group"})
 
@@ -248,13 +282,15 @@ def join_group(request):
 
 
 def invite(request):
-    sender_id = request.user.pk
     # push notifications to the invited people
-    invited_id = int(request.POST.get('invited_id'))
+    student_id = int(request.POST.get('student_id'))
     class_id = int(request.POST.get('class_id'))
-    create_notification(class_id, sender_id, invited_id, False, -1)
-    message = "Successfully sent invite notifications. Waiting for responses..."
-    return class_details(request, message, class_id)
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    student_instance = DataModel.Account.objects.filter(account_id=student_id).first()
+    relationship = DataModel.Relationship.objects.filter(student_instance=request.user, class_instance=class_instance).first()
+    group_instance = DataModel.Group.objects.filter(group_id=relationship.group_id).first()
+    DataModel.Notification.objects.create(class_instance=class_instance, sender_instance=request.user, receiver_instance=student_instance, group_instance=group_instance, status=-1)
+    return JsonResponse({"message": "Successfully invite student"})
 
 
 def create_notification(class_id, sender, receiver, read, status, group_id=None):
@@ -295,8 +331,10 @@ def enroll_form(request):
                                          description=description)
     enroll(class_instance, request.user)
     data={"message": "Successfully enrolled in class"}
-    if "from-notification" in request.POST:
+    notification = DataModel.Notification.objects.filter(sender_instance=class_instance.instructor_instance, receiver_instance=request.user, class_instance=class_instance, status=3)
+    if "from-notification" in request.POST or len(notification) != 0:
         DataModel.Notification.objects.filter(sender_instance=class_instance.instructor_instance, receiver_instance=request.user, class_instance=class_instance, status=3).delete()
+
     return JsonResponse(data)
 
 
@@ -324,6 +362,9 @@ def remove_student(request):
     DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
     DataModel.Skill_label.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
     DataModel.Description.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
+    DataModel.Notification.objects.filter(sender_instance=student_instance, class_instance=class_instance).delete()
+    DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student_instance, class_instance=class_instance, status=8)
+
     return JsonResponse({'res:':"student removed successfully"})
 
 
@@ -378,6 +419,16 @@ def add_student_to_group(request):
     student_instance = DataModel.Account.objects.filter(account_id=student_id).first()
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
     relation = DataModel.Relationship.objects.filter(student_instance=student_instance, class_instance=class_instance).first()
+    if relation.group_id != -1:
+        group_instance = DataModel.Group.objects.filter(group_id=relation.group_id).first()
+        DataModel.Notification.objects.filter(sender_instance=student_instance, class_instance=class_instance, group_instance=group_instance).delete()
+        new_group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+        DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student_instance, class_instance=class_instance, group_instance=new_group_instance, status=5)
+    else:
+        new_group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+        DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student_instance,
+                                              class_instance=class_instance, group_instance=new_group_instance,
+                                              status=7)
     relation.group_id = group_id
     relation.save()
     return JsonResponse({"message": "student successfully added to group"})
@@ -389,11 +440,14 @@ def unenroll(request):
     DataModel.Relationship.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Skill_label.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Description.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
+    DataModel.Notification.objects.filter(sender_instance=request.user, class_instance=class_instance).delete()
     return HttpResponseRedirect('/groups/class/'+class_id)
+
 
 def add_message(request):
     group_id = request.POST.get('group_id', False)
     return render(request, 'new_message.html', context={'group_id': group_id})
+
 
 def add_msg_to_DB(request):
     sender_name = "[%s %s]:"%(DataModel.Account.objects.filter(account_id=request.user.account_id).first().first_name, DataModel.Account.objects.filter(account_id=request.user.account_id).first().last_name)

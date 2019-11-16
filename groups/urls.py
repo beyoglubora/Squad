@@ -8,6 +8,7 @@ urlpatterns = [
     re_path(r'class/creategroup/[0-9]+', views.create_group),
     re_path(r'class/removestudent/', views.remove_student),
     re_path(r'removestudentfromgroup/', views.remove_student_from_group),
+    re_path(r'requesttojoingroup/', views.request_to_join_group),
     re_path(r'leavegroup/', views.leave_group),
     re_path(r'class/removegroup/', views.remove_group),
     re_path(r'addstudents/[0-9]+', views.add_students_to_group_view),

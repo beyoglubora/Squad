@@ -348,10 +348,13 @@
         #student-group-name{
             color: lightskyblue;
         }
-        #invite-button{
+        .invite-button{
+            background: none;
+            outline: none;
+            border: none;
             color: lightskyblue;
             font-family: 'Montserrat', sans-serif;
-            margin-bottom: 100px;
+            margin-bottom: 10px;
         }
         .students-in-group-text{
             color: gray;
@@ -442,6 +445,11 @@
             text-indent: 10px;
             margin-bottom: 20px;
             background-color: whitesmoke;
+        }
+        .invite-button-processed-text{
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 10px;
         }
     </style>
 
@@ -534,8 +542,14 @@
                             <br>
                             {% if "group" in v %}
                                 <p id="student-group-name-text">This student is in the following group: <a href="/groups/{{ v.group.group_id }}" id="student-group-name">{{ v.group.group_name }}</a></p>
-                            {% elif in_group %}
-                                <a id="invite-button" href="/groups/invite">+ Invite student to your group</a>
+                            {% elif in_group and k.student_instance.account_id != request.user.account_id %}
+                                {% if v.pending %}
+                                    <p class="invite-button-processed-text">You have invited this student to your group</p>
+                                {% elif v.accepted %}
+                                    <p class="invite-button-processed-text">This student is already in your group</p>
+                                 {% else %}
+                                    <button class="invite-button" id="button-{{ k.student_instance.account_id }}" onclick="inviteStudent(this)">+ Invite student to your group</button>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -667,7 +681,7 @@
             };
         {% endif %}
 
-        {% if enrolled or request.user.pk == class.instructor_instance.account_id and not in_group %}
+        {% if enrolled and not in_group or request.user.pk == class.instructor_instance.account_id %}
             createGroupButton.onclick = function(){
               createGroupModal.style.display="block";
             };
@@ -748,8 +762,6 @@
                 removeModalBody.prepend(p);
             }
             else{
-                console.log(parent);
-                console.log(parent.class);
                 id = parent.id;
                 removingStudent = false;
                 let p = document.createElement('p');
@@ -843,6 +855,32 @@
               sc[i].style.display = "none";
             }
           }
+        }
+
+        function inviteStudent(elem){
+            var buttonId = elem.id;
+            var list = buttonId.split("-");
+            var studentId = list[list.length - 1]
+            $.ajax({
+                url: '/groups/invite/',
+                method: 'post',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'student_id': studentId,
+                    'class_id': '{{ class.class_id }}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var parent = elem.parentElement;
+                    parent.removeChild(elem);
+                    let p = document.createElement('p');
+                    p.setAttribute("class", "invite-button-processed-text");
+                    p.innerHTML = "You have invited this student to your group.";
+                    parent.appendChild(p)
+                },
+                error: function (data){
+                }
+              });
         }
     </script>
 {%endblock %}
