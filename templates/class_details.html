@@ -459,7 +459,7 @@
         <div id="wrapper">
             <div id="banner-card">
                 <h1 id = "class-title">{{class.class_name}}</h1>
-                {% if enrolled %}
+                {% if enrolled or request.user.is_instructor %}
                     <a id="unenroll-link" href="/groups/class/unenroll/{{ class.class_id }}">Unenroll from class</a>
                 {% elif request.user.pk == class.instructor_instance.account_id %}
                     <a id="enroll-students-link" href="enrollstudents/{{ class.class_id }}">Enroll students into your class</a>

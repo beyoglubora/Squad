@@ -83,6 +83,12 @@
             color: gray;
             font-size: 30px;
         }
+        #instructing-text{
+            margin-left: 40px;
+            color: lightskyblue;
+            font-size: 24px;
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 
     <div id="wrapper">
@@ -91,6 +97,9 @@
             <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
             <br>
         </div>
+        {% if request.user.is_instructor %}
+            <p id="instructing-text">You are instructing the following courses</p>
+        {% endif %}
         <ul id="classes-list" class="class-list">
             {% for class, group in classes.items %}
                 <li class="class-list-item">

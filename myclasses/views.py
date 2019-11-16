@@ -11,6 +11,13 @@ def getIDInstance(request):
     s_ins = DataModel.Account.objects.filter(email=user_email)[0]
     return s_ins
 
+def get_my_instructing_classes(instructor):
+    ls = {}
+    classes = DataModel.Class.objects.filter(instructor_instance=instructor)
+    for c in classes:
+        ls[c] = ""
+    return ls
+
 def getMyClass(s_ins):
     """
     :param s_ins: student_instance
@@ -44,12 +51,17 @@ def listRequested(request):
             group_name = group_ins[0].group_name
 
         group_list.append((re, group_name))
+    if s_ins.is_instructor:
+        classes = get_my_instructing_classes(s_ins)
+    else:
+        classes = getMyClass(s_ins)
+
 
     if request.method == 'POST':
         pass
     else:
         return render(request, 'studentDashBoard.html',
-                    {'classes': getMyClass(s_ins),
+                    {'classes': classes,
                     'user_is_instructor': s_ins.is_instructor,
                     'is_instructor_of': is_instructor_of,
                     'groups':group_list})
