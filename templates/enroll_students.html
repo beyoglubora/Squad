@@ -1,0 +1,299 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'navbar.html' %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body{
+            background-color: whitesmoke;
+        }
+        #add-students-title{
+            font-size: 64px;
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #group-link{
+            color: lightskyblue;
+        }
+        #wrapper{
+            display: inline-block;
+            margin-top: 10px;
+            margin-left: 270px;
+            width: 80%;
+        }
+        #banner-card{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding-top: 3px;
+            padding-left: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 3%;
+        }
+        #underline{
+            margin-top: 0;
+        }
+        #student-search{
+            border: 2px solid lightskyblue;
+            width: 98%;
+            height: 40px;
+            outline: none;
+            text-indent: 10px;
+        }
+        .student-container{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 5%;
+            padding-left: 10px;
+            padding-top:15px;
+            padding-right: 10px;
+            display: flex;
+            padding-bottom: 10px;
+        }
+        .profile-photo{
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+        }
+        #info-container{
+            word-wrap: break-word;
+            width: 700px;
+            margin-left: 100px;
+        }
+        .student-name{
+            font-family: 'Montserrat', sans-serif;
+            color: lightskyblue;
+            font-size: 30px;
+        }
+        #assign-to-group{
+            margin-right: -200px;
+            float: right;
+            background: none;
+            border: none;
+            color: lightskyblue;
+            outline:none;
+            font-size: 20px;
+        }
+        #assign-to-group:hover{
+            text-decoration: underline;
+        }
+
+        #upload-csv-container{
+            width:100%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            background-color: darkgreen;
+            padding-top:10px;
+            padding-bottom: 10px;
+            margin-top:-10px;
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
+        #issue-text{
+            font-size: 20px;
+        }
+        #upload-csv-container:hover{
+            opacity: .7;
+        }
+
+        #upload-csv-container-text{
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #student-enrolled-text{
+            font-family: 'Montserrat', sans-serif;
+            color: darkgreen;
+        }
+        #student-enrolled-error-text{
+            font-family: 'Montserrat', sans-serif;
+            color: darkred;
+        }
+        .upload-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 50%;
+            width: 30%;
+            margin: 10% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 850px;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top: 30px;
+            text-align: center;
+        }
+        #upload-text{
+            color: dodgerblue;
+            font-size: 24px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #upload-submit{
+            background: none;
+            background-color: darkgreen;
+            color: white;
+            border: none;
+            outline: none;
+            height: 50px;
+            width: 100px;
+            margin-top: 70px;
+        }
+        #upload-submit:hover{
+            opacity: .7;
+        }
+        #file-input{
+            margin-top: 50px;
+            margin-left:80px;
+        }
+        #success-enroll-text{
+            font-family: 'Montserrat', sans-serif;
+            color: darkgreen;
+        }
+    </style>
+    <div id="wrapper">
+        <div id="banner-card">
+            <h1 id = "add-students-title">Enroll Students in <a id="group-link" href="../../class/{{ class.class_id }}">{{ class.class_name }}</a></h1>
+            <br>
+            <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+            <br>
+            <input type="text" id="student-search" onkeyup="studentSearch()" placeholder="Search for Students to Add">
+        </div>
+        <button id="upload-csv-container">
+            <h1 id="upload-csv-container-text" onclick="showUploadModal()">Upload Roster</h1>
+        </button>
+         <div id="student-roster">
+                {% for student in students %}
+                    <div class="student-container" id="{{ student.account_id }}">
+                        {% if k.student_instance.profile_photo %}
+                            <img class="profile-photo" src="{{ student.profile_photo.url }}"/>
+                        {% else %}
+                            <img class="profile-photo" src="../../../media/default.jpg"/>
+                        {% endif %}
+                        <div id="info-container">
+                            {% if student.notified %}
+                                <p id="student-enrolled-text">A notification to this student has been sent. They will be enrolled once they fill out a description and a set of skills.</p>
+                            {% else %}
+                                <button onclick="enrollStudent(this)" id="assign-to-group">Enroll in {{ class.class_name }}</button>
+                            {% endif %}
+                            <a class="student-name" href="/account/{{ student.account_id }}">{{ student.first_name }} {{ student.last_name }}</a>
+                            <br>
+                            <p class='email'>{{ student.email }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="upload-modal" class="modal">
+                <div id="upload-modal-status" class="upload-modal-content">
+
+                </div>
+                <div id="upload-modal-body" class="upload-modal-content">
+                    <p id="upload-text">Upload a csv with student emails and we will automatically send an enrollment notification to each of them!</p>
+                    <input id = "file-input" type="file" accept=".csv">
+                    <br>
+                    <button id="upload-submit" onclick="uploadStudents()">Upload</button>
+                </div>
+            </div>
+    </div>
+
+    <script>
+        function studentSearch(){
+            // Declare variables
+          var input, filter, studentContainers, sc, a, i, b, txtValue, txtValue2;
+          input = document.getElementById('student-search');
+          filter = input.value.toUpperCase();
+          sc = document.getElementsByClassName("student-container");
+          // Loop through all list items, and hide those who don't match the search query
+          for (i = 0; i < sc.length; i++) {
+            a = sc[i].getElementsByClassName("email")[0];
+            b = sc[i].getElementsByClassName("student-name")[0];
+            txtValue = a.textContent || a.innerText;
+            txtValue2 = b.textContent || b.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              sc[i].style.display = "";
+            }
+            else if(txtValue2.toUpperCase().indexOf(filter) > -1){
+                sc[i].style.display = "";
+            }
+            else {
+              sc[i].style.display = "none";
+            }
+          }
+        }
+
+        function enrollStudent(elem){
+            var id = elem.parentElement.parentElement.id;
+            console.log(elem.parentElement.parentElement);
+            $.ajax({
+                url: '/groups/enrollstudenttoclass/',
+                method: 'post',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'student_id': id,
+                    'class_id': '{{ class.class_id }}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var parent = elem.parentElement;
+                    parent.removeChild(parent.getElementsByTagName("button")[0]);
+                    let p = document.createElement('p');
+                    p.setAttribute("id", "student-enrolled-text");
+                    p.innerHTML = "A notification to this student has been sent. They will be enrolled once they fill out a description and a set of skills.";
+                    parent.prepend(p);
+                    elemAlreadySet = false;
+                },
+                error: function (data){
+                }
+            });
+        }
+        function uploadStudents(){
+            var file = document.getElementById("file-input").files[0];
+            var fd = new FormData();
+            fd.append('file', file);
+            fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            fd.append('class_id', '{{ class.class_id }}');
+            $.ajax({
+                url: '/groups/enrollstudentstoclass/',
+                method: 'post',
+                data: fd,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                success: function (data) {
+                    let div = document.createElement('div');
+                    div.setAttribute("class", "upload-modal-content");
+                    let p = document.createElement('p');
+                    p.setAttribute("id", "student-enrolled-error-text");
+                    console.log(data["message"]);
+                    if(data["message"] != "") {
+                        p.innerHTML = "<p id=issue-text>There was an issue enrolling the following students</p> <br><br>" + data['message'] + "<br><br><br><p id=success-enroll-text>All other students were successfully notified and will appear in the roster after they have filled out a set of skills and a quick description of themselves for their peers!<\p>";
+                    }
+                    else{
+                        p.innerHTML = "<p id=success-enroll-text>All students were successfully notified and will appear in the roster after they have filled out a set of skills and a quick description of themselves for their peers!<p>"
+                    }
+                    div.appendChild(p);
+                    uploadModalBody.style.display = "none";
+                    uploadModal.appendChild(div)
+                },
+                error: function (data){
+                }
+            });
+        }
+        uploadModalBody = document.getElementById("upload-modal-body");
+        uploadModal = document.getElementById("upload-modal");
+        function showUploadModal(){
+            uploadModal.style.display = "block";
+            uploadModalBody.style.display = "block";
+        }
+        window.onclick = function(event) {
+            if (event.target == uploadModal) {
+                uploadModal.style.display = "none";
+                if(document.getElementById("student-enrolled-error-text") != null){
+                    window.location.href = "../../class/enrollstudents/{{ class.class_id }}"
+                }
+            }
+        };
+    </script>
+{% endblock %}

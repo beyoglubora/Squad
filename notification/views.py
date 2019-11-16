@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 
 # Create your views here.
@@ -39,16 +39,15 @@ def read_notification(request):
     :param request:
     :return: False or HttpResponseRedirect('/notification')
     """
-    temp_str = request.get_full_path()
-    notification_id = temp_str.split("read/")[-1]
+    notification_id = request.POST.get("notification_id")
     temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
     if not temp_obj:
         print("ERROR: cant find the notification")
-        return HttpResponseRedirect('/notification')
+        return JsonResponse({"message": "cant find notification"})
     else:
         temp_obj[0].read = True
         temp_obj[0].save()
-        return HttpResponseRedirect('/notification')
+        return JsonResponse({"message": "notification successfully marked as read"})
 
 
 def read_all_notifications(request):

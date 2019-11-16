@@ -1,78 +1,432 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href = "../static/css/student_notification.css">
-<link href="https://fonts.googleapis.com/css?family=Oleo+Script+Swash+Caps&display=swap" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+{#<link rel="stylesheet" type="text/css" href = "../static/css/student_notification.css">#}
 {% extends 'base.html' %}
 
 {% block content %}
     {% include 'navbar.html' %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-    {% if messages %}
-        {% for msg in messages %}
-        <script>
-            window.onload = function() {
-                alert('{{ msg }}');
-            }
-        </script>
-        {% endfor %}
-    {% endif %}
+    <style>
+        body{
+            background-color: whitesmoke;
+        }
+        #underline{
+            margin-top: 0;
+        }
+        #notifications-title{
+            display: inline-block;
+            font-size: 64px;
+            color: lightskyblue;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+        }
+        #banner-card{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding-top: 3px;
+            padding-left: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 3%;
+        }
+        #wrapper{
+            display: inline-block;
+            margin-top: 10px;
+            margin-left: 270px;
+            width: 80%;
+        }
+        .notification-container{
+            border-radius: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            width: 500px;
+            min-height: 300px;
+            margin-bottom: 5%;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top:30px;
+            display: inline-block;
+            margin-right: 5%;
+            background: none;
+            border: none;
+            word-wrap: break-word;
+            background-color: white;
+        }
+        #sender-name{
+            float:left;
+            color: lightskyblue;
+            display: inline;
+            font-size: 30px;
+        }
+        #action-text{
+            font-size: 30px;
+            color: gray;
+        }
+        #enroll-button{
+            position: absolute;
+            background-color: dodgerblue;
+            border: none;
+            color: white;
+            height: 50px;
+            width: 100px;
+            margin-top: 75px;
+            margin-left: 250px;
+        }
+        .class_link{
+            color: lightskyblue;
+        }
+        .class_link:hover{
+            color: lightskyblue;
+        }
+        .read-button{
+            position:absolute;
+            background-color: gray;
+            border: none;
+            color: white;
+            height: 50px;
+            width: 100px;
+            margin-top: 180px;
+            margin-left: 60px;
+        }
+        #read-text{
+            position:absolute;
+            margin-top: 191px;
+            margin-left: 60px;
+            color: gray;
+        }
+        .enroll-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 98%;
+            width: 60%;
+            margin: .5% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 850px;
+        }
+        #enroll-modal-body{
+            margin: 5% 5% 5% 5%;
+        }
+        #enroll-class-banner{
+            width:100%;
+            height:20%;
+            background-color: lightskyblue;
+            text-align: center;
+            padding-top: 20px;
+        }
+        #banner-enroll-class-text{
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+        }
+        #enroll-class-description{
+            border: 2px solid lightskyblue;
+            height: 20%;
+            width: 100%;
+            text-indent: 10px;
+            margin: 0 auto;
+            resize: none;
+        }
+        .delete-skill{
+            display: inline-block;
+            height: 28px;
+            margin-left:-4px;
+            margin-bottom: 50000px;
+            background: none;
+            background-color: lightskyblue;
+            color: white;
+            border: none;
+        }
+        #add-skill{
+            margin-left: 10px;
+            display: inline-block;
+            background: none lightskyblue;
+            color: white;
+            border-radius: 50%;
+            outline: none;
+            border: none;
+        }
 
-    <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
-        <h1 id="explore-title" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Notification</h1>
-    </div>
-    <div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 90%">
-    {% if not user.is_all_read %}
-        <a class="color-orange" href="/notification/readall">
-            Read All
-        </a>
-    {% endif %}
-    {% for notification in list_notification %}
-        {% if notification.status != -3 %}
-            <div class="notification-container">
-            <a class="color-orange" href="/account/{{ notification.sender_instance.account_id }}">
-                {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}
-            </a>
-            {% if notification.status == -2 %}
-                DELETED you from
-            {% elif notification.status < 6 and notification.status > -2 %}
-                wants to group with you in
-            {% elif notification.status == -5 %}
-                sent you a message in
-            {% endif %}
-            <a class="color-orange" href="/groups/class/{{ notification.class_instance.class_id}}">
-                {{ notification.class_instance.class_name }}
-            </a>
-            {% if notification.status == -5 %}
-                group:
-                <a class="color-orange" href="/groups/{{ notification.group_instance.group_id}}">
-                {{ notification.group_instance.group_name }}
-                </a>
-            {% endif %}
+        #enroll-class-error-message{
+            color: darkred;
+            font-size: small;
+            margin-bottom: 5%;
+        }
+        #add-skill{
+            margin-left: 10px;
+            display: inline-block;
+            background: none lightskyblue;
+            color: white;
+            border-radius: 50%;
+            outline: none;
+            border: none;
+        }
+        #skill-title{
+            font-family: 'Montserrat', sans-serif;
+            color: gray;
+            margin-top: 10px;
+        }
+        li{
+            height: 40px;
+            margin-left: 20px;
+            display: inline-block;
+        }
+        ul{
+            list-style: none;
+            margin-top:15px;
+        }
+        #enroll-class-button{
+            background-color: lightskyblue;
+            height: 40px;
+            width: 100px;
+            color: white;
+            border: none;
+            margin-top:15%;
+            margin-left: 40%;
+        }
+    </style>
+
+    <div id="wrapper">
+        <div id="banner-card">
+            <h1 id = "notifications-title">Notifications</h1>
+            <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
             <br>
-            <div class="notification-actions">
+        </div>
+
+        {% for notification in list_notification %}
+            <div class="notification-container" id="{{ notification.notification_id }}">
                 {% if not notification.read %}
-                    <button onclick="location.href='/notification/read/{{ notification.notification_id }}'">
-                        READ
-                    </button>
+                    <button class="read-button" onclick=readNotification(this)>Read</button>
+                {% else %}
+                    <p id="read-text">Marked as read</p>
                 {% endif %}
-                {% if notification.status == 1 or notification.status == 4 %}
-                    You have accepted
-                {% elif notification.status == 2 or notification.status == 5 %}
-                    You have declined
-                {% elif notification.status == -1 or notification.status == 3 %}
-                    <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">
-                        ACCEPT
+                <a id="sender-name" href="/account/{{ notification.sender_instance.account_id }}">
+                    {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}&nbsp
+                </a>
+                {% if notification.status == -1 %}
+                    <p>wants you to join their group</p>
+                    <button onclick="acceptGroupInvite()">
+                        Accept
                     </button>
-                    <button onclick="location.href='/notification/decline/{{ notification.notification_id }}'">
-                        DECLINE
+                    <button onclick="rejectGroupInvite()">
+                        Decline
                     </button>
-                {% endif %}
-            </div>
-            </div>
-            <br>
+                {% elif notification.status == 1 %}
+                    <p id="action-text">wants you to join their group</p>
+                    <p>You have accepted this invitation</p>
+                {% elif notification.status == 2 %}
+                    <p id="action-text">wants you to join their group</p>
+                    <p>You have declined this invitation</p>
+                {% elif notification.status == 3 %}
+                    <p id="action-text">wants you to enroll in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <button id="enroll-button" onclick="acceptGroupInvite()">
+                        Enroll
+                    </button>
 
-        {% endif %}
-    {% endfor %}
+                    <div id="enroll-modal" class="modal">
+                        <div id = "{{ notification.class_instance.class_id }}" class="enroll-modal-content">
+                            <div id="enroll-class-banner">
+                                <h3 id="banner-enroll-class-text">Enroll in {{ notification.class_instance.class_name }}</h3>
+                            </div>
+                            <div id="enroll-modal-body">
+                                <textarea placeholder="Give a description about yourself!" id="enroll-class-description"></textarea>
+                                <p id="skill-title">What skills do you have that are relevant to this class?</p>
+                                <ul id="skill_list"><li id="skill_0">
+                                    <input class = "skill" name="skill_set_0">
+                                    <button class="delete-skill" onclick="deleteSkill(this)">X</button>
+                                    </li><button id="add-skill" onclick="addSkill()">+</button></ul>
+                                <button id="enroll-class-button" onclick="enroll(this)">Enroll</button>
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif notification.status == 4 %}
+                    <p id="action-text">has messaged your group</p>
+                {% elif notification.status == 5 %}
+                    <p id="action-text">has moved you into the following group for <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a>: <a href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a></p>
+                {% elif notification.status == 6 %}
+                    <p id="action-text">has removed you from your group in <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% elif notification.status == 7 %}
+                    <p id="action-text">has placed you into the following group for <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a>: <a href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a></p>
+                {% elif notification.status == 9 %}
+                    <p id="action-text">has removed you from <a href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+
+
     </div>
+    <script>
+        var enrollModal = document.getElementById("enroll-modal");
+        var enrollButton = document.getElementById("enroll-button");
+        //var span = document.getElementsByClassName("close")[0];
+        let enrollModalBody = document.getElementById("enroll-modal-body");
+        let enroll_message_error_displayed = false;
+        enrollButton.onclick = function() {
+              enrollModal.style.display = "block";
+            };
+        window.onclick = function(event) {
+            if (event.target == enrollModal) {
+                if (enroll_message_error_displayed) {
+                    enrollModalBody.removeChild(document.getElementById("enroll-class-error-message"));
+                    enroll_message_error_displayed = false;
+                }
+                enrollModal.style.display = "none";
+            }
+        };
+        function readNotification(elem){
+            var notification_id = elem.parentElement.id;
+            console.log(notification_id);
+            $.ajax({
+                    url: '/notification/read/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'notification_id': notification_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href="../notification"
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+        var skill_num = 1;
+        function addSkill(){
+            let ul, li;
+            ul = document.getElementById("skill_list")
+            console.log("skill_" + (skill_num-1));
+            li = document.createElement('li');
+            li.id = "skill_" + skill_num;
+            li.class = "skill";
+            li.innerHTML = "<input class='skill' name='skill_set_" + skill_num + "'> <button class=\"delete-skill\" onclick=\"deleteSkill(this)\">X</div>";
+            ul.insertBefore(li, ul.childNodes[ul.childNodes.length-1])
+            skill_num++;
+            if (ul.childNodes.length > 9){
+                document.getElementById("add-skill").style.display = "none"
+            }
+        }
+        function deleteSkill(elem){
+            let ul, id;
+            id = elem.parentElement.id;
+            ul = document.getElementById("skill_list");
+            ul.removeChild(document.getElementById(id));
+            if(ul.childNodes.length <= 9){
+                document.getElementById("add-skill").style.display = "inline-block"
+            }
+        }
+
+        function enroll(elem){
+            var classId = elem.parentElement.parentElement.id;
+            console.log(elem.parentElement.parentElement);
+            let description = document.getElementById("enroll-class-description").value;
+            let iter = document.getElementsByClassName("skill");
+            let skills = [];
+            for(var i = 0; i < iter.length; i++){
+                var skill = iter[i].value;
+                if(skill != null){
+                    if (skill.length>0 && skill.replace(/\s/g, '').length){
+                        skills.push(skill)
+                    }
+                }
+            }
+            if((skills.length === 0 || !description.replace(/\s/g, '').length) && !enroll_message_error_displayed){
+                let p = document.createElement('p');
+                p.setAttribute("id", "enroll-class-error-message");
+                p.innerHTML = "You must provide a valid description and at least one skill.";
+                enrollModalBody.prepend(p);
+                enroll_message_error_displayed = true;
+            }
+            else{
+                $.ajax({
+                    url: '/groups/class/enroll/' + classId,
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'description': description,
+                        'skills': skills,
+                        'class_id': classId,
+                        'from-notification': true
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href="/groups/class/" + classId;
+                    },
+                    error: function (data){
+                    }
+                  });
+            }
+        }
+
+    </script>
+{#    {% if messages %}#}
+{#        {% for msg in messages %}#}
+{#        <script>#}
+{#            window.onload = function() {#}
+{#                alert('{{ msg }}');#}
+{#            }#}
+{#        </script>#}
+{#        {% endfor %}#}
+{#    {% endif %}#}
+{##}
+{#    <div style="position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">#}
+{#        <h1 id="explore-title" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Notification</h1>#}
+{#    </div>#}
+{#    <div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 90%">#}
+{#    {% if not user.is_all_read %}#}
+{#        <a class="color-orange" href="/notification/readall">#}
+{#            Read All#}
+{#        </a>#}
+{#    {% endif %}#}
+{#    {% for notification in list_notification %}#}
+{#        {% if notification.status != -3 %}#}
+{#            <div class="notification-container">#}
+{#            <a class="color-orange" href="/account/{{ notification.sender_instance.account_id }}">#}
+{#                {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}#}
+{#            </a>#}
+{#            {% if notification.status == -2 %}#}
+{#                DELETED you from#}
+{#            {% elif notification.status < 6 and notification.status > -2 %}#}
+{#                wants to group with you in#}
+{#            {% elif notification.status == -5 %}#}
+{#                sent you a message in#}
+{#            {% endif %}#}
+{#            <a class="color-orange" href="/groups/class/{{ notification.class_instance.class_id}}">#}
+{#                {{ notification.class_instance.class_name }}#}
+{#            </a>#}
+{#            {% if notification.status == -5 %}#}
+{#                group:#}
+{#                <a class="color-orange" href="/groups/{{ notification.group_instance.group_id}}">#}
+{#                {{ notification.group_instance.group_name }}#}
+{#                </a>#}
+{#            {% endif %}#}
+{#            <br>#}
+{#            <div class="notification-actions">#}
+{#                {% if not notification.read %}#}
+{#                    <button onclick="location.href='/notification/read/{{ notification.notification_id }}'">#}
+{#                        READ#}
+{#                    </button>#}
+{#                {% endif %}#}
+{#                {% if notification.status == 1 or notification.status == 4 %}#}
+{#                    You have accepted#}
+{#                {% elif notification.status == 2 or notification.status == 5 %}#}
+{#                    You have declined#}
+{#                {% elif notification.status == -1 or notification.status == 3 %}#}
+{#                    <button onclick="location.href='/notification/accept/{{ notification.notification_id }}'">#}
+{#                        ACCEPT#}
+{#                    </button>#}
+{#                    <button onclick="location.href='/notification/decline/{{ notification.notification_id }}'">#}
+{#                        DECLINE#}
+{#                    </button>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#            </div>#}
+{#            <br>#}
+{##}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{#    </div>#}
 {% endblock %}
 

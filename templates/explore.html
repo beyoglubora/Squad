@@ -210,6 +210,7 @@
         }
         #create-class-redirect{
             color: dodgerblue;
+            position: relative;
         }
         #create-class-redirect:hover{
             text-decoration: underline;
@@ -229,7 +230,6 @@
                     <h1 id="add-class-text">+ Add a Class</h1>
                 </button>
                 <div id="add-class-modal" class="modal">
-                    <button class="close">&times;</button>
                     <div class="modal-content">
                         <div id="add-class-banner">
                             <h3 id="banner-add-class-text">Add Your Class</h3>
@@ -295,7 +295,6 @@ function classSearch() {
 var button = document.getElementById("add-class-container");
 var modal = document.getElementById("add-class-modal");
 var statusModal = document.getElementById("add-class-status-modal");
-var span = document.getElementsByClassName("close")[0];
 
 button.onclick = function() {
   modal.style.display = "block";
@@ -305,17 +304,7 @@ let error_message_displayed = false;
 let success_message_displayed = false;
 let modalBody = document.getElementById("modal-body");
 let modalBodyStatus = document.getElementById("modal-body-status");
-span.onclick = function() {
-  modal.style.display = "none";
-  if(error_message_displayed){
-      modalBody.removeChild(document.getElementById("add-class-error-message"));
-      error_message_displayed = false;
-  }
-  if(success_message_displayed){
-      modalBody.removeChild(document.getElementById("add-class-success-message"));
-      success_message_displayed = false;
-  }
-};
+
 
 window.onclick = function(event) {
   console.log(event.target);
@@ -328,6 +317,7 @@ window.onclick = function(event) {
     if(success_message_displayed){
         modalBody.removeChild(document.getElementById("add-class-success-message"));
         success_message_displayed = false;
+        window.location.href = "../explore/";
     }
   }
 };

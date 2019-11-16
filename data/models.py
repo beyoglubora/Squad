@@ -91,18 +91,23 @@ class Notification(models.Model):
     sender_instance = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='send_Account')
     receiver_instance = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='receiver_Account')
     status = models.IntegerField()
-    read = models.BooleanField()
-    # -2: instructor deleting you
+    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
+    read = models.BooleanField(default=False)
     # -1: invitation pending
     # 1: invitation accepted
-    # 2 invitation declined
-    # 5 group message
-    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
+    # 2: invitation declined
+    # 3: instructor wants you to enroll
+    # 4: group message
+    # 5: instructor has moved you from one group to another
+    # 6: instructor has removed you from your group
+    # 7: Instructor has put you into a group
+    # 8: instructor has removed you from the class
 
 
 class Group(models.Model):
     group_id = models.BigAutoField(primary_key=True)  # It's a sql type ForeignKey referred to notification_id
     group_name = models.CharField(max_length=50, default='')
+    class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
 
 
 class Relationship(models.Model):

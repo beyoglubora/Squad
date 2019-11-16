@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body{
+            background-color: whitesmoke;
+        }
+        #add-students-title{
+            font-size: 64px;
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #group-link{
+            color: lightskyblue;
+        }
+        #wrapper{
+            display: inline-block;
+            margin-top: 10px;
+            margin-left: 270px;
+            width: 80%;
+        }
+        #banner-card{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding-top: 3px;
+            padding-left: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 3%;
+        }
+        #underline{
+            margin-top: 0;
+        }
+        #student-search{
+            border: 2px solid lightskyblue;
+            width: 98%;
+            height: 40px;
+            outline: none;
+            text-indent: 10px;
+        }
+        .student-container{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 5%;
+            padding-left: 10px;
+            padding-top:15px;
+            padding-right: 10px;
+            display: flex;
+            padding-bottom: 10px;
+        }
+        .profile-photo{
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+        }
+        #info-container{
+            word-wrap: break-word;
+            width: 700px;
+            margin-left: 100px;
+        }
+        .student-name{
+            font-family: 'Montserrat', sans-serif;
+            color: lightskyblue;
+            font-size: 30px;
+        }
+        #description{
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+            word-wrap: break-word;
+        }
+        #skills{
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #skill-text{
+            margin-top:-2%;
+            color: lightskyblue;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #skills-list-text{
+            margin-top:-7px;
+        }
+        #student-group-name-text{
+            font-family: 'Montserrat', sans-serif;
+            color: gray;
+        }
+        #student-group-name{
+            color: lightskyblue;
+        }
+        #assign-to-group{
+            margin-right: -200px;
+            float: right;
+            background: none;
+            border: none;
+            color: lightskyblue;
+            outline:none;
+            font-size: 20px;
+        }
+        #assign-to-group:hover{
+            text-decoration: underline;
+        }
+        #student-added-text{
+            margin-right: -200px;
+            float: right;
+            color: gray;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .move-student-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 40%;
+            width: 30%;
+            margin: 20% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 850px;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top: 30px;
+            text-align: center;
+        }
+        #confirm-move{
+            background: none;
+            background-color: darkred;
+            color: white;
+            border: none;
+            outline: none;
+            height: 50px;
+            width: 100px;
+            margin-top: 70px;
+        }
+        #dont-confirm-move{
+            background: none;
+            background-color: gray;
+            color: white;
+            border: none;
+            outline: none;
+            height: 50px;
+            width: 100px;
+            margin-top: 70px;
+            margin-right: 50px;
+        }
+    </style>
+    <div id="wrapper">
+        <div id="banner-card">
+            <h1 id = "add-students-title">Add Students to <a id="group-link" href="../{{ group.group_id }}">{{ group.group_name }}</a></h1>
+            <br>
+            <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+            <br>
+            <input type="text" id="student-search" onkeyup="studentSearch()" placeholder="Search for Students to Add">
+        </div>
+
+         <div id="student-roster">
+                {% for k,v in student_descriptions_skills.items %}
+                    <div class="student-container" id="{{ k.student_instance.account_id }}">
+                        {% if k.student_instance.profile_photo %}
+                            <img class="profile-photo" src="{{ k.student_instance.profile_photo.url }}"/>
+                        {% else %}
+                            <img class="profile-photo" src="../../../media/default.jpg"/>
+                        {% endif %}
+                        <div id="info-container">
+                            {% if v.in_group %}
+                                <button onclick="moveStudent(this)" id="assign-to-group">Assign to {{ group.group_name }}</button>
+                            {% else %}
+                                <button onclick="assignStudentToGroup(this)" id="assign-to-group">Assign to {{ group.group_name }}</button>
+                            {% endif %}
+
+                            <a class="student-name" href="/account/{{ k.student_instance.account_id }}">{{ k.student_instance.first_name }} {{ k.student_instance.last_name }}</a>
+                            <p id="description">{{ v.description }}</p>
+                            <br>
+                            <div id="skills">
+                                <p id="skill-text">Skills:</p>
+                                <p id="skills-list-text">{{ v.skills }}</p>
+                            </div>
+                            <br>
+                            <p class='email' style="display:none;">{{ v.email }}</p>
+                            {% if "group" in v %}
+                                <p id="student-group-name-text">This student is in the following group: <a href="/groups/{{ v.group.group_id }}" id="student-group-name">{{ v.group.group_name }}</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="move-student-modal" class="modal">
+                <div id="move-student-modal-body" class="move-student-modal-content">
+                    <p id="move-student-text">This student is already in a group. Performing this action will remove him from that group. Are you sure you wish to proceed?</p>
+                    <button id="dont-confirm-move">No</button>
+                    <button id="confirm-move" onclick="assignStudentToGroup()">Yes</button>
+                </div>
+            </div>
+    </div>
+
+
+
+
+    <script>
+        function studentSearch(){
+            // Declare variables
+          var input, filter, studentContainers, sc, a, i, b, txtValue, txtValue2;
+          input = document.getElementById('student-search');
+          filter = input.value.toUpperCase();
+          sc = document.getElementsByClassName("student-container");
+          // Loop through all list items, and hide those who don't match the search query
+          for (i = 0; i < sc.length; i++) {
+            a = sc[i].getElementsByClassName("email")[0];
+            b = sc[i].getElementsByClassName("student-name")[0];
+            txtValue = a.textContent || a.innerText;
+            txtValue2 = b.textContent || b.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              sc[i].style.display = "";
+            }
+            else if(txtValue2.toUpperCase().indexOf(filter) > -1){
+                sc[i].style.display = "";
+            }
+            else {
+              sc[i].style.display = "none";
+            }
+          }
+        }
+        var elemAlreadySet = false;
+        var preSetElem = null;
+        function assignStudentToGroup(elem){
+            if(elemAlreadySet){
+                elem = preSetElem
+            }
+            var id = elem.parentElement.parentElement.id;
+            $.ajax({
+                url: '/groups/addstudenttogroup/',
+                method: 'post',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'student_id': id,
+                    'class_id': '{{ class.class_id }}',
+                    'group_id': '{{group.group_id}}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var parent = elem.parentElement;
+                    parent.removeChild(parent.getElementsByTagName("button")[0]);
+                    let p = document.createElement('p');
+                    p.setAttribute("id", "student-added-text");
+                    p.innerHTML = "This student has been successfully added to the group.";
+                    parent.prepend(p);
+                    elemAlreadySet = false;
+                    moveModal.style.display = "none";
+                },
+                error: function (data){
+                }
+            });
+
+        }
+
+        moveModal = document.getElementById("move-student-modal");
+        noButton = document.getElementById("dont-confirm-move");
+        yesButton = document.getElementById("confirm-move");
+
+        noButton.onclick = function() {
+            moveModal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+            if (event.target == moveModal) {
+                moveModal.style.display = "none";
+            }
+        };
+
+        function moveStudent(elem){
+            elemAlreadySet = true;
+            preSetElem = elem;
+            moveModal.style.display="block";
+        }
+    </script>
+{% endblock %}
