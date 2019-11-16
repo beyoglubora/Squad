@@ -1,70 +1,173 @@
-<link rel="stylesheet" type="text/css" href="../static/css/create_class.css">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dash Board</title>
-</head>
-<body>
-{% include 'navbar.html' %}
-{% if messages %}
-        <script>
-            {% for msg in messages %}
-                alert('{{ msg.message }}');
-            {% endfor %}
-        </script>
-{% endif %}
-<div style=" position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">
-    <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Classes and Groups</h1>
-</div>
-<script>
-    function confirm_delete(str) {
-        var boo = prompt("Type DELETE to confirm");
-        if (boo === "DELETE") {
-            var s = "/dashboard/del";
-            s+=str;
-            window.location.href=s;
-        }
-    }
-</script>
-<div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 1000px">
-{% if user_is_instructor %}
-    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
-    <h3 style="color:darkorange;">Instructor of classes:</h3>
-    <ul id="classes-list" class="class-list">
-        {% for c in is_instructor_of %}
-        <li class="class-list-item" style="list-style-type: none;">
-        <div class="class-container">
-            <div style="float: left; width: 50%;"><a style="position: center;color: darkorange" href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a></div>
-            <div style="float: left; width: 50%; margin-bottom:10px;"><button onClick="confirm_delete({{ c.class_id }})" style="border: 1px solid darkorange; border-radius: 4px">DELETE</button></div>
-        </div>
-        </li>
-        {% endfor %}
-    </ul>
-    </div>
-{% endif %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 
-<div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">
-    <h3 style="color:darkorange;">Enrolled classes:</h3>
-    <ul id="classes-list" class="class-list">
-        {% for gins, group_name in groups %}
-        <li class="class-list-item" style="list-style-type: none;">
-        <div class="class-container">
-            <div style="float: left; width: 50%;">
-                <a href="/groups/class/{{ gins.class_instance.class_id }}" style="color: darkorange;">{{ gins.class_instance.class_name }}</a>
-            </div>
-            <div style="float: left; width: 50%; margin-bottom:10px;">
-                {% if gins.group_id != -1 %}
-                    <a href="/groups/{{ gins.group_id }}" style="color: darkorange">{{ group_name }}</a>
-                {% else %}
-                    <a style="color: darkorange">You have no groups</a>
-                {% endif %}
-            </div>
+{% extends 'base.html' %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    {% include 'navbar.html' %}
+
+    <style>
+        #banner-card{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding-top: 3px;
+            padding-left: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 3%;
+        }
+        #wrapper{
+            display: inline-block;
+            margin-top: 10px;
+            margin-left: 270px;
+            width: 80%;
+        }
+        body{
+            background-color: whitesmoke;
+        }
+        #underline{
+            margin-top: 0;
+        }
+        #classes-and-groups-title{
+            display: inline-block;
+            font-size: 64px;
+            color: lightskyblue;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+        }
+        .class-container{
+            display: flex;
+            margin-bottom: 2%;
+        }
+        .class-name-container{
+            background-color: #f2f2f2;
+            width: 45%;
+            padding-top: 80px;
+            padding-bottom: 100px;
+            padding-left: 70px;
+            padding-right: 30px;
+            float: left;
+            word-wrap: break-word;
+            min-width:400px;
+
+        }
+        .description-container{
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            word-wrap: break-word;
+
+        }
+        li{
+            list-style-type: none;
+        }
+        #class-name{
+            color: lightskyblue;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 40px;
+        }
+        .description-label{
+            color: lightskyblue;
+        }
+        .description-container{
+            margin-left: 5%;
+            width: 100%;
+            padding-left: 10px;
+            padding-right:10px;
+        }
+        .description{
+            font-size: 20px;
+            color: gray;
+        }
+
+        #instructor-name{
+            color: gray;
+            font-size: 30px;
+        }
+    </style>
+
+    <div id="wrapper">
+        <div id="banner-card">
+            <h1 id = "classes-and-groups-title">My Classes and Groups</h1>
+            <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+            <br>
         </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-</div>
-</body>
-</html>
+        <ul id="classes-list" class="class-list">
+            {% for class, group in classes.items %}
+                <li class="class-list-item">
+                    <div class="class-container">
+                        <div  class="class-name-container">
+                            <a href="../groups/class/{{ class.class_id }}"  id="class-name">{{ class.class_name }}</a>
+                            <br>
+                            {% if not request.user.is_instructor %}
+                                {% if group == -1 %}
+                                    <p id="instructor-name">No Group</p>
+                                {% else %}
+                                    <a href="../groups/{{ group.group_id }}" id="instructor-name">{{ group.group_name }}</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="description-container">
+                            <h2 class="description-label">Description</h2>
+                            <hr>
+                            <p class="description">{{ class.description }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+{#<div style=" position: absolute; height: 5px; width: 100%; background-color: darkorange; margin-top: 125px;">#}
+{#    <h1 id="class-and-groups" style="position: absolute; color:darkorange; margin-left: 350px; margin-top: -90px">Classes and Groups</h1>#}
+{#</div>#}
+{#<script>#}
+{#    function confirm_delete(str) {#}
+{#        var boo = prompt("Type DELETE to confirm");#}
+{#        if (boo === "DELETE") {#}
+{#            var s = "/dashboard/del";#}
+{#            s+=str;#}
+{#            window.location.href=s;#}
+{#        }#}
+{#    }#}
+{#</script>#}
+{#<div style="position: absolute;margin-top: 150px;margin-left: 300px;width: 1000px">#}
+{#{% if user_is_instructor %}#}
+{#    <div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">#}
+{#    <h3 style="color:darkorange;">Instructor of classes:</h3>#}
+{#    <ul id="classes-list" class="class-list">#}
+{#        {% for c in is_instructor_of %}#}
+{#        <li class="class-list-item" style="list-style-type: none;">#}
+{#        <div class="class-container">#}
+{#            <div style="float: left; width: 50%;"><a style="position: center;color: darkorange" href="/groups/class/{{ c.class_id }}">{{ c.class_name }}</a></div>#}
+{#            <div style="float: left; width: 50%; margin-bottom:10px;"><button onClick="confirm_delete({{ c.class_id }})" style="border: 1px solid darkorange; border-radius: 4px">DELETE</button></div>#}
+{#        </div>#}
+{#        </li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#    </div>#}
+{#{% endif %}#}
+{##}
+{#<div style="height: auto;width: 100%; background-color: transparent; margin-left: 50px">#}
+{#    <h3 style="color:darkorange;">Enrolled classes:</h3>#}
+{#    <ul id="classes-list" class="class-list">#}
+{#        {% for gins, group_name in groups %}#}
+{#        <li class="class-list-item" style="list-style-type: none;">#}
+{#        <div class="class-container">#}
+{#            <div style="float: left; width: 50%;">#}
+{#                <a href="/groups/class/{{ gins.class_instance.class_id }}" style="color: darkorange;">{{ gins.class_instance.class_name }}</a>#}
+{#            </div>#}
+{#            <div style="float: left; width: 50%; margin-bottom:10px;">#}
+{#                {% if gins.group_id != -1 %}#}
+{#                    <a href="/groups/{{ gins.group_id }}" style="color: darkorange">{{ group_name }}</a>#}
+{#                {% else %}#}
+{#                    <a style="color: darkorange">You have no groups</a>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#        </li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#</div>#}
+{#</div>#}
+{#</body>#}

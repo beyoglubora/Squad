@@ -17,9 +17,13 @@ def getMyClass(s_ins):
     :return: a list of classes' name of s_ins enrolled in
     """
     classes = DataModel.Relationship.objects.filter(student_instance=s_ins)
-    ls = []
+    ls = {}
     for c in classes:
-        ls.append(c.class_instance)
+        if c.group_id == -1:
+            ls[c.class_instance] = -1
+        else:
+            group = DataModel.Group.objects.filter(group_id=c.group_id).first()
+            ls[c.class_instance] = group
         # if ls is null
     return ls
 
@@ -45,7 +49,7 @@ def listRequested(request):
         pass
     else:
         return render(request, 'studentDashBoard.html',
-                    {'myclasslist': getMyClass(s_ins),
+                    {'classes': getMyClass(s_ins),
                     'user_is_instructor': s_ins.is_instructor,
                     'is_instructor_of': is_instructor_of,
                     'groups':group_list})

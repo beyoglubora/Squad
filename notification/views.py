@@ -80,6 +80,7 @@ def accept_notification(request):
         response.status_code = 403
         return response
 
+
 def accept_join_notification(request):
     notification_id = request.POST.get("notification_id")
     temp_obj = data.models.Notification.objects.filter(notification_id=notification_id)
