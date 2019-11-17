@@ -125,7 +125,7 @@
         }
         function delete_post(post_id){
             $.ajax({
-                    url: '/discussion/create/',
+                    url: '/discussion/delete/',
                     method: 'post',
                     data: {
                         'csrfmiddlewaretoken': '{{ csrf_token }}',
