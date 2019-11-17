@@ -480,5 +480,5 @@ def add_msg_to_DB(request):
 
 
 def get_group_message(group_id):
-    messages = DataModel.Messages.objects.filter(group_id=group_id)
+    messages = DataModel.Messages.objects.filter(group_instance=group_id)
     return messages
