@@ -10,6 +10,14 @@ def show_messages(request):
 def create_post(request):
     # class post -> -5
     # group post -> group id
+    group_id = request.POST.get("group_id")
+    group_instance = DataModel.Group.objects.filter(group_id=group_id)
+    class_id = request.POST.get("class_id")
+    class_instance = DataModel.Class.objects.filter(class_id=class_id)
+    creator = request.user
+    body = request.POST.get("body")
+    parent = request.POST.get("parent")
+    create_post_db(group_instance, class_instance, creator, body, parent)
 
     return JsonResponse({"result": True})
 
@@ -17,12 +25,31 @@ def create_post(request):
 def delete_post(request):
     # creator and instructor
     # create parent -> all gone
+    target_id = request.POST.get("target_id")
+    target_instance = DataModel.Messages.objects.filter(message_id=target_id)
+    if len(target_instance) != 1:
+        # error here due to Not found
+        pass
+    target_instance = target_instance.first()
+    delete_post_db(target_instance)
 
     return JsonResponse({"result": True})
 
 
 def edit_post(request):
     # only creator can edit
+    new_body = request.POST.get("new_body")
+    target_id = request.POST.get("target_id")
+    target_instance = DataModel.Messages.objects.filter(message_id=target_id)
+    if len(target_instance) != 1:
+        # error here due to Not found
+        pass
+    target_instance = target_instance.first()
+    if request.user != target_instance.creator:
+        # Error here due to not the creator
+        pass
+    edit_post_db(target_instance, new_body)
+
     return JsonResponse({"result": True})
 
 
