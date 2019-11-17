@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from data import models as DataModel
 from myclasses.views import getMyClass
@@ -50,58 +50,31 @@ def getAllProfile(s_ins):
     return list
 
 
-def listRequestedmine(request):
-    # if (not getIDInstance()):
-    #     messages.info(request, "You are not logged in!")
-    #     return HttpResponseRedirect('/account/')
-    list = getAllProfile(getIDInstance(request))
-    same_one = True
-    list_eclass_and_iclass = False
-    return render(request, 'userprofile.html', {
-        'fname': list[0],
-        'lname': list[1],
-        'email': list[2],
-        'incins': list[3],
-        'photo': list[4],
-        'desins': list[5],
-        'encins': list[6],
-        'sins': list[7],
-        'same_one': same_one,
-        'listclass': list_eclass_and_iclass,
-        'aggregator': list[8],
-    })
-
-
 def listRequested(request):
-    explorer_id = getIDInstance(request).account_id
-    uid = request.get_full_path().split('/account/')[-1]
-    is_same_one = (str(explorer_id) == uid)
-    list_eclass_and_iclass = (str(explorer_id) != uid)
-    u_ins = DataModel.Account.objects.filter(account_id=uid)
-    if (not u_ins):
-        messages.info(request, "No Such User")
-        return HttpResponseRedirect('/account/')
-    is_instructor = u_ins[0].is_instructor
-    list = getAllProfile(u_ins[0])
-    icins_empty = False
-    if not list[3]:
-        icins_empty = True
-    return render(request, 'userprofile.html', {
-        'fname': list[0],
-        'lname': list[1],
-        'email': list[2],
-        'incins': list[3],
-        'photo': list[4],
-        'desins': list[5],
-        'encins': list[6],
-        'sins': list[7],
-        'same_one': is_same_one,
-        'listclass': list_eclass_and_iclass,
-        'u_ins':u_ins,
-        'aggregator': list[8],
-        'is_instructor':is_instructor,
-        'instruct_null':icins_empty
-    })
+    user_id = request.get_full_path().split('/account/')[-1]
+    own_profile = False
+    if user_id == request.user.pk:
+        own_profile = True
+    student_instance = DataModel.Account.objects.filter(account_id=user_id).first()
+    classes = {}
+    if student_instance.is_instructor:
+        instructing_classes = DataModel.Class.objects.filter(instructor_instance=student_instance)
+        for c in instructing_classes:
+            d = {}
+            d['description'] = c.description
+            classes[c] = d
+    else:
+        relations = DataModel.Relationship.objects.filter(student_instance=student_instance)
+        for relation in relations:
+            d = {}
+            d['description'] = DataModel.Description.objects.filter(student_instance=relation.student_instance,
+                                                                    class_instance=relation.class_instance).first().description
+            d['skills'] = DataModel.Skill_label.objects.filter(student_instance=relation.student_instance,
+                                                               class_instance=relation.class_instance).first().label.split(",")
+            d['skills_display'] = ", ".join(d['skills'])
+            classes[relation.class_instance] = d
+
+    return render(request, 'userprofile.html', {'user': student_instance, 'classes': classes, 'own_profile': own_profile})
 
 
 def changProfile(request):
@@ -137,6 +110,40 @@ def changProfile(request):
             'sins': list[7],
             'aggregator': list[8]
         })
+
+
+def edit_enroll(request):
+    description = request.POST.get('description', None)
+    skills = request.POST.getlist('skills[]', None)
+    skills = ", ".join(skills)
+    class_id = request.POST.get('class_id', None)
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    skill_label = DataModel.Skill_label.objects.filter(student_instance=request.user, class_instance=class_instance).first()
+    skill_label.label = skills
+    skill_label.save()
+    description_instance = DataModel.Description.objects.filter(student_instance=request.user, class_instance=class_instance).first()
+    description_instance.description = description
+    description_instance.save()
+    data={"message": "Successfully enrolled in class"}
+    return JsonResponse(data)
+
+
+def edit_class(request):
+    class_id = request.POST.get('class_id')
+    class_name = request.POST.get('class_name', None)
+    class_description = request.POST.get('class_description', None)
+    print(class_id)
+    print(class_name)
+    print(class_description)
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    class_instance.class_name = class_name
+    class_instance.description = class_description
+    try:
+        class_instance.save()
+    except:
+        raise ValueError("This class already exists")
+    return JsonResponse({"message":"Successfully edited class"})
+
 
 def changebyclass(request):
     class_id = request.get_full_path().split('/account/class/')[-1]
