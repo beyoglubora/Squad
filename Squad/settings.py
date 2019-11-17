@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'myclasses',
     'accountprofile',
     'groups',
-    'notification'
+    'notification',
+    'discussion',
 ]
 
 MIDDLEWARE = [

@@ -28,5 +28,6 @@ urlpatterns = [
     path('dashboard/', include('myclasses.urls')),
     path('account/', include('accountprofile.urls')),
     path('groups/', include('groups.urls')),
-    path('notification/', include('notification.urls'))
+    path('notification/', include('notification.urls')),
+    path('discussion/', include('discussion.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
