@@ -147,7 +147,6 @@ class Messages(models.Model):
     parent = models.BigIntegerField(default=-1)
     class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
     creator = models.ForeignKey('Account', on_delete=models.CASCADE)
-    subject = models.TextField(max_length=20)
     body = models.TextField(max_length=300)
     date = models.DateTimeField(auto_now_add=True)
 
