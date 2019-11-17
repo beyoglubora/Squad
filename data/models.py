@@ -109,7 +109,7 @@ class Notification(models.Model):
 class Group(models.Model):
     group_id = models.BigAutoField(primary_key=True)  # It's a sql type ForeignKey referred to notification_id
     group_name = models.CharField(max_length=50, default='')
-    class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
+    class_instance = models.ForeignKey('Class', on_delete=models.CASCADE, null=True)
 
 
 class Relationship(models.Model):
@@ -143,9 +143,9 @@ class Description(models.Model):
 
 class Messages(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    group_id = models.ForeignKey('Group', on_delete=models.CASCADE)
+    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE)
     parent = models.BigIntegerField(default=-1)
-    class_id = models.ForeignKey('Class', on_delete=models.CASCADE)
+    class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
     creator = models.ForeignKey('Account', on_delete=models.CASCADE)
     subject = models.TextField(max_length=20)
     body = models.TextField(max_length=300)
