@@ -98,6 +98,75 @@
         {% endif %}
     </div>
     <script>
+    function create_post(parent_id,body){
+            $.ajax({
+                    url: '/discussion/create/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'body': body,
+                        'group_instance': '',
+                        'parent_id': parent_id,
+                        'class_instance': '',
+                        'creator': ''
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data["result"]){
+                            window.location.href = ""
+                        }
+                        else {
+                            window.location.href = ""
+                        }
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+        function delete_post(post_id){
+            $.ajax({
+                    url: '/discussion/delete/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'post_id': post_id
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data["result"]){
+                            window.location.href = ""
+                        }
+                        else {
+                            window.location.href = ""
+                        }
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+        function edit_post(post_id){
+            $.ajax({
+                    url: '/discussion/edit/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'body': post_id
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data["result"]){
+                            window.location.href = ""
+                        }
+                        else {
+                            window.location.href = ""
+                        }
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+    </script>
+    <script>
          var coll = document.getElementsByClassName("collapsible");
          var i;
          for (i = 0; i < coll.length; i++) {
