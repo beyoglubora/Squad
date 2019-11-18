@@ -44,11 +44,11 @@
                             <div>
                                 <p>{{ val.body }} date:{{ val.date }} creator:{{ val.creator.first_name }}</p>
                                 {% if requesterID == val.creator.account_id %}
-                                    <button onclick="">edit</button>
+                                    <a onclick="edit_form(this, {{ val.message_id }})">edit</a>
                                 {% endif %}
 {#                                <button onclick="delete_post({{ val.message_id }})">delete</button>#}
                                 {% if requesterID == val.creator.account_id or is_instructor %}
-                                    <a href="" onclick="delete_post({{ val.message_id }})">delete</a>
+                                    <a onclick="delete_post({{ val.message_id }})">delete</a>
                                 {% endif %}
                             </div>
                             <hr class="child-separator">
@@ -65,9 +65,8 @@
 <script>
 function create_form(this_element, pid) {
     $(".post_form").remove();
-    let parent_id, container, body, buttonElement, cancel;
+    let container, body, buttonElement, cancel;
     parent = this_element.parentElement;
-    console.log(parent.id);
 
     container = document.createElement('div');
     container.setAttribute('class', "post_form");
@@ -99,6 +98,54 @@ function create_form(this_element, pid) {
 
     parent.appendChild(container);
 
+}
+
+function edit_form(element, mid) {
+    let parent, old_body;
+    parent = element.parentElement;
+    console.log(parent);
+    old_body =  parent.firstChild.value;
+    console.log(old_body);
+
+    // remove <p> + edit and delete<button>
+    let childs = parent.childNodes;
+    for(var i = childs .length - 1; i >= 0; i--) {
+      parent.removeChild(childs[i]);
+    }
+    // new form
+    $(".post_form").remove();
+    let container, body, buttonElement, cancel;
+
+    container = document.createElement('div');
+    container.setAttribute('class', "post_form");
+
+    body = document.createElement('input'); //input element, text
+    body.setAttribute('type',"text");
+    body.setAttribute('id',""+mid);
+    body.value = old_body;
+    body.onkeydown = function(event) {
+        // console.log(event.key);
+        if (event.key === 'Enter') {
+            create_post(pid, body.id);
+        }
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            cancel_post(this);
+        }
+    };
+
+    buttonElement = document.createElement('button');
+    buttonElement.innerHTML = "post";
+    buttonElement.onclick = function () { edit_post(mid, body.id) };
+
+    cancel = document.createElement('button');
+    cancel.innerHTML = "cancel";
+    cancel.onclick = function () { cancel_post(this) };
+
+    container.appendChild(body);
+    container.appendChild(buttonElement);
+    container.appendChild(cancel);
+
+    parent.appendChild(container);
 }
 
 function create_post(parent_id,body_id){
