@@ -28,22 +28,28 @@
     </style>
 
     <h1>Discussion Page</h1>
-    {% if in_group %}
+    {% if is_enrolled or is_instructor %}
         <div id="message-board" class="has-border">
             <div id="create-new-message">
                 <button onclick="create_form(this, -5)">New Message</button>
             </div>
             {% for key, values in msg_dict.items %}
                 <div class="has-border">
-                    <div class="parent-message">{{ key.body }}</div>
-                    <button onclick="delete_post({{ key.message_id }})">delete</button>
+                    <div class="parent-message">{{ key.body }} date:{{ key.date }} creator:{{ key.creator.first_name }}</div>
+                    {% if requesterID == key.creator.account_id or is_instructor %}
+                        <button onclick="delete_post({{ key.message_id }})">delete</button>
+                    {% endif %}
                     <div class="child-message">
                         {% for val in values %}
                             <div>
                                 <p>{{ val.body }} date:{{ val.date }} creator:{{ val.creator.first_name }}</p>
-                                <button onclick="">edit</button>
+                                {% if requesterID == val.creator.account_id %}
+                                    <button onclick="">edit</button>
+                                {% endif %}
 {#                                <button onclick="delete_post({{ val.message_id }})">delete</button>#}
-                                <a href="" onclick="delete_post({{ val.message_id }})">delete</a>
+                                {% if requesterID == val.creator.account_id or is_instructor %}
+                                    <a href="" onclick="delete_post({{ val.message_id }})">delete</a>
+                                {% endif %}
                             </div>
                             <hr class="child-separator">
                         {% endfor %}

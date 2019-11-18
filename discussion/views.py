@@ -21,6 +21,7 @@ def show_messages(request):
         if r.student_instance.account_id == request.user.account_id:
             isEnrolled = True
             break
+    requesterID = request.user.account_id
 
     # get messages
     messages = list(DataModel.Messages.objects.filter(group_instance=group_instance))
@@ -35,9 +36,11 @@ def show_messages(request):
     # sort the dict based on the key's datetime
     od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
 
-    return render(request, 'discussion.html', {'in_group': isEnrolled or isInstructor,
+    return render(request, 'discussion.html', {'is_enrolled': isEnrolled,
+                                               'is_instructor': isInstructor,
                                                'group_instance': group_instance,
-                                               'msg_dict': od_msg_dict})
+                                               'msg_dict': od_msg_dict,
+                                               'requesterID': requesterID})
 
 
 def create_post(request):
