@@ -33,7 +33,7 @@ def show_messages(request):
                 children_msg.append(m)
         msg_dict[parent_msg] = children_msg
 
-    return render(request, 'discussion.html', {'isValid': isEnrolled or isInstructor,
+    return render(request, 'discussion.html', {'in_group': isEnrolled or isInstructor,
                                                'group_instance': group_instance,
                                                'msg_dict': msg_dict})
 
