@@ -21,7 +21,7 @@ def create_post(request):
     # class post -> -5
     # group post -> group id
     group_instance = request.POST.get("group_instance")
-    class_instance = request.POST.get("group_instance")
+    class_instance = group_instance.class_instance
     creator = request.user
     body = request.POST.get("body")
     parent = request.POST.get("parent_id")
