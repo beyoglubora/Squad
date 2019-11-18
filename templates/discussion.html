@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <style>
-        .has-board {
+        .has-border {
             border: 2px solid navy;
             border-radius: 5px;
         }
@@ -17,13 +17,24 @@
             color: lightgray;
             opacity: 0.4;
         }
+        a {
+            text-decoration: none;
+            color: cornflowerblue;
+        }
+        a:hover {
+          color: blue;
+        }
+
     </style>
 
     <h1>Discussion Page</h1>
     {% if in_group %}
-        <div id="message-board" class="has-board">
+        <div id="message-board" class="has-border">
+            <div id="create-new-message">
+                <button onclick="create_form(this, -5)">New Message</button>
+            </div>
             {% for key, values in msg_dict.items %}
-                <div class="has-board">
+                <div class="has-border">
                     <div class="parent-message">{{ key.body }}</div>
                     <button onclick="delete_post({{ key.message_id }})">delete</button>
                     <div class="child-message">
@@ -31,7 +42,8 @@
                             <div>
                                 <p>{{ val.body }} date:{{ val.date }} creator:{{ val.creator.first_name }}</p>
                                 <button onclick="">edit</button>
-                                <button onclick="delete_post({{ val.message_id }})">delete</button>
+{#                                <button onclick="delete_post({{ val.message_id }})">delete</button>#}
+                                <a href="" onclick="delete_post({{ val.message_id }})">delete</a>
                             </div>
                             <hr class="child-separator">
                         {% endfor %}
@@ -42,7 +54,6 @@
             {% endfor %}
         </div>
     {% endif %}
-    <div>{{ group_instance }}</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>

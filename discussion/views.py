@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from data import models as DataModel
+import collections
 
 
 def show_messages(request):
@@ -10,14 +11,13 @@ def show_messages(request):
 
     # group_instance: the group instance of the currently viewed page
     # group_id = request.get_full_path().split('/')[-1] # get group id
-    group_id = 5 # hard code for testing
+    group_id = 1 # hard code for testing
     group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
 
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
     isEnrolled = False
     group_relation = list(DataModel.Relationship.objects.filter(group_id=group_id))
     for r in group_relation:
-        # print(r)
         if r.student_instance.account_id == request.user.account_id:
             isEnrolled = True
             break
@@ -32,10 +32,12 @@ def show_messages(request):
             if parent_msg.message_id == m.parent: # classify the children node
                 children_msg.append(m)
         msg_dict[parent_msg] = children_msg
+    # sort the dict based on the key's datetime
+    od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
 
     return render(request, 'discussion.html', {'in_group': isEnrolled or isInstructor,
                                                'group_instance': group_instance,
-                                               'msg_dict': msg_dict})
+                                               'msg_dict': od_msg_dict})
 
 
 def create_post(request):
