@@ -29,7 +29,7 @@
                     <div class="child-message">
                         {% for val in values %}
                             <div>
-                                <p>{{ val.body }}</p>
+                                <p>{{ val.body }} date:{{ val.date }} creator:{{ val.creator.first_name }}</p>
                                 <button onclick="">edit</button>
                                 <button onclick="delete_post({{ val.message_id }})">delete</button>
                             </div>
