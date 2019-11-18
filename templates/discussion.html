@@ -25,7 +25,7 @@
             {% for key, values in msg_dict.items %}
                 <div class="has-board">
                     <div class="parent-message">{{ key.body }}</div>
-
+                    <button onclick="delete_post({{ key.message_id }})">delete</button>
                     <div class="child-message">
                         {% for val in values %}
                             <div>
