@@ -48,7 +48,7 @@
 <script>
 function create_form(this_element, pid) {
     $(".post_form").remove();
-    let parent_id, container, body, buttonElement;
+    let parent_id, container, body, buttonElement, cancel;
     parent = this_element.parentElement;
     console.log(parent.id);
 
@@ -63,8 +63,13 @@ function create_form(this_element, pid) {
     buttonElement.innerHTML = "post";
     buttonElement.onclick = function () { create_post(pid, body.id) };
 
+    cancel = document.createElement('button');
+    cancel.innerHTML = "cancel";
+    cancel.onclick = function () { cancel_post(this) };
+
     container.appendChild(body);
     container.appendChild(buttonElement);
+    container.appendChild(cancel);
 
     parent.appendChild(container);
 
@@ -140,6 +145,12 @@ function edit_post(post_id, new_body){
             error: function (data){
             }
           });
+}
+
+function cancel_post(element) {
+    let parent = element.parentElement;
+    let grand = parent.parentElement;
+    grand.removeChild(parent);
 }
 
 </script>
