@@ -10,14 +10,14 @@ def show_messages(request):
 
     # group_instance: the group instance of the currently viewed page
     # group_id = request.get_full_path().split('/')[-1] # get group id
-    group_id = 1 # hard code for testing
+    group_id = 5 # hard code for testing
     group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
 
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
     isEnrolled = False
     group_relation = list(DataModel.Relationship.objects.filter(group_id=group_id))
     for r in group_relation:
-        print(r)
+        # print(r)
         if r.student_instance.account_id == request.user.account_id:
             isEnrolled = True
             break
@@ -41,10 +41,12 @@ def show_messages(request):
 def create_post(request):
     # class post -> -5
     # group post -> group id
-    group_instance = request.POST.get("group_instance")
+    group_id = request.POST.get("group_id")
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
     class_instance = group_instance.class_instance
     creator = request.user
     body = request.POST.get("body")
+    print(body)
     parent = request.POST.get("parent_id")
     create_post_db(group_instance, class_instance, creator, body, parent)
 

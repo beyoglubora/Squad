@@ -30,16 +30,117 @@
                         {% for val in values %}
                             <div>
                                 <p>{{ val.body }}</p>
-{#                                  TODO: Create modify button#}
-{#                                  TODO: Create delet button#}
+                                <button onclick="">edit</button>
+                                <button onclick="delete_post({{ val.message_id }})">delete</button>
                             </div>
                             <hr class="child-separator">
                         {% endfor %}
+                        <button onclick="create_form(this, {{ key.message_id }})">+ reply</button>
                     </div>
+
                 </div>
             {% endfor %}
         </div>
     {% endif %}
     <div>{{ group_instance }}</div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+function create_form(this_element, pid) {
+    $(".post_form").remove();
+    let parent_id, container, body, buttonElement;
+    parent = this_element.parentElement;
+    console.log(parent.id);
+
+    container = document.createElement('div');
+    container.setAttribute('class', "post_form");
+
+    body = document.createElement('input'); //input element, text
+    body.setAttribute('type',"text");
+    body.setAttribute('id',"reply_"+pid);
+
+    buttonElement = document.createElement('button');
+    buttonElement.innerHTML = "post";
+    buttonElement.onclick = function () { create_post(pid, body.id) };
+
+    container.appendChild(body);
+    container.appendChild(buttonElement);
+
+    parent.appendChild(container);
+
+}
+
+function create_post(parent_id,body_id){
+    var bodyElement = document.getElementById(body_id);
+    var body = bodyElement.value;
+    console.log(parent_id, body_id);
+        $.ajax({
+                url: '/discussion/create/',
+                method: 'post',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'body': body,
+                    'group_id': '{{ group_instance.group_id }}',
+                    'parent_id': parent_id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if(data["result"]){
+                        window.location.href = ""
+                    }
+                    else {
+                        alert("fail to reply");
+                    }
+                },
+                error: function (data){
+                }
+              });
+    }
+
+function delete_post(post_id){
+    $.ajax({
+            url: '/discussion/delete/',
+            method: 'post',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'post_id': post_id
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data["result"]){
+                    window.location.href = ""
+                }
+                else {
+                    alert("fail to delete");
+                }
+            },
+            error: function (data){
+            }
+          });
+}
+
+function edit_post(post_id, new_body){
+    $.ajax({
+            url: '/discussion/edit/',
+            method: 'post',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'post_id': post_id,
+                'new_body': new_body
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data["result"]){
+                    window.location.href = ""
+                }
+                else {
+                    window.location.href = ""
+                }
+            },
+            error: function (data){
+            }
+          });
+}
+
+</script>
 {% endblock %}
