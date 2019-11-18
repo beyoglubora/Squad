@@ -4,7 +4,17 @@ from data import models as DataModel
 
 
 def show_messages(request):
-    return render(request, 'discussion.html')
+    # Display group messages only for group members and instructors.
+
+    # isValid: boolean, true for group members and instructor
+    # group_id: group ID
+    # msg_dict = {parent_msg: [children_msgs]}
+
+    # group_id = request.get_full_path().split('/')[-1]
+
+    return render(request, 'discussion.html', {isValid: isValid,
+                                               group_id: group_id,
+                                               msg_dict: msg_dict})
 
 
 def create_post(request):
