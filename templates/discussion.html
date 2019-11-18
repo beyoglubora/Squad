@@ -78,6 +78,9 @@ function create_form(this_element, pid) {
 function create_post(parent_id,body_id){
     var bodyElement = document.getElementById(body_id);
     var body = bodyElement.value;
+    if (body === "") {
+        return ;
+    }
     console.log(parent_id, body_id);
         $.ajax({
                 url: '/discussion/create/',
