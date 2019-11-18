@@ -7,14 +7,14 @@ def show_messages(request):
     # Display group messages only for group members and instructors.
 
     # isValid: boolean, true for group members and instructor
-    # group_id: group ID
+    # group_instance: the group instance of the currently viewed page
     # msg_dict = {parent_msg: [children_msgs]}
 
     # group_id = request.get_full_path().split('/')[-1]
 
-    return render(request, 'discussion.html', {isValid: isValid,
-                                               group_id: group_id,
-                                               msg_dict: msg_dict})
+    return render(request, 'discussion.html', {'isValid': isValid,
+                                               'group_instance': group_instance,
+                                               'msg_dict': msg_dict})
 
 
 def create_post(request):
