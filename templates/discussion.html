@@ -58,6 +58,15 @@ function create_form(this_element, pid) {
     body = document.createElement('input'); //input element, text
     body.setAttribute('type',"text");
     body.setAttribute('id',"reply_"+pid);
+    body.onkeydown = function(event) {
+        // console.log(event.key);
+        if (event.key === 'Enter') {
+            create_post(pid, body.id);
+        }
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            cancel_post(this);
+        }
+    };
 
     buttonElement = document.createElement('button');
     buttonElement.innerHTML = "post";
