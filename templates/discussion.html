@@ -1,4 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
+    <style>
+        .has-board {
+            border: 2px solid navy;
+            border-radius: 5px;
+        }
+        .parent-message {
+            border-bottom: 6px solid red;
+            background-color: lightgrey;
+            font-size: 1.5em;
+        }
+        .child-message {
+            margin-left: 2em;
+        }
+        .child-separator {
+            color: lightgray;
+            opacity: 0.4;
+        }
+    </style>
+
     <h1>Discussion Page</h1>
+    {% if in_group %}
+        <div id="message-board" class="has-board">
+            {% for key, values in msg_dict.items %}
+                <div class="has-board">
+                    <div class="parent-message">{{ key.body }}</div>
+
+                    <div class="child-message">
+                        {% for val in values %}
+                            <div>
+                                <p>{{ val.body }}</p>
+{#                                  TODO: Create modify button#}
+{#                                  TODO: Create delet button#}
+                            </div>
+                            <hr class="child-separator">
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div>{{ group_instance }}</div>
+
 {% endblock %}

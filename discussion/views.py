@@ -4,15 +4,36 @@ from data import models as DataModel
 
 
 def show_messages(request):
-    # Display group messages only for group members and instructors.
+    """
+    Display group messages only for group members and instructors.
+    """
 
-    # isValid: boolean, true for group members and instructor
     # group_instance: the group instance of the currently viewed page
-    # msg_dict = {parent_msg: [children_msgs]}
+    # group_id = request.get_full_path().split('/')[-1] # get group id
+    group_id = 1 # hard code for testing
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
 
-    # group_id = request.get_full_path().split('/')[-1]
+    isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
+    isEnrolled = False
+    group_relation = list(DataModel.Relationship.objects.filter(group_id=group_id))
+    for r in group_relation:
+        print(r)
+        if r.student_instance.account_id == request.user.account_id:
+            isEnrolled = True
+            break
 
-    return render(request, 'discussion.html', {'isValid': isValid,
+    # get messages
+    messages = list(DataModel.Messages.objects.filter(group_instance=group_instance))
+    parent_msgs = list(DataModel.Messages.objects.filter(group_instance=group_instance, parent=-5)) # get parent messages
+    msg_dict = {} # msg_dict = {parent_msg: [children_msgs]}
+    for parent_msg in parent_msgs:
+        children_msg = []
+        for m in messages:
+            if parent_msg.message_id == m.parent: # classify the children node
+                children_msg.append(m)
+        msg_dict[parent_msg] = children_msg
+
+    return render(request, 'discussion.html', {'in_group': isEnrolled or isInstructor,
                                                'group_instance': group_instance,
                                                'msg_dict': msg_dict})
 
