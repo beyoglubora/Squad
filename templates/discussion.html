@@ -35,14 +35,22 @@
             </div>
             {% for key, values in msg_dict.items %}
                 <div class="has-border">
-                    <div class="parent-message">{{ key.body }} date:{{ key.date }} creator:{{ key.creator.first_name }}</div>
+                    <div class="parent-message">
+                        {{ key.body }} -
+                        <a onclick="">{{ key.creator.first_name }}</a>
+                        at
+                        <i>{{ key.date }}</i>
+                    </div>
                     {% if requesterID == key.creator.account_id or is_instructor %}
                         <button onclick="delete_post({{ key.message_id }})">delete</button>
                     {% endif %}
                     <div class="child-message">
                         {% for val in values %}
                             <div>
-                                <p>{{ val.body }} date:{{ val.date }} creator:{{ val.creator.first_name }}</p>
+                                {{ val.body }} -
+                                <a onclick="">{{ val.creator.first_name }}</a>
+                                at
+                                <i>{{ val.date }}</i>
                                 {% if requesterID == val.creator.account_id or is_instructor %}
                                     <a onclick="delete_post({{ val.message_id }})">delete</a>
                                 {% endif %}
