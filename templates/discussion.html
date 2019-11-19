@@ -6,11 +6,11 @@
             border-radius: 5px;
         }
         .parent-message {
-            border-bottom: 6px solid red;
-            background-color: lightgrey;
+            background-color: #E0FFFF;
             font-size: 1.2em;
         }
         .child-message {
+            margin-top: 1em;
             margin-left: 2em;
         }
         .child-separator {
@@ -39,6 +39,10 @@
         .message-date {
             color: #848d95;
         }
+        .whole-message {
+            margin-bottom: 2em;
+            word-wrap: break-word;
+        }
 
     </style>
 
@@ -49,7 +53,7 @@
                 <button onclick="create_form(this, -5)">New Message</button>
             </div>
             {% for key, values in msg_dict.items %}
-                <div class="has-border message-font">
+                <div class="has-border message-font whole-message">
                     <div class="parent-message">
                         {{ key.body }} -
                         <a onclick="" class="key-info">{{ key.creator.first_name }}</a>
@@ -73,7 +77,6 @@
                         {% endfor %}
                         <a onclick="create_form(this, {{ key.message_id }})" id="add-a-comment">add a comment</a>
                     </div>
-
                 </div>
             {% endfor %}
         </div>
