@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 
 {% extends 'base.html' %}
@@ -188,7 +189,7 @@
             position: absolute;
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            height: 98%;
+            height: 85%;
             width: 60%;
             margin: .5% auto;
             top:0;
@@ -196,6 +197,7 @@
 	        left: 0;
 	        right: 0;
             min-width: 850px;
+            min-height: 590px;
         }
         #enroll-modal-body{
             margin: 5% 5% 5% 5%;
@@ -226,27 +228,26 @@
             width: 100px;
             color: white;
             border: none;
-            margin-top:15%;
             margin-left: 40%;
         }
         .skill{
             border: 2px solid lightskyblue;
             outline: none;
         }
-        li{
+        .list-item{
             height: 40px;
             margin-left: 20px;
             display: inline-block;
         }
-        ul{
+        .unordered-list{
             list-style: none;
             margin-top:15px;
         }
         .delete-skill{
             display: inline-block;
             height: 28px;
-            margin-left:-4px;
-            margin-bottom: 50000px;
+            {#margin-left:-4px;#}
+            {#margin-bottom: 50000px;#}
             background: none;
             background-color: lightskyblue;
             color: white;
@@ -459,7 +460,7 @@
         <div id="wrapper">
             <div id="banner-card">
                 <h1 id = "class-title">{{class.class_name}}</h1>
-                {% if enrolled or request.user.is_instructor %}
+                {% if enrolled %}
                     <a id="unenroll-link" href="/groups/class/unenroll/{{ class.class_id }}">Unenroll from class</a>
                 {% elif request.user.pk == class.instructor_instance.account_id %}
                     <a id="enroll-students-link" href="enrollstudents/{{ class.class_id }}">Enroll students into your class</a>
@@ -469,7 +470,7 @@
                 <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
                 <br>
             </div>
-            {% if not enrolled and user.account_id != class.instructor_instance_id %}
+            {% if not enrolled and user.account_id != class.instructor_instance_id and not user.is_instructor%}
                 <button id="enroll-class-container">
                     <h1 id="enroll-class-text">Enroll in Class</h1>
                 </button>
@@ -482,7 +483,7 @@
                         <div id="enroll-modal-body">
                             <textarea placeholder="Give a description about yourself!" id="enroll-class-description"></textarea>
                             <p id="skill-title">What skills do you have that are relevant to this class?</p>
-                            <ul id="skill_list"><li id="skill_0">
+                            <ul id="skill_list" class="unordered-list"><li id="skill_0" class="list-item">
                                 <input class = "skill" name="skill_set_0">
                                 <button class="delete-skill" onclick="deleteSkill(this)">X</button>
                                 </li><button id="add-skill" onclick="addSkill()">+</button></ul>
@@ -490,12 +491,11 @@
                         </div>
                     </div>
                 </div>
-                {% elif not in_group %}
+                {% elif not in_group and not user.is_instructor %}
                     <button id="create-group-container">
                         <h1 id="create-group-container-text">Start a Group</h1>
                     </button>
                     <div id="create-group-modal" class="modal">
-                        <button class="close">&times;</button>
                         <div class="create-group-modal-content">
                             <div id="create-group-banner">
                                 <h3 id="banner-create-group-text">Start a Group in {{ class.class_name }}</h3>
@@ -508,7 +508,7 @@
                             </div>
                         </div>
                     </div>
-                {% else %}
+                {% elif not user.is_instructor %}
                     <button id="big-group-button" onclick="window.location.href='/groups/{{ own_group.group_id }}'">
                         <h1 id="big-group-button-text">Your group is: {{ own_group.group_name }}</h1>
                     </button>
@@ -711,9 +711,11 @@
         var skill_num = 1;
         function addSkill(){
             let ul, li;
-            ul = document.getElementById("skill_list")
+            ul = document.getElementById("skill_list");
+            ul.setAttribute("class", "unordered-list");
             console.log("skill_" + (skill_num-1));
             li = document.createElement('li');
+            li.setAttribute("class", "list-item");
             li.id = "skill_" + skill_num;
             li.class = "skill";
             li.innerHTML = "<input class='skill' name='skill_set_" + skill_num + "'> <button class=\"delete-skill\" onclick=\"deleteSkill(this)\">X</div>";

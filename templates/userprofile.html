@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 
 
@@ -104,7 +106,7 @@
             position: absolute;
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            height: 98%;
+            height: 85%;
             width: 60%;
             margin: .5% auto;
             top:0;
@@ -112,6 +114,7 @@
 	        left: 0;
 	        right: 0;
             min-width: 850px;
+            min-height: 590px;
         }
         .edit-enroll-modal-body{
             margin: 5% 5% 5% 5%;
@@ -142,7 +145,6 @@
             width: 100px;
             color: white;
             border: none;
-            margin-top:15%;
             margin-left: 40%;
         }
         .skill{
@@ -161,8 +163,8 @@
         .delete-skill{
             display: inline-block;
             height: 28px;
-            margin-left:-4px;
-            margin-bottom: 50000px;
+            {#margin-left:-4px;#}
+            {#margin-bottom: 50000px;#}
             background: none;
             background-color: lightskyblue;
             color: white;
@@ -281,7 +283,10 @@
                                     <p id="skill-title">What skills do you have that are relevant to this class?</p>
                                     <ul id="skill_list">
                                         {% for skill in v.skills %}
-                                            <li class="skill_{{ forloop.counter0 }}"><input class = "skill" name="skill_set_{{ forloop.counter0 }}" value="{{ skill }}"><button class="delete-skill" onclick="deleteSkill(this)">X</button></li>
+                                            <li class="skill_{{ forloop.counter0 }}">
+                                                <input class = "skill" name="skill_set_{{ forloop.counter0 }}" value="{{ skill }}">
+                                                <button class="delete-skill" onclick="deleteSkill(this)">X</button>
+                                            </li>
                                         {% endfor %}
                                         <button class="add-skill" onclick="addSkill(this)">+</button></ul>
                                     <button id="edit-enroll-class-button" onclick="editEnrollInformation(this)">Edit</button>
@@ -365,7 +370,7 @@
             li.innerHTML = "<input class='skill' name='skill_set_" + skill_num + "'> <button class=\"delete-skill\" onclick=\"deleteSkill(this)\">X</div>";
             ul.insertBefore(li, ul.childNodes[ul.childNodes.length-1]);
             skill_num++;
-            if (ul.childNodes.length > 9){
+            if (ul.getElementsByTagName("li").length >= 9){
                 elem.style.display = "none"
             }
         }

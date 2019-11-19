@@ -157,13 +157,66 @@
             margin-right: 20px;
             margin-top: 20px;
         }
-    #group-discussion {
-        color: gray;
-        font-size: 1.5em;
-        border-radius: 25px;
-        background: lightskyblue;
-        padding: 10px;
-    }
+        #edit-group-button{
+            border: none;
+            background: none;
+            color: gray;
+            outline: none;
+        }
+        .edit-group-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 60%;
+            width: 10%;
+            margin: 10% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 850px;
+        }
+        #edit-group-modal-body{
+            margin: 5% 5% 5% 5%;
+        }
+        #edit-group-banner{
+            width:100%;
+            height:30%;
+            background-color: lightskyblue;
+            text-align: center;
+            padding-top: 20px;
+        }
+        #edit-create-group-text{
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+        }
+        #group-name-input{
+            width: 60%;
+            outline: none;
+            border: 2px solid lightskyblue;
+            padding-left: 10px;
+        }
+        #group-name-text{
+            font-family: 'Montserrat', sans-serif;
+            color: gray;
+        }
+        #edit-group-error-message{
+            color: darkred;
+            font-size: small;
+            margin-bottom: 5%;
+        }
+        #submit-edit-group-button{
+            background-color: lightskyblue;
+            height: 40px;
+            width: 200px;
+            color: white;
+            border: none;
+            margin-top: 10%;
+        }
+        #banner-edit-group-text{
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+        }
     </style>
 
     {% if invalid %}
@@ -177,13 +230,14 @@
                     <button id="request-to-join-link" onclick="requestToJoinGroup(this)">Request to Join Group</button>
                 {% endif %}
                 <h1 id = "group-title">{{group_name}}</h1>
+                {% if in_group or request.user.pk == class.instructor_instance.account_id %}
+                    <button id = "edit-group-button" onclick="editGroupNameModal()">edit</button>
+                {% endif %}
                 <br>
                 <p id="class-name-text">A group in <a id="class-link" href="/groups/class/{{ class.class_id }}">{{ class.class_name }}</a></p>
                 <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
                 <br>
-                {% if in_group or is_instructor %}
-                    <a id="group-discussion" href="../discussion/{{ group_id }}">Group Discussion</a>
-                {% endif %}
+                <a href="../discussion">Group Discussion</a>
             </div>
 
             <div id="student-roster">
@@ -220,6 +274,20 @@
         </div>
     </div>
 
+    <div id="edit-group-modal" class="modal">
+        <div class="edit-group-modal-content">
+            <div id="edit-group-banner">
+                <h3 id="banner-edit-group-text">Edit the Group Name</h3>
+            </div>
+            <div id="edit-group-modal-body">
+                <p id="group-name-text">Rename the group</p>
+                <input id = "group-name-input" name="group-name" value="{{ group_name }}">
+                <br>
+                <button id="submit-edit-group-button" onclick="editGroupName()">Submit</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let studentId = null;
         removeModal = document.getElementById("remove-modal");
@@ -236,6 +304,9 @@
         window.onclick = function(event) {
             if (event.target == removeModal) {
                 removeModal.style.display = "none";
+            }
+            if (event.target == editGroupModal) {
+                editGroupModal.style.display = "none";
             }
         };
         function leaveGroup(){
@@ -298,6 +369,44 @@
                   });
         }
 
+        var editGroupModal = document.getElementById("edit-group-modal");
+        var editGroupButton = document.getElementById("edit-group-container");
+        //var span = document.getElementsByClassName("close")[0];
+        let editGroupModalBody = document.getElementById("edit-group-modal-body");
+        let edit_group_message_error_displayed = false;
+        function editGroupNameModal(){
+            editGroupModal.style.display = "block";
+        }
+
+        function editGroupName(){
+            let groupName = document.getElementById("group-name-input").value;
+            if((!groupName.replace(/\s/g, '').length || groupName.length > 50) && !edit_group_message_error_displayed){
+                let p = document.createElement('p');
+                p.setAttribute("id", "edit-group-error-message");
+                p.innerHTML = "You must provide a valid group name. Please make sure you haven't exceeded the maximum character limit of 50";
+                editGroupModalBody.prepend(p);
+                edit_group_message_error_displayed = true;
+            }
+            else{
+                $.ajax({
+                    url: '/groups/editgroup/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'group_name': groupName,
+                        'group_id': '{{ group_id }}'
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log("/groups/" + data);
+                        window.location.href = "/groups/{{ group_id }}";
+                    },
+                    error: function (data){
+                    }
+                  });
+
+            }
+        }
     </script>
 
 {% endblock %}
