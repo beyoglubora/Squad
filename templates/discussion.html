@@ -17,6 +17,9 @@
             color: lightgray;
             opacity: 0.4;
         }
+        textarea {
+
+        }
         a {
             text-decoration: none;
             color: cornflowerblue;
@@ -89,12 +92,13 @@ function create_form(this_element, pid) {
     container = document.createElement('div');
     container.setAttribute('class', "post_form");
 
-    body = document.createElement('input'); //input element, text
+    body = document.createElement('textarea'); //input element, text
     body.setAttribute('type',"text");
     body.setAttribute('id',"reply_"+pid);
     body.onkeydown = function(event) {
-        // console.log(event.key);
-        if (event.key === 'Enter') {
+        var shiftKey = event.shiftKey;
+
+        if (shiftKey && event.key === 'Enter') {
             create_post(pid, body.id);
         }
         if (event.key === 'Escape' || event.key === 'Esc') {
@@ -111,6 +115,7 @@ function create_form(this_element, pid) {
     cancel.onclick = function () { cancel_post(this) };
 
     container.appendChild(body);
+    container.appendChild(document.createElement('br'));
     container.appendChild(buttonElement);
     container.appendChild(cancel);
 
