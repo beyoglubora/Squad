@@ -18,13 +18,22 @@
             opacity: 0.4;
         }
         textarea {
-
+            width: 90%;
+        }
+        .span-parent-content {
+            white-space: pre-line;
+        }
+        .message-info {
+            overflow: auto;
+            clear: right;
         }
         a {
+            margin-left: 5px;
             text-decoration: none;
             color: cornflowerblue;
         }
         a:hover {
+          cursor: pointer;
           color: blue;
         }
         .key-info {
@@ -54,12 +63,14 @@
             {% for key, values in msg_dict.items %}
                 <div class="has-border message-font">
                     <div class="parent-message">
-                        {{ key.body }} -
+                        <span class="span-parent-content">{{ key.body }}</span>
+                        <span class="message-info">
                         <a onclick="" class="key-info">{{ key.creator.first_name }}</a>
                         <i class="key-info message-date">{{ key.date }}</i>
                         {% if requesterID == key.creator.account_id or is_instructor %}
                         <a onclick="delete_post({{ key.message_id }})" class="key-info">delete</a>
                         {% endif %}
+                        </span>
                     </div>
 
                     <div class="child-message">
@@ -106,11 +117,11 @@ function create_form(this_element, pid) {
         }
     };
 
-    buttonElement = document.createElement('button');
+    buttonElement = document.createElement('a');
     buttonElement.innerHTML = "post";
     buttonElement.onclick = function () { create_post(pid, body.id) };
 
-    cancel = document.createElement('button');
+    cancel = document.createElement('a');
     cancel.innerHTML = "cancel";
     cancel.onclick = function () { cancel_post(this) };
 
