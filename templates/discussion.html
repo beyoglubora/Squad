@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% include 'navbar.html' %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <style>
         {#.has-border {#}
         {#    border: 2px solid navy;#}
@@ -56,14 +58,58 @@
             margin-bottom: 2em;
             word-wrap: break-word;
         }
-
+    .discussion-page {
+        margin-left: 270px;
+        margin-right: 50px;
+    }
+    #banner-card{
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        padding-top: 3px;
+        padding-left: 10px;
+        padding-bottom: 15px;
+        margin-bottom: 3%;
+    }
+    .wrapper{
+            display: inline-block;
+            margin-top: 10px;
+            margin-left: 270px;
+            width: 80%;
+    }
+    #group-title{
+            display: inline-block;
+            font-size: 64px;
+            color: lightskyblue;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+    }
+    #start-new-topic-button {
+        background-color: skyblue;
+        border: none;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 4px 2px;
+        border-radius: 12px;
+    }
+    #create-new-message-area {
+        margin-bottom: 2em;
+    }
     </style>
 
-    <h1>Discussion Page</h1>
+    <div class="discussion-page wrapper">
+        <div id="banner-card">
+            <h1 id = "group-title">{{group_instance.group_name}}'s Discussions</h1>
+            <br>
+            <a href="../groups/{{ group_instance.group_id }}">Back to group</a>
+        </div>
     {% if is_enrolled or is_instructor %}
         <div id="message-board" class="has-border">
-            <div id="create-new-message">
-                <button onclick="create_form(this, -5)">New Message</button>
+            <div id="create-new-message-area">
+                <button id="start-new-topic-button" onclick="create_form(this, -5)">Start New Topic</button>
             </div>
             {% for key, values in msg_dict.items %}
                 <div class="has-border message-font whole-message">
@@ -92,10 +138,12 @@
                         {% endfor %}
                         <a onclick="create_form(this, {{ key.message_id }})" id="add-a-comment">add a comment</a>
                     </div>
+                    <hr>
                 </div>
             {% endfor %}
         </div>
     {% endif %}
+    </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
