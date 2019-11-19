@@ -116,7 +116,7 @@
             position: absolute;
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            height: 98%;
+            height: 85%;
             width: 60%;
             margin: .5% auto;
             top:0;
@@ -124,6 +124,7 @@
 	        left: 0;
 	        right: 0;
             min-width: 850px;
+            min-height: 590px;
         }
         #enroll-modal-body{
             margin: 5% 5% 5% 5%;
@@ -150,8 +151,8 @@
         .delete-skill{
             display: inline-block;
             height: 28px;
-            margin-left:-4px;
-            margin-bottom: 50000px;
+            {#margin-left:-4px;#}
+            {#margin-bottom: 50000px;#}
             background: none;
             background-color: lightskyblue;
             color: white;
@@ -172,6 +173,10 @@
             font-size: small;
             margin-bottom: 5%;
         }
+        .skill{
+            border: 2px solid lightskyblue;
+            outline: none;
+        }
         #add-skill{
             margin-left: 10px;
             display: inline-block;
@@ -186,12 +191,12 @@
             color: gray;
             margin-top: 10px;
         }
-        li{
+        .list-item{
             height: 40px;
             margin-left: 20px;
             display: inline-block;
         }
-        ul{
+        .unordered-list{
             list-style: none;
             margin-top:15px;
         }
@@ -201,7 +206,6 @@
             width: 100px;
             color: white;
             border: none;
-            margin-top:15%;
             margin-left: 40%;
         }
         #group-link{
@@ -281,7 +285,7 @@
                             <div id="enroll-modal-body">
                                 <textarea placeholder="Give a description about yourself!" id="enroll-class-description"></textarea>
                                 <p id="skill-title">What skills do you have that are relevant to this class?</p>
-                                <ul id="skill_list"><li id="skill_0">
+                                <ul id="skill_list" class="unordered-list"><li id="skill_0" class="list-item">
                                     <input class = "skill" name="skill_set_0">
                                     <button class="delete-skill" onclick="deleteSkill(this)">X</button>
                                     </li><button id="add-skill" onclick="addSkill()">+</button></ul>
@@ -390,9 +394,11 @@
         var skill_num = 1;
         function addSkill(){
             let ul, li;
-            ul = document.getElementById("skill_list")
+            ul = document.getElementById("skill_list");
+            ul.setAttribute("class", "unordered-list");
             console.log("skill_" + (skill_num-1));
             li = document.createElement('li');
+            li.setAttribute("class", "list-item");
             li.id = "skill_" + skill_num;
             li.class = "skill";
             li.innerHTML = "<input class='skill' name='skill_set_" + skill_num + "'> <button class=\"delete-skill\" onclick=\"deleteSkill(this)\">X</div>";
