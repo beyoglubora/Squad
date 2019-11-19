@@ -10,8 +10,7 @@ def show_messages(request):
     """
 
     # group_instance: the group instance of the currently viewed page
-    # group_id = request.get_full_path().split('/')[-1] # get group id
-    group_id = 1 # hard code for testing
+    group_id = request.get_full_path().split('/')[-1] # get group id
     group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
 
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor

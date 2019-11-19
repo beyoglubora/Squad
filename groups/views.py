@@ -125,6 +125,8 @@ def group_detail(request):
         d['skills'] = ", ".join(d['skills'])
         student_descriptions_skills[student] = d
 
+    isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
+
     return render(request, 'group_detail.html', {'group_id': group_id,
                                                  'group_name': group_name,
                                                  'group_members': group_members,
@@ -134,7 +136,8 @@ def group_detail(request):
                                                  'enrolled': enrolled,
                                                  'student_descriptions_skills': student_descriptions_skills,
                                                  'class': class_instance,
-                                                 'has_group': has_group})
+                                                 'has_group': has_group,
+                                                 'is_instructor': isInstructor})
 
 
 def request_to_join_group(request):
