@@ -280,10 +280,10 @@ function classSearch() {
     b = li[i].getElementsByTagName("p")[1];
     txtValue = a.textContent || a.innerText;
     txtValue2 = b.textContent || b.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    if (txtValue.toUpperCase().replace(/\s/g, '').indexOf(filter) > -1) {
       li[i].style.display = "";
     }
-    else if(txtValue2.toUpperCase().indexOf(filter) > -1){
+    else if(txtValue2.toUpperCase().replace(/\s/g, '').indexOf(filter) > -1){
         li[i].style.display = "";
     }
     else {
@@ -296,9 +296,11 @@ var button = document.getElementById("add-class-container");
 var modal = document.getElementById("add-class-modal");
 var statusModal = document.getElementById("add-class-status-modal");
 
-button.onclick = function() {
-  modal.style.display = "block";
-};
+{% if request.user.is_instructor %}
+    button.onclick = function() {
+      modal.style.display = "block";
+    };
+{% endif %}
 
 let error_message_displayed = false;
 let success_message_displayed = false;

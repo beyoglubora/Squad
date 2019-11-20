@@ -1,7 +1,5 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from data.models import Class
-from explore.forms import CreateClassForm
 from django.http import JsonResponse
 
 

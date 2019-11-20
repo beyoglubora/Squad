@@ -181,7 +181,7 @@ def enroll_students_view(request):
         class_member_ids.append(student.student_instance.account_id)
     stud_list = []
     for student in students:
-        if student['account_id'] not in class_member_ids and student['account_id'] != class_instance.instructor_instance.account_id:
+        if student['account_id'] not in class_member_ids and not student['is_instructor']:
             student_instance = DataModel.Account.objects.filter(account_id=student['account_id']).first()
             enroll_notification = DataModel.Notification.objects.filter(sender_instance=request.user, receiver_instance=student_instance, class_instance=class_instance, status=3).first()
             if enroll_notification:

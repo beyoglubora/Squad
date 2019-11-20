@@ -475,7 +475,6 @@
                     <h1 id="enroll-class-text">Enroll in Class</h1>
                 </button>
                 <div id="enroll-modal" class="modal">
-                    <button class="close">&times;</button>
                     <div class="enroll-modal-content">
                         <div id="enroll-class-banner">
                             <h3 id="banner-enroll-class-text">Enroll in {{ class.class_name }}</h3>
@@ -491,7 +490,7 @@
                         </div>
                     </div>
                 </div>
-                {% elif not in_group and not user.is_instructor %}
+                {% elif not in_group or request.user.pk == class.instructor_instance_id %}
                     <button id="create-group-container">
                         <h1 id="create-group-container-text">Start a Group</h1>
                     </button>
@@ -536,9 +535,9 @@
                             <br>
                             <div id="skills">
                                 <p id="skill-text">Skills:</p>
-                                <p id="skills-list-text">{{ v.skills }}</p>
+                                <p id="skills-list-text" class="skill-item">{{ v.skills }}</p>
                             </div>
-                            <p class='email' style="display:none;">{{ v.email }}</p>
+                            <p class='email' style="display:none;">{{ k.student_instance.email }}</p>
                             <br>
                             {% if "group" in v %}
                                 <p id="student-group-name-text">This student is in the following group: <a href="/groups/{{ v.group.group_id }}" id="student-group-name">{{ v.group.group_name }}</a></p>
@@ -733,6 +732,7 @@
             if(ul.childNodes.length <= 9){
                 document.getElementById("add-skill").style.display = "inline-block"
             }
+
         }
 
         let studentToRemove = null;
@@ -812,7 +812,7 @@
         }
         function studentSearch(){
             // Declare variables
-          var input, filter, studentContainers, sc, a, i, b, txtValue, txtValue2;
+          var input, filter, studentContainers, sc, a, i, b, c, txtValue, txtValue2, txtValue3;
           input = document.getElementById('student-search');
           filter = input.value.toUpperCase();
           sc = document.getElementsByClassName("student-container");
@@ -820,18 +820,21 @@
           for (i = 0; i < sc.length; i++) {
             a = sc[i].getElementsByClassName("email")[0];
             b = sc[i].getElementsByClassName("student-name")[0];
-            console.log(a);
-            console.log(b);
+            c = sc[i].getElementsByClassName("skill-item")[0];
             txtValue = a.textContent || a.innerText;
             txtValue2 = b.textContent || b.innerText;
+            txtValue3 = c.textContent || c.textContent;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
-              sc[i].style.display = "";
+                sc[i].style.display = "";
             }
             else if(txtValue2.toUpperCase().indexOf(filter) > -1){
                 sc[i].style.display = "";
             }
+            else if(txtValue3.toUpperCase().indexOf(filter) > -1){
+                sc[i].style.display = "";
+            }
             else {
-              sc[i].style.display = "none";
+                sc[i].style.display = "none";
             }
           }
         }
