@@ -148,7 +148,7 @@
                         {% for val in values %}
                             <div>
                                 {{ val.body }} -
-                                <a href="../account/{{ key.creator.account_id }}" class="value-info">{{ val.creator.first_name }}</a>
+                                <a href="../account/{{ val.creator.account_id }}" class="value-info">{{ val.creator.first_name }}</a>
                                 <i class="value-info message-date">{{ val.date }}</i>
                                 {% if requesterID == val.creator.account_id or is_instructor %}
                                     <a href="" onclick="delete_post({{ val.message_id }})" class="value-info">delete</a>
