@@ -224,6 +224,25 @@
             background: lightskyblue;
             padding: 10px;
         }
+        #big-group-button {
+            width: 100%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            background-color: dodgerblue;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            padding-right: 50px;
+            font-size: 2em;
+            color: whitesmoke;
+            text-align: center;
+        }
+        #big-group-button:hover {
+            opacity: .7;
+        }
+        button:focus {
+            outline:0;
+        }
     </style>
 
     {% if invalid %}
@@ -244,10 +263,12 @@
                 <p id="class-name-text">A group in <a id="class-link" href="/groups/class/{{ class.class_id }}">{{ class.class_name }}</a></p>
                 <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
                 <br>
+            </div>
+            <div>
                 {% if in_group or is_instructor %}
-                    <a id="group-discussion" href="../discussion/{{ group_id }}">Group Discussion</a>
+                    <button id="big-group-button" onclick="window.location.href='../discussion/{{ group_id }}'" id="group-discussion-text">Group Discussion</button>
                 {% endif %}
-                </div>
+            </div>
 
             <div id="student-roster">
                 {% for k,v in student_descriptions_skills.items %}
