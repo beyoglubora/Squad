@@ -145,6 +145,12 @@ def edit_class(request):
     return JsonResponse({"message":"Successfully edited class"})
 
 
+def delete_class(request):
+    class_id = request.POST.get("class_id")
+    DataModel.Class.objects.filter(class_id=class_id).delete()
+    return JsonResponse({"message": "Successfully deleted class"})
+
+
 def changebyclass(request):
     class_id = request.get_full_path().split('/account/class/')[-1]
     Relation_ins = DataModel.Relationship.objects.filter(class_instance__class_id=class_id, student_instance=request.user)
