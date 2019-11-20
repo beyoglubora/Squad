@@ -270,7 +270,7 @@ window.onbeforeunload = function () {
        scrollPos = window.pageYOffset;
     }
     else if (typeof document.compatMode != 'undefined' &&
-         document.compatMode != 'BackCompat') {
+         document.compatMode !== 'BackCompat') {
        scrollPos = document.documentElement.scrollTop;
     }
     else if (typeof document.body != 'undefined') {
