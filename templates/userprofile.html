@@ -151,12 +151,12 @@
             border: 2px solid lightskyblue;
             outline: none;
         }
-        li{
+        .skill-item{
             height: 40px;
             margin-left: 20px;
             display: inline-block;
         }
-        ul{
+        .unordered-list{
             list-style: none;
             margin-top:15px;
         }
@@ -338,14 +338,18 @@
                                 <div class="edit-enroll-modal-body">
                                     <textarea placeholder="Give a description about yourself!" class="edit-enroll-class-description">{{ v.description }}</textarea>
                                     <p id="skill-title">What skills do you have that are relevant to this class?</p>
-                                    <ul id="skill_list">
+                                    <ul id="skill_list" class="unordered-list">
                                         {% for skill in v.skills %}
-                                            <li class="skill_{{ forloop.counter0 }}">
+                                            <li class="skill_{{ forloop.counter0 }} skill-item">
                                                 <input class = "skill" name="skill_set_{{ forloop.counter0 }}" value="{{ skill }}">
                                                 <button class="delete-skill" onclick="deleteSkill(this)">X</button>
                                             </li>
                                         {% endfor %}
-                                        <button class="add-skill" onclick="addSkill(this)">+</button></ul>
+                                        {% if v.skills|length >= 9 %}
+                                            <button style="display: none" class="add-skill" onclick="addSkill(this)">+</button></ul>
+                                         {% else %}
+                                            <button class="add-skill" onclick="addSkill(this)">+</button></ul>
+                                        {% endif %}
                                     <button id="edit-enroll-class-button" onclick="editEnrollInformation(this)">Edit</button>
                                 </div>
                             </div>
@@ -435,11 +439,11 @@
             console.log("skill_" + (skill_num-1));
             li = document.createElement('li');
             li.id = "skill_" + skill_num;
-            li.class = "skill";
+            li.className = "skill-item";
             li.innerHTML = "<input class='skill' name='skill_set_" + skill_num + "'> <button class=\"delete-skill\" onclick=\"deleteSkill(this)\">X</div>";
             ul.insertBefore(li, ul.childNodes[ul.childNodes.length-1]);
             skill_num++;
-            if (ul.getElementsByTagName("li").length >= 9){
+            if (ul.getElementsByClassName("skill-item").length >= 9){
                 elem.style.display = "none"
             }
         }
@@ -448,7 +452,7 @@
             li = elem.parentElement;
             ul = elem.parentElement.parentElement;
             ul.removeChild(li);
-            if(ul.childNodes.length <= 9){
+            if(ul.getElementsByClassName("skill-item").length < 9){
                 ul.getElementsByClassName("add-skill")[0].style.display = "inline-block"
             }
         }

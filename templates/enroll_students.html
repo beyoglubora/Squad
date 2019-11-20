@@ -267,7 +267,7 @@
                     let p = document.createElement('p');
                     p.setAttribute("id", "student-enrolled-error-text");
                     console.log(data["message"]);
-                    if(data["message"] != "") {
+                    if(data["message"] !== "") {
                         p.innerHTML = "<p id=issue-text>There was an issue enrolling the following students</p> <br><br>" + data['message'] + "<br><br><br><p id=success-enroll-text>All other students were successfully notified and will appear in the roster after they have filled out a set of skills and a quick description of themselves for their peers!<\p>";
                     }
                     else{
@@ -278,6 +278,16 @@
                     uploadModal.appendChild(div)
                 },
                 error: function (data){
+                    console.log(data);
+                    let div = document.createElement('div');
+                    div.setAttribute("class", "upload-modal-content");
+                    let p = document.createElement('p');
+                    p.setAttribute("id", "student-enrolled-error-text");
+                    console.log(data["message"]);
+                    p.innerHTML = "<p id=issue-text>" + data.responseJSON.message +  "</p> <br>";
+                    div.appendChild(p);
+                    uploadModalBody.style.display = "none";
+                    uploadModal.appendChild(div)
                 }
             });
         }

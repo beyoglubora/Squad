@@ -213,14 +213,16 @@ def enroll_students(request):
     error_str = ""
     for line in contents.splitlines():
         if first:
-            line = line.replace(" ", "")
+            line = line.replace(" ", "").lower()
             columns = line.split(",")
             if "email" in columns:
                 index = columns.index("email")
             elif "e-mail" in columns:
                 index = columns.index("e-mail")
             else:
-                raise ValueError({"message": "no column named email was detected"})
+                response = JsonResponse({"message": "There was no column for email. Please make sure there is exactly one column in the csv file for email."})
+                response.status_code = 403
+                return response
             first = False
         else:
             row = line.split(",")
@@ -378,6 +380,8 @@ def remove_group(request):
     students_in_group = DataModel.Relationship.objects.filter(class_instance=class_instance, group_id=group_id)
     for student in students_in_group:
         relationship = DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student.student_instance).first()
+        DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student.student_instance,
+                                              class_instance=class_instance, status=6)
         relationship.group_id = -1
         relationship.save()
     DataModel.Group.objects.filter(group_id=group_id).delete()

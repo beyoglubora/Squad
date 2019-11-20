@@ -490,7 +490,7 @@
                         </div>
                     </div>
                 </div>
-                {% elif not in_group or request.user.pk == class.instructor_instance_id %}
+                {% elif enrolled and not in_group or request.user.pk == class.instructor_instance_id %}
                     <button id="create-group-container">
                         <h1 id="create-group-container-text">Start a Group</h1>
                     </button>
@@ -739,6 +739,7 @@
         let groupToRemove = null;
         var removingStudent = false;
         let id = null;
+        let parentElement = null;
         removeModal = document.getElementById("remove-modal");
         removeModalBody = document.getElementById("remove-modal-body");
         noButton = document.getElementById("dont-confirm-removal");
@@ -750,6 +751,7 @@
         };
         function removeStudentModal(elem){
             let parent = elem.parentElement;
+            parentElement = parent;
             if(parent.id === "info-container"){
                 parent = parent.parentElement;
             }
@@ -786,7 +788,9 @@
                     },
                     dataType: 'json',
                     success: function (data) {
-                        window.location.href="/groups/class/{{ class.class_id }}"
+                        parentElement.parentElement.style.display = "none";
+                        removeModal.style.display = "none";
+
                     },
                     error: function (data){
                     }
@@ -803,7 +807,8 @@
                     },
                     dataType: 'json',
                     success: function (data) {
-                        window.location.href="/groups/class/{{ class.class_id }}"
+                        parentElement.style.display = "none";
+                        removeModal.style.display = "none";
                     },
                     error: function (data){
                     }
