@@ -71,7 +71,7 @@
             margin-left: 250px;
         }
         .accept-button{
-            background-color: dodgerblue;
+            background-color: darkgreen;
             border: none;
             color: white;
             height: 50px;
@@ -321,7 +321,7 @@
                         Decline
                     </button>
                 {% elif notification.status == 10 %}
-                    <p id="action-text">has accepted your request to join <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    <p id="action-text">has accepted your request to join their <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                 {% endif %}
 
 
@@ -363,6 +363,7 @@
                 process_invite_error_displayed = false;
             }
             processInviteModal.style.display = "none";
+            window.location.href="/notification/"
         };
         window.onclick = function(event) {
             console.log("HERE");

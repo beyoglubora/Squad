@@ -578,12 +578,13 @@
                 </div>
             </div>
 
-            <div id="remove-modal" class="modal">
-                <div id="remove-modal-body" class="remove-modal-content">
-                    <button id="dont-confirm-removal">No</button>
-                    <button id="confirm-removal" onclick="remove()">Yes</button>
-                </div>
+        </div>
+        <div id="remove-modal" class="modal">
+            <div id="remove-modal-body" class="remove-modal-content">
+                <button id="dont-confirm-removal">No</button>
+                <button id="confirm-removal" onclick="remove()">Yes</button>
             </div>
+        </div>
     {% endif %}
     <script>
         window.onload = function() {
@@ -765,7 +766,6 @@
             if(parent.id === "info-container"){
                 parent = parent.parentElement;
             }
-            let idToRemove = parent.class;
             console.log(parent);
             if(parent.className === "student-container"){
                 id = parent.id;
@@ -783,6 +783,8 @@
                 p.innerHTML = "Are you sure you want to delete this group? Doing this will remove all students from the group.";
                 removeModalBody.prepend(p);
             }
+            console.log("HERE");
+            console.log(removeModal);
             removeModal.style.display="block";
         }
 

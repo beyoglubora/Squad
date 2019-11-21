@@ -444,7 +444,12 @@ def add_student_to_group(request):
 def unenroll(request):
     class_id = request.get_full_path().split('/')[-1]
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    DataModel.Relationship.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
+    relation = DataModel.Relationship.objects.filter(class_instance=class_instance).filter(student_instance=request.user).first()
+    group_id = relation.group_id
+    relation.delete()
+    relations = DataModel.Relationship.objects.filter(group_id=group_id)
+    if len(relations) == 0:
+        DataModel.Group.objects.filter(group_id=group_id).delete()
     DataModel.Skill_label.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Description.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Notification.objects.filter(sender_instance=request.user, class_instance=class_instance).delete()

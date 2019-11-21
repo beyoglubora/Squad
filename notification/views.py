@@ -92,7 +92,7 @@ def accept_join_notification(request):
                                                              notification_instance=notification_instance)
     if flag_success:
         data.models.Notification.objects.filter(sender_instance=notification_instance.sender_instance, class_instance=notification_instance.class_instance, group_instance=notification_instance.group_instance, status=notification_instance.status).delete()
-        relation = data.models.Relationship.objects.filter(student_instance=notification_instance.sender_instance).first()
+        relation = data.models.Relationship.objects.filter(student_instance=notification_instance.sender_instance, class_instance=notification_instance.class_instance).first()
         relation.group_id = notification_instance.group_instance.group_id
         relation.save()
         data.models.Notification.objects.create(sender_instance=notification_instance.receiver_instance, receiver_instance=notification_instance.sender_instance, class_instance=notification_instance.class_instance, group_instance=notification_instance.group_instance, status=10)
