@@ -366,7 +366,6 @@
             window.location.href="/notification/"
         };
         window.onclick = function(event) {
-            console.log("HERE");
             if (event.target == enrollModal) {
                 if (enroll_message_error_displayed) {
                     enrollModalBody.removeChild(document.getElementById("enroll-class-error-message"));
@@ -406,7 +405,6 @@
             let ul, li;
             ul = document.getElementById("skill_list");
             ul.setAttribute("class", "unordered-list");
-            console.log("skill_" + (skill_num-1));
             li = document.createElement('li');
             li.setAttribute("class", "list-item");
             li.id = "skill_" + skill_num;
@@ -430,7 +428,6 @@
 
         function enroll(elem){
             var classId = elem.parentElement.parentElement.id;
-            console.log(elem.parentElement.parentElement);
             let description = document.getElementById("enroll-class-description").value;
             let iter = document.getElementsByClassName("skill");
             let skills = [];
