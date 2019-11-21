@@ -244,17 +244,12 @@ def enroll_students(request):
     return JsonResponse({"message": error_str})
 
 def edit_group_name(request):
-    group_id = request.get_full_path().split('/')[-1]
-    group = DataModel.Group.objects.filter(group_id=group_id).first()
-    invalid = False
-    if request.method == 'POST':
-        if len(request.POST['group-name']) < 20:
-            group.group_name = request.POST['group-name']
-            group.save()
-            return HttpResponseRedirect("/groups/"+group_id)
-        else:
-            invalid = True
-    return render(request, 'edit_group_name.html', context={'group': group, 'invalid': invalid})
+    group_id = request.POST.get("group_id")
+    new_group_name = request.POST.get("group_name")
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+    group_instance.group_name = new_group_name
+    group_instance.save()
+    return JsonResponse({"message": "successfully changed group name"})
 
 
 def leave_group(request):

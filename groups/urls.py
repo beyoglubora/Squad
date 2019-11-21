@@ -16,7 +16,7 @@ urlpatterns = [
     re_path(r'enrollstudenttoclass/', views.enroll_student),
     re_path(r'enrollstudentstoclass/', views.enroll_students),
     re_path(r'addstudenttogroup', views.add_student_to_group),
-    re_path(r'edit_group_name/[0-9]+', views.edit_group_name, name='edit-group-name'),
+    re_path(r'editgroup', views.edit_group_name, name='edit-group-name'),
     re_path(r'[0-9]+', views.group_detail),
     re_path('join-group', views.join_group, name='join-group'),
     re_path('leave-group', views.leave_group, name='leave-group'),

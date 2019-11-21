@@ -221,9 +221,9 @@
             position: absolute;
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            height: 40%;
+            height: 50%;
             width: 30%;
-            margin: 20% auto;
+            margin: 10% auto;
             top:0;
 	        bottom: 0;
 	        left: 0;
@@ -446,7 +446,7 @@
                 enrollModalBody.prepend(p);
                 enroll_message_error_displayed = true;
             }
-            else{
+            else if ((skills.length !== 0 && description.replace(/\s/g, '').length)){
                 $.ajax({
                     url: '/groups/class/enroll/' + classId,
                     method: 'post',

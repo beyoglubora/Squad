@@ -628,7 +628,7 @@
                 createGroupModalBody.prepend(p);
                 create_group_message_error_displayed = true;
             }
-            else{
+            else if (groupName.replace(/\s/g, '').length && groupName.length <= 50){
                 console.log(groupName);
                 $.ajax({
                     url: '/groups/class/creategroup/{{ class.class_id }}',
@@ -669,7 +669,7 @@
                 enrollModalBody.prepend(p);
                 enroll_message_error_displayed = true;
             }
-            else{
+            else if (skills.length !== 0 && description.replace(/\s/g, '').length){
                 $.ajax({
                     url: '/groups/class/enroll/{{ class.class_id }}',
                     method: 'post',
