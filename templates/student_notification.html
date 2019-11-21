@@ -249,6 +249,12 @@
         .group-link:hover{
             color: lightskyblue;
         }
+        .row{
+            display: flex;
+        }
+        #notification-table{
+            margin-left: 5%;
+        }
     </style>
 
     <div id="wrapper">
@@ -258,8 +264,10 @@
             <br>
         </div>
 
+        <div id="notification-table">
         {% for notification in list_notification %}
-            <div class="notification-container" id="{{ notification.notification_id }}">
+            {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
+            <div class="notification-container column" id="{{ notification.notification_id }}">
                 <a id="sender-name" href="/account/{{ notification.sender_instance.account_id }}">
                     {{ notification.sender_instance.first_name }} {{ notification.sender_instance.last_name }}&nbsp
                 </a>
@@ -323,8 +331,9 @@
                     <p class="read-text">Marked as read</p>
                 {% endif %}
             </div>
+            {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
         {% endfor %}
-
+        </div>
         <div id="process-invite-modal" class="modal">
             <div id="process-invite-modal-body" class="process-invite-modal-content">
                 <button id="dismiss-message-button">Dismiss</button>

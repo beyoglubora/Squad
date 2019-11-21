@@ -452,6 +452,12 @@
             font-family: 'Montserrat', sans-serif;
             margin-bottom: 10px;
         }
+        .row{
+            display: flex;
+        }
+        #group-list{
+            margin-left: 5%;
+        }
     </style>
 
     {% if invalid %}
@@ -557,15 +563,19 @@
 
             <div id="group-roster">
                 <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
+                <div id="group-list">
                 {% for k,v in groups.items %}
-                    <div class="group-container" id="{{ k.group_id }}">
+                    {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
+                    <div class="group-container column" id="{{ k.group_id }}">
                         {% if request.user.pk == class.instructor_instance.pk %}
                             <button onclick="removeStudentModal(this)" id="remove-group">X</button>
                         {% endif %}
                         <a href="/groups/{{ k.group_id }}" class="group-name">{{ k.group_name }}</a>
                         <p class="students-in-group-text">{{ v }}</p>
                     </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
                 {% endfor %}
+                </div>
             </div>
 
             <div id="remove-modal" class="modal">
