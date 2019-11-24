@@ -519,8 +519,9 @@
                     </button>
             {% endif %}
             <div>
-                <button id="students-button" onclick="changeToStudentRoster(true)">Students</button>
+                <button id="students-button" onclick="changeToStudentRoster()">Students</button>
                 <button id="groups-button" onclick="changeToGroupRoster()">Groups</button>
+                <button id="discussion-button" onclick="changeToDiscussionRoster()">Discussion</button>
             </div>
 
             <div id="student-roster">
@@ -577,6 +578,9 @@
                 {% endfor %}
                 </div>
             </div>
+            <div id="discussion-roster">
+                <p>hello</p>
+            </div>
 
         </div>
         <div id="remove-modal" class="modal">
@@ -587,24 +591,66 @@
         </div>
     {% endif %}
     <script>
-        var showingStudents = true;
+        window.onbeforeunload = function () {
+        var scrollPos;   
+        if (typeof window.pageYOffset != 'undefined') {
+           scrollPos = window.pageYOffset;
+        }
+        else if (typeof document.compatMode != 'undefined' &&
+             document.compatMode !== 'BackCompat') {
+           scrollPos = document.documentElement.scrollTop;
+        }
+        else if (typeof document.body != 'undefined') {
+           scrollPos = document.body.scrollTop;
+        }
+        document.cookie="scrollTop="+scrollPos;
+    };
         window.onload = function() {
-            changeToStudentRoster(false);
-        };
-        function changeToStudentRoster(bool){
-            if (bool){
-                window.location.href="/groups/class/{{ class.class_id }}";
+            if(document.cookie.match(/show=([a-zA-Z]+)/)!=null){
+            var showElement = document.cookie.match(/show=([a-zA-Z]+)/);
+            console.log(showElement[1]);
+            if (showElement[1] === "student") {
+                changeToStudentRoster();
+            } else if (showElement[1] === "group") {
+                changeToGroupRoster();
+            } else if (showElement[1] === "discussion") {
+                changeToDiscussionRoster();
+                if(document.cookie.match(/scrollTop=([^;]+)(;|$)/)!=null){
+                    var arr=document.cookie.match(/scrollTop=([^;]+)(;|$)/);
+                    document.documentElement.scrollTop=parseInt(arr[1]);
+                    document.body.scrollTop=parseInt(arr[1]);
+                }
             }
+        } else {
+            changeToStudentRoster();
+        }
+        };
+        function changeToStudentRoster(){
             document.getElementById("groups-button").setAttribute("style", 'color:gray');
             document.getElementById("students-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "block";
             document.getElementById("group-roster").style.display = "none";
+            document.getElementById("discussion-roster").style.display = "none";
+            document.cookie = "show="+"student";
         }
         function changeToGroupRoster(){
             document.getElementById("students-button").setAttribute("style", 'color:gray');
             document.getElementById("groups-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "none";
             document.getElementById("group-roster").style.display = "block";
+            document.getElementById("discussion-roster").style.display = "none";
+            document.cookie = "show="+"group";
+        }
+        function changeToDiscussionRoster() {
+            document.getElementById("students-button").setAttribute("style", 'color:gray');
+            document.getElementById("groups-button").setAttribute("style", 'color:gray');
+            document.getElementById("discussion-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("student-roster").style.display = "none";
+            document.getElementById("group-roster").style.display = "none";
+            document.getElementById("discussion-roster").style.display = "block";
+            document.cookie = "show="+"discussion";
         }
 
         var enrollModal = document.getElementById("enroll-modal");
