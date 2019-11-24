@@ -310,18 +310,18 @@
 
     <div id="wrapper">
         <div id="banner-card">
-            {% if user.profile_photo %}
+            {% if user_instance.profile_photo %}
                 <img class="profile-photo" src="{{ k.student_instance.profile_photo.url }}"/>
             {% else %}
                 <img class="profile-photo" src="../../media/default.jpg"/>
             {% endif %}
-            <h1 id = "profile-title">{{ user.first_name }} {{ user.last_name }}'s Profile</h1>
+            <h1 id = "profile-title">{{ user_instance.first_name }} {{ user_instance.last_name }}'s Profile</h1>
 
             <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
-            <h3 id="email">{{ user.email }}</h3>
+            <h3 id="email">{{ user_instance.email }}</h3>
             <br>
         </div>
-        {% if user.is_instructor %}
+        {% if user_instance.is_instructor %}
             <p id="header-text">This instructor is teaching the following courses</p>
         {% else %}
             <p id="header-text">This user is enrolled in the following courses</p>
@@ -382,16 +382,16 @@
 
 
                         <a id="class-name" href="../groups/class/{{ k.class_id }}">{{ k.class_name }}</a>
-                        {% if user.is_instructor and user.account_id == request.user.pk %}
+                        {% if user_instance.is_instructor and user_instance.account_id == request.user.pk %}
                             <button class="edit" onclick="editClassInstructor()">Edit</button>
-                        {% elif not user.is_instructor and user.account_id == request.user.pk%}
+                        {% elif not user_instance.is_instructor and user_instance.account_id == request.user.pk%}
                             <button class="edit" onclick="editClassStudent(this)">Edit</button>
                         {% endif %}
                         <hr>
                         <p id="description-label">Description for this course</p>
                         <p id="description">{{ v.description }}</p>
                         <br>
-                        {% if not user.is_instructor %}
+                        {% if not user_instance.is_instructor %}
                             <div id="skills">
                                 <p id="skill-text">Skills:</p>
                                 <p id="skills-list-text">{{ v.skills_display }}</p>

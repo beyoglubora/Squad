@@ -244,17 +244,12 @@ def enroll_students(request):
     return JsonResponse({"message": error_str})
 
 def edit_group_name(request):
-    group_id = request.get_full_path().split('/')[-1]
-    group = DataModel.Group.objects.filter(group_id=group_id).first()
-    invalid = False
-    if request.method == 'POST':
-        if len(request.POST['group-name']) < 20:
-            group.group_name = request.POST['group-name']
-            group.save()
-            return HttpResponseRedirect("/groups/"+group_id)
-        else:
-            invalid = True
-    return render(request, 'edit_group_name.html', context={'group': group, 'invalid': invalid})
+    group_id = request.POST.get("group_id")
+    new_group_name = request.POST.get("group_name")
+    group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
+    group_instance.group_name = new_group_name
+    group_instance.save()
+    return JsonResponse({"message": "successfully changed group name"})
 
 
 def leave_group(request):
@@ -364,13 +359,21 @@ def remove_student(request):
     student_id = request.POST.get("student_id")
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
     student_instance = DataModel.Account.objects.filter(account_id=student_id).first()
-    DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
+    relation = DataModel.Relationship.objects.filter(class_instance=class_instance, student_instance=student_instance).first()
+    group_id = relation.group_id
+    relation.delete()
+    s = []
+    if group_id != -1:
+        relations = DataModel.Relationship.objects.filter(group_id=group_id)
+        for r in relations:
+            s.append(r.student_instance.first_name + " " + r.student_instance.last_name)
+    students_in_group = ",".join(s)
     DataModel.Skill_label.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
     DataModel.Description.objects.filter(class_instance=class_instance, student_instance=student_instance).delete()
     DataModel.Notification.objects.filter(sender_instance=student_instance, class_instance=class_instance).delete()
     DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student_instance, class_instance=class_instance, status=8)
 
-    return JsonResponse({'res:':"student removed successfully"})
+    return JsonResponse({"was_in_group": "true", "group_id": group_id, "remaining_students": students_in_group})
 
 
 def remove_group(request):
@@ -385,7 +388,7 @@ def remove_group(request):
         relationship.group_id = -1
         relationship.save()
     DataModel.Group.objects.filter(group_id=group_id).delete()
-    return JsonResponse({'result':"group removed successfully"})
+    return JsonResponse({'result': "group removed successfully"})
 
 
 def add_students_to_group_view(request):
@@ -444,7 +447,12 @@ def add_student_to_group(request):
 def unenroll(request):
     class_id = request.get_full_path().split('/')[-1]
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    DataModel.Relationship.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
+    relation = DataModel.Relationship.objects.filter(class_instance=class_instance).filter(student_instance=request.user).first()
+    group_id = relation.group_id
+    relation.delete()
+    relations = DataModel.Relationship.objects.filter(group_id=group_id)
+    if len(relations) == 0:
+        DataModel.Group.objects.filter(group_id=group_id).delete()
     DataModel.Skill_label.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Description.objects.filter(class_instance=class_instance).filter(student_instance=request.user).delete()
     DataModel.Notification.objects.filter(sender_instance=request.user, class_instance=class_instance).delete()

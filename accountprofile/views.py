@@ -74,7 +74,7 @@ def listRequested(request):
             d['skills_display'] = ", ".join(d['skills'])
             classes[relation.class_instance] = d
 
-    return render(request, 'userprofile.html', {'user': student_instance, 'classes': classes, 'own_profile': own_profile})
+    return render(request, 'userprofile.html', {'user_instance': student_instance, 'classes': classes, 'own_profile': own_profile})
 
 
 def changProfile(request):

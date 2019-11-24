@@ -13,6 +13,7 @@
             padding-left: 10px;
             padding-bottom: 15px;
             margin-bottom: 3%;
+            word-break: break-word;
         }
         #wrapper{
             display: inline-block;
@@ -336,6 +337,12 @@
                 removeModal.style.display = "none";
             }
             if (event.target == editGroupModal) {
+                var elem = document.getElementById("edit-group-error-message");
+                if (elem !== null){
+                    console.log("HERE");
+                    editGroupModalBody.removeChild(elem);
+                    edit_group_message_error_displayed = false;
+                }
                 editGroupModal.style.display = "none";
             }
         };
@@ -417,7 +424,8 @@
                 editGroupModalBody.prepend(p);
                 edit_group_message_error_displayed = true;
             }
-            else{
+            else if(groupName.replace(/\s/g, '').length && groupName.length < 50){
+                console.log("HERE");
                 $.ajax({
                     url: '/groups/editgroup/',
                     method: 'post',
@@ -434,9 +442,17 @@
                     error: function (data){
                     }
                   });
-
             }
         }
+        window.addEventListener( "pageshow", function ( event ) {
+          var historyTraversal = event.persisted ||
+                                 ( typeof window.performance != "undefined" &&
+                                      window.performance.navigation.type === 2 );
+          if ( historyTraversal ) {
+            // Handle page restore.
+            window.location.reload();
+          }
+        });
     </script>
 
 {% endblock %}

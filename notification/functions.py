@@ -284,8 +284,8 @@ def accept_request(current_account, notification_instance):
         # receiver join sender's group
         group_num = sender_have_group
         join_group(receiver, temp_class, group_num)
-        notification_instance.status = 1
-        notification_instance.save()
+        # notification_instance.status = 1
+        # notification_instance.save()
         message = "You have successfully joined the group!"
         return True, message, False
 

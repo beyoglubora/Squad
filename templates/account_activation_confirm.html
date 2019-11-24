@@ -1,0 +1,73 @@
+<link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+{% extends "base.html" %}
+{% block content %}
+    <style>
+    body{
+       background-color: dodgerblue;
+    }
+    #activation-box{
+        position: absolute;
+        height: 400px;
+        width: 450px;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin: auto;
+        top:0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+        text-align: center;
+    }
+
+    #banner{
+        position: absolute;
+        background-color: lightskyblue;
+        height: 25%;
+        width: 100%;
+        text-align: center;
+    }
+
+    #title{
+        margin-top: 45px;
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+    }
+    #activation-text{
+        color: darkgreen;
+        font-family: 'Montserrat', sans-serif;
+        padding-top: 40%;
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+    #failed-activation-text{
+        color: darkred;
+        font-family: 'Montserrat', sans-serif;
+        padding-top: 40%;
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+    #login-link{
+        font-family: 'Montserrat', sans-serif;
+        text-decoration: none;
+        color: lightskyblue;
+    }
+    #login-link:hover{
+        text-decoration: underline;
+    }
+    </style>
+
+    <div id="activation-box">
+        <div id="banner">
+            <h1 id="title">Squad</h1>
+        </div>
+        {% if valid %}
+            <p id="activation-text">
+                Thanks for confirming your email. Start using Squad by clicking <a id="login-link" href="/../../explore">here</a>.
+            </p>
+        {% else %}
+            <p id="failed-activation-text">
+                Uh oh, looks like this activation link has expired. You might have already activated your account. Click  <a id="login-link" href="/accounts/login">here</a> to login.
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -452,6 +452,12 @@
             font-family: 'Montserrat', sans-serif;
             margin-bottom: 10px;
         }
+        .row{
+            display: flex;
+        }
+        #group-list{
+            margin-left: 5%;
+        }
     </style>
 
     {% if invalid %}
@@ -515,6 +521,7 @@
             <div>
                 <button id="students-button" onclick="changeToStudentRoster()">Students</button>
                 <button id="groups-button" onclick="changeToGroupRoster()">Groups</button>
+                <button id="discussion-button" onclick="changeToDiscussionRoster()">Discussion</button>
             </div>
 
             <div id="student-roster">
@@ -557,39 +564,93 @@
 
             <div id="group-roster">
                 <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
+                <div id="group-list">
                 {% for k,v in groups.items %}
-                    <div class="group-container" id="{{ k.group_id }}">
+                    {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
+                    <div class="group-container column" id="group-{{ k.group_id }}">
                         {% if request.user.pk == class.instructor_instance.pk %}
                             <button onclick="removeStudentModal(this)" id="remove-group">X</button>
                         {% endif %}
                         <a href="/groups/{{ k.group_id }}" class="group-name">{{ k.group_name }}</a>
                         <p class="students-in-group-text">{{ v }}</p>
                     </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
                 {% endfor %}
-            </div>
-
-            <div id="remove-modal" class="modal">
-                <div id="remove-modal-body" class="remove-modal-content">
-                    <button id="dont-confirm-removal">No</button>
-                    <button id="confirm-removal" onclick="remove()">Yes</button>
                 </div>
             </div>
+            <div id="discussion-roster">
+                <p>hello</p>
+            </div>
+
+        </div>
+        <div id="remove-modal" class="modal">
+            <div id="remove-modal-body" class="remove-modal-content">
+                <button id="dont-confirm-removal">No</button>
+                <button id="confirm-removal" onclick="remove()">Yes</button>
+            </div>
+        </div>
     {% endif %}
     <script>
+        window.onbeforeunload = function () {
+        var scrollPos;   
+        if (typeof window.pageYOffset != 'undefined') {
+           scrollPos = window.pageYOffset;
+        }
+        else if (typeof document.compatMode != 'undefined' &&
+             document.compatMode !== 'BackCompat') {
+           scrollPos = document.documentElement.scrollTop;
+        }
+        else if (typeof document.body != 'undefined') {
+           scrollPos = document.body.scrollTop;
+        }
+        document.cookie="scrollTop="+scrollPos;
+    };
         window.onload = function() {
+            if(document.cookie.match(/show=([a-zA-Z]+)/)!=null){
+            var showElement = document.cookie.match(/show=([a-zA-Z]+)/);
+            console.log(showElement[1]);
+            if (showElement[1] === "student") {
+                changeToStudentRoster();
+            } else if (showElement[1] === "group") {
+                changeToGroupRoster();
+            } else if (showElement[1] === "discussion") {
+                changeToDiscussionRoster();
+                if(document.cookie.match(/scrollTop=([^;]+)(;|$)/)!=null){
+                    var arr=document.cookie.match(/scrollTop=([^;]+)(;|$)/);
+                    document.documentElement.scrollTop=parseInt(arr[1]);
+                    document.body.scrollTop=parseInt(arr[1]);
+                }
+            }
+        } else {
             changeToStudentRoster();
+        }
         };
         function changeToStudentRoster(){
             document.getElementById("groups-button").setAttribute("style", 'color:gray');
             document.getElementById("students-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "block";
             document.getElementById("group-roster").style.display = "none";
+            document.getElementById("discussion-roster").style.display = "none";
+            document.cookie = "show="+"student";
         }
         function changeToGroupRoster(){
             document.getElementById("students-button").setAttribute("style", 'color:gray');
             document.getElementById("groups-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "none";
             document.getElementById("group-roster").style.display = "block";
+            document.getElementById("discussion-roster").style.display = "none";
+            document.cookie = "show="+"group";
+        }
+        function changeToDiscussionRoster() {
+            document.getElementById("students-button").setAttribute("style", 'color:gray');
+            document.getElementById("groups-button").setAttribute("style", 'color:gray');
+            document.getElementById("discussion-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("student-roster").style.display = "none";
+            document.getElementById("group-roster").style.display = "none";
+            document.getElementById("discussion-roster").style.display = "block";
+            document.cookie = "show="+"discussion";
         }
 
         var enrollModal = document.getElementById("enroll-modal");
@@ -613,7 +674,7 @@
                 createGroupModalBody.prepend(p);
                 create_group_message_error_displayed = true;
             }
-            else{
+            else if (groupName.replace(/\s/g, '').length && groupName.length <= 50){
                 console.log(groupName);
                 $.ajax({
                     url: '/groups/class/creategroup/{{ class.class_id }}',
@@ -654,7 +715,7 @@
                 enrollModalBody.prepend(p);
                 enroll_message_error_displayed = true;
             }
-            else{
+            else if (skills.length !== 0 && description.replace(/\s/g, '').length){
                 $.ajax({
                     url: '/groups/class/enroll/{{ class.class_id }}',
                     method: 'post',
@@ -755,7 +816,6 @@
             if(parent.id === "info-container"){
                 parent = parent.parentElement;
             }
-            let idToRemove = parent.class;
             console.log(parent);
             if(parent.className === "student-container"){
                 id = parent.id;
@@ -773,6 +833,7 @@
                 p.innerHTML = "Are you sure you want to delete this group? Doing this will remove all students from the group.";
                 removeModalBody.prepend(p);
             }
+            console.log(removeModal);
             removeModal.style.display="block";
         }
 
@@ -788,15 +849,23 @@
                     },
                     dataType: 'json',
                     success: function (data) {
+                        removeModalBody.removeChild(document.getElementById("removal-text"));
                         parentElement.parentElement.style.display = "none";
                         removeModal.style.display = "none";
-
+                        console.log(data);
+                        if("was_in_group" in data){
+                            var gc = document.getElementById("group-" + data["group_id"]);
+                            var studentsInGroup = gc.getElementsByClassName("students-in-group-text")[0];
+                            studentsInGroup.innerText = data["remaining_students"];
+                        }
                     },
                     error: function (data){
                     }
                   });
             }
             else{
+                id = id.split("-");
+                id = id[id.length-1];
                 $.ajax({
                     url: '/groups/class/removegroup/',
                     method: 'post',
@@ -807,6 +876,7 @@
                     },
                     dataType: 'json',
                     success: function (data) {
+                        removeModalBody.removeChild(document.getElementById("removal-text"));
                         parentElement.style.display = "none";
                         removeModal.style.display = "none";
                     },
@@ -892,5 +962,14 @@
                 }
               });
         }
+        window.addEventListener( "pageshow", function ( event ) {
+          var historyTraversal = event.persisted ||
+                                 ( typeof window.performance != "undefined" &&
+                                      window.performance.navigation.type === 2 );
+          if ( historyTraversal ) {
+            // Handle page restore.
+            window.location.reload();
+          }
+        });
     </script>
 {%endblock %}
