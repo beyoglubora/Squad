@@ -151,3 +151,17 @@ class Messages(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
+class Assignment(models.Model):
+    assignment_id = models.BigAutoField(primary_key=True)
+    subject = models.CharField(max_length=30)
+    description = models.TextField(max_length=300)
+    class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
+    due_date = models.DateTimeField()
+
+
+class StudentUpload(models.Model):
+    description = models.TextField(max_length=300, default='')
+    assignment_instance = models.ForeignKey('Assignment', on_delete=models.CASCADE)
+    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE)
+    upload_file = models.FileField()
+    upload_time = models.DateTimeField(auto_now_add=True)
