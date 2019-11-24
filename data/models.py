@@ -161,11 +161,18 @@ class Assignment(models.Model):
 
 class StudentUpload(models.Model):
     description = models.TextField(max_length=300, default='')
-    upload_file = models.FileField()
+    upload_file = models.FileField(upload_to='students/uploads')
+
+    def delete(self, *args, **kwargs):
+        self.upload_file.delete()
+        super().delete(*args, **kwargs)
 
 
 class AssignmentRelationship(models.Model):
     group_instance = models.ForeignKey('Group', on_delete=models.CASCADE)
     assignment_instance = models.ForeignKey('Assignment', on_delete=models.CASCADE)
     student_upload_instance = models.ForeignKey('StudentUpload', on_delete=models.CASCADE)
-    upload_time = models.DateTimeField(auto_now_add=True)
+    upload_time = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.assignment_instance.subject + ' ' + self.group_instance.group_name

@@ -1,5 +1,5 @@
 from django import forms
-from data.models import Assignment
+from data.models import Assignment, StudentUpload
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 import datetime
 
@@ -17,3 +17,9 @@ class AssignmentsForm(forms.ModelForm):
                 }
             )
         }
+
+
+class StudentUploadForm(forms.ModelForm):
+    class Meta:
+        model = StudentUpload
+        fields = ('description', 'upload_file')
