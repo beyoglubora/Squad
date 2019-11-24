@@ -159,6 +159,7 @@ class Assignment(models.Model):
     due_date = models.DateTimeField()
 
 
+'''
 class StudentUpload(models.Model):
     description = models.TextField(max_length=300, default='')
     upload_file = models.FileField()
@@ -169,3 +170,4 @@ class AssignmentRelationship(models.Model):
     assignment_instance = models.ForeignKey('Assignment', on_delete=models.CASCADE)
     student_upload_instance = models.ForeignKey('StudentUpload', on_delete=models.CASCADE)
     upload_time = models.DateTimeField(auto_now_add=True)
+'''
