@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'groups',
     'notification',
     'discussion',
+    'assignments'
 ]
 
 MIDDLEWARE = [
