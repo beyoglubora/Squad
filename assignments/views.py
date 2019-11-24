@@ -11,10 +11,10 @@ def show(request):
         form = AssignmentsForm(request.POST, request.FILES)
         print(222)
         if form.is_valid():
+            print(form.cleaned_data['due_date'])
 
             print("1111")
-            a = form.save()
-            print(a.due_date)
+            # a = form.save()
 
         # TODO: new return
         return render(request, 'assignment.html', {
