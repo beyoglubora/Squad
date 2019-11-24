@@ -9,7 +9,9 @@ def show(request):
     # for test
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
+        print(222)
         if form.is_valid():
+            print("1111")
             form.save()
 
         # TODO: new return
