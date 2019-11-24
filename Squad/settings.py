@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'groups',
     'notification',
     'discussion',
-    'assignments'
+    'assignments',
+    'tempus_dominus'
 ]
 
 MIDDLEWARE = [

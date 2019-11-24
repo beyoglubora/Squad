@@ -1,17 +1,12 @@
 from django import forms
 from data.models import Assignment
+from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 
 class AssignmentsForm(forms.ModelForm):
-    date = forms.DateTimeField(
-        input_formats=['%d/%m/%Y %H:%M'],
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker1'
-        })
-    )
     class Meta:
         model = Assignment
         fields = ('subject', 'description', 'due_date', 'class_instance')
         widgets = {
-            'class_instance': forms.HiddenInput()
+            'class_instance': forms.HiddenInput(),
+            'due_date': DateTimePicker()
         }
