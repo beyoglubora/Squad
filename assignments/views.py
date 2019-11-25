@@ -23,9 +23,10 @@ def assignment_main_page(request, class_pk):
         messages.info(request, "You are not the instructor of this class")
         return HttpResponseRedirect("/groups/class/" + str(class_pk))
 
-
+    assignments_in_this_class = Assignment.objects.filter(class_instance=class_instance)
     return render(request, 'assignment_main_instructor.html',{
-        'class_ins': class_instance
+        'class_ins': class_instance,
+        'assignments': assignments_in_this_class
     })
 
 
