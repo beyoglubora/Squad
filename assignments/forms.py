@@ -13,7 +13,8 @@ class AssignmentsForm(forms.ModelForm):
             'due_date': DateTimePicker(
                 options={
                     'minDate': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    'format': "YYYY-MM-DD HH:mm"
+                    'format': "YYYY-MM-DD HH:mm",
+                    'defaultDate': datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
                 }
             )
         }
