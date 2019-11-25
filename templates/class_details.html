@@ -479,7 +479,13 @@
             margin-left: 5%;
         }
     </style>
-
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
     {% if invalid %}
         <p style="margin-left: 300px; margin-top: 80px; position:absolute">This class does not exist.</p>
     {% else %}

@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm
@@ -5,8 +6,15 @@ from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelat
 
 # Create your views here.
 def assignment_main_page(request, class_pk):
-    print(class_pk)
     class_instance = Class.objects.filter(class_id=class_pk).first()
+    if not class_instance:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/groups/class/"+str(class_pk))
+    if class_instance.instructor_instance != request.user:
+        messages.info(request, "You are not the instructor of this class")
+        return HttpResponseRedirect("/groups/class/" + str(class_pk))
+
+
     return render(request, 'assignment_main_instructor.html',{
         'class_ins': class_instance
     })
