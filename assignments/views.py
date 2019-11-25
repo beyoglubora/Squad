@@ -1,16 +1,17 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from assignments.forms import AssignmentsForm, StudentUploadForm
+from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
 from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
 from django.urls import reverse_lazy
 from bootstrap_modal_forms.generic import BSModalCreateView
 
-def Assignment_create_view(BSModalCreateView):
+
+class Assignment_create_view(BSModalCreateView):
     template_name = 'publish_assignment.html'
-    form_class = Assignment
+    form_class = Assignments_Boostrap_Form
     success_message = 'Success: Assignment was published.'
-    success_url = reverse_lazy('/assignment/instructor/1/')
+    success_url = reverse_lazy('/assignment/instructor/1')
 
 
 # Create your views here.
