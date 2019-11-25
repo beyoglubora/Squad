@@ -7,7 +7,7 @@ from bootstrap_modal_forms.forms import BSModalForm
 class Assignments_Boostrap_Form(BSModalForm):
     class Meta:
         model = Assignment
-        fields = ('subject', 'description', 'due_date', 'class_instance')
+        fields = ['subject', 'description', 'due_date', 'class_instance']
         widgets = {
             'class_instance': forms.HiddenInput(),
             'due_date': DateTimePicker(
