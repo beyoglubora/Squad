@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'notification',
     'discussion',
     'assignments',
-    'tempus_dominus'
+    'tempus_dominus',
+    'bootstrap_modal_forms'
 ]
 
 MIDDLEWARE = [

@@ -4,6 +4,11 @@ from assignments.forms import AssignmentsForm, StudentUploadForm
 from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
 
 # Create your views here.
+def assignment_main_page(request):
+
+    return render(request, 'assignment_main_instructor.html',{
+
+    })
 
 
 def get_class_ins(request):
