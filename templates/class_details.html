@@ -111,13 +111,21 @@
         #students-button:focus{
             outline:none;
         }
+        {##groups-button{#}
+        {#    float:right;#}
+        {#    margin-right:25%;#}
+        {#    font-size: 40px;#}
+        {#    border: none;#}
+        {#    background: none;#}
+        {#    color: gray;#}
+        {#}#}
         #groups-button{
-            float:right;
-            margin-right:25%;
             font-size: 40px;
             border: none;
             background: none;
             color: gray;
+            margin-left:15%;
+            margin-bottom: 3%;
         }
         #groups-button:hover{
             color: lightskyblue;
@@ -125,6 +133,27 @@
         #groups-button:focus{
             outline: none;
         }
+
+        #discussion-button{
+            font-size: 40px;
+            border: none;
+            background: none;
+            color: gray;
+            margin-left:15%;
+            margin-bottom: 3%;
+        }
+        #discussion-button:hover{
+            color: lightskyblue;
+        }
+        #discussion-button:focus {
+            outline: none;
+        }
+
+        {##discussion-roster {#}
+        {#    margin-left: 270px;#}
+        {#    width: 80%;#}
+        {#}#}
+
         .student-container{
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -458,6 +487,54 @@
         #group-list{
             margin-left: 5%;
         }
+
+        .message-font {
+            font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
+        }
+        .whole-message {
+            margin-bottom: 2em;
+            word-wrap: break-word;
+        }
+        .span-parent-content {
+            white-space: pre-line;
+            margin-left: 1em;
+        }
+
+        .message-info {
+            float: right;
+            clear: right;
+        }
+        .key-info {
+            font-size: 0.7em;
+            color: skyblue;
+        }
+        .value-info {
+            font-size: 0.8em;
+            color: skyblue;
+        }
+        .message-date {
+            color: #848d95;
+        }
+        .child-separator {
+            color: lightgray;
+            opacity: 0.4;
+        }
+        #add-a-comment {
+            color: #848d95;
+            margin-left: 2em;
+        }
+        #add-a-comment:hover {
+            text-decoration: underline;
+        }
+        .child-message {
+            margin-top: 1em;
+            margin-left: 2em;
+        }
+        .parent-message {
+            background-color: lightgray;
+            font-size: 1.2em;
+            overflow: auto;
+        }
     </style>
 
     {% if invalid %}
@@ -566,6 +643,7 @@
                 <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
                 <div id="group-list">
                 {% for k,v in groups.items %}
+                    {% if k.group_name != k.class_instance.class_name %}
                     {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
                     <div class="group-container column" id="group-{{ k.group_id }}">
                         {% if request.user.pk == class.instructor_instance.pk %}
@@ -575,14 +653,56 @@
                         <p class="students-in-group-text">{{ v }}</p>
                     </div>
                     {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
+                    {% endif %}
                 {% endfor %}
                 </div>
             </div>
+
             <div id="discussion-roster">
-                <p>hello</p>
+                {% if enrolled or isInstructor %}
+                    <div id="message-board" class="has-border">
+                        <div id="create-new-message-area">
+                            <button id="big-group-button" onclick="create_form(this, -5)">Start New Topic</button>
+                        </div>
+                        {% for key, values in msg_dict.items %}
+                            <div class="has-border message-font whole-message">
+                                <div class="parent-message">
+                                    <span class="span-parent-content">{{ key.body }}</span>
+                                    <span class="message-info">
+                                    <a href="../../account/{{ key.creator.account_id }}" class="key-info">{{ key.creator.first_name }}</a>
+                                    <i class="key-info message-date">{{ key.date }}</i>
+                                    {% if requesterID == key.creator.account_id or isInstructor %}
+{#                                        <a href="" onclick="delete_post({{ key.message_id }})" class="key-info" id="{{ key.message_id }}">delete</a>#}
+                                        <a onclick="removeCommentModal({{ key.message_id }})" class="key-info" style="color: skyblue">delete</a>
+
+                                    {% endif %}
+                                    </span>
+                                </div>
+
+                                <div class="child-message">
+                                    {% for val in values %}
+                                        <div>
+                                            {{ val.body }} -
+                                            <a href="../../account/{{ val.creator.account_id }}" class="value-info">{{ val.creator.first_name }}</a>
+                                            <i class="value-info message-date">{{ val.date }}</i>
+                                            {% if requesterID == val.creator.account_id or isInstructor %}
+{#                                                <a href="" onclick="delete_post({{ val.message_id }})" class="value-info" id="{{ val.message_id }}">delete</a>#}
+                                                <a onclick="removeCommentModal({{ val.message_id }})" class="value-info" style="color: skyblue">delete</a>
+                                            {% endif %}
+                                        </div>
+                                        <hr class="child-separator">
+                                    {% endfor %}
+                                    <a onclick="create_form(this, {{ key.message_id }})" id="add-a-comment">add a comment</a>
+                                </div>
+                                <hr>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
         </div>
+
         <div id="remove-modal" class="modal">
             <div id="remove-modal-body" class="remove-modal-content">
                 <button id="dont-confirm-removal">No</button>
@@ -591,6 +711,111 @@
         </div>
     {% endif %}
     <script>
+
+        function create_form(this_element, pid) {
+            console.log("create form")
+            $(".post_form").remove();
+            let container, body, buttonElement, cancel;
+            parent = this_element.parentElement;
+
+            container = document.createElement('div');
+            container.setAttribute('class', "post_form");
+            container.style.marginBottom = "2em";
+
+            body = document.createElement('textarea'); //input element, text
+            body.setAttribute('type',"text");
+            body.setAttribute('id',"reply_"+pid);
+            body.style.width = "100%";
+            body.onkeydown = function(event) {
+                var shiftKey = event.shiftKey;
+
+                if (shiftKey && event.key === 'Enter') {
+                    create_post(pid, body.id);
+                }
+                if (event.key === 'Escape' || event.key === 'Esc') {
+                    cancel_post(this);
+                }
+            };
+
+            buttonElement = document.createElement('a');
+            buttonElement.innerHTML = "post";
+            buttonElement.href = "";
+            buttonElement.style.color = "lightskyblue";
+            buttonElement.onclick = function () { create_post(pid, body.id) };
+
+            cancel = document.createElement('a');
+            cancel.innerHTML = "cancel";
+            cancel.style.marginLeft = "2em";
+            cancel.href = "";
+            cancel.style.color = "#DC143C";
+            cancel.onclick = function () { cancel_post(this) };
+
+            container.appendChild(body);
+            container.appendChild(document.createElement('br'));
+            container.appendChild(buttonElement);
+            container.appendChild(cancel);
+
+            parent.appendChild(container);
+        }
+
+        function create_post(parent_id,body_id){
+            var bodyElement = document.getElementById(body_id);
+            var body = bodyElement.value;
+            if (body === "") {
+                return ;
+            }
+            console.log(parent_id, body_id);
+                $.ajax({
+                        url: '/discussion/create_class_post/',
+                        method: 'post',
+                        data: {
+                            'csrfmiddlewaretoken': '{{ csrf_token }}',
+                            'body': body,
+                            'class_id': '{{ class.class_id }}',
+                            'parent_id': parent_id
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if(data["result"]){
+                                window.location.href = "";
+                            }
+                            else {
+                                alert("fail to reply");
+                            }
+                        },
+                        error: function (data){
+                        }
+                      });
+            }
+
+        function delete_post(post_id){
+            $.ajax({
+                    url: '/discussion/delete/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'post_id': post_id
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data["result"]){
+                            window.location.href = "";
+                        }
+                        else {
+                            alert("fail to delete");
+                        }
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
+
+        function cancel_post(element) {
+            let parent = element.parentElement;
+            let grand = parent.parentElement;
+            grand.removeChild(parent);
+        }
+
         window.onbeforeunload = function () {
         var scrollPos;   
         if (typeof window.pageYOffset != 'undefined') {
@@ -810,6 +1035,19 @@
             removeModalBody.removeChild(document.getElementById("removal-text"));
             removeModal.style.display = "none";
         };
+
+        var removeComment = false;
+        var commentId = null;
+        function removeCommentModal(comment_id) {
+            removeComment = true;
+            commentId = comment_id;
+            let p = document.createElement('p');
+            p.setAttribute("id", "removal-text");
+            p.innerHTML = "I confirm I want to delete this message and it's comments (if any)";
+            removeModalBody.prepend(p);
+            removeModal.style.display="block";
+        }
+
         function removeStudentModal(elem){
             let parent = elem.parentElement;
             parentElement = parent;
@@ -838,6 +1076,10 @@
         }
 
         function remove(){
+            if(removeComment) {
+                delete_post(commentId);
+            }
+
             if(removingStudent){
                 $.ajax({
                     url: '/groups/class/removestudent/',
