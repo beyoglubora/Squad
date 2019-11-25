@@ -1,11 +1,50 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from assignments.forms import AssignmentsForm
-from data.models import Class
+from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
+from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
+from django.urls import reverse_lazy
+from bootstrap_modal_forms.generic import BSModalCreateView
+
+
+class Assignment_create_view(BSModalCreateView):
+    template_name = 'publish_assignment.html'
+    form_class = Assignments_Boostrap_Form
+    success_message = 'Success: Assignment was published.'
+    success_url = reverse_lazy('/assignment/instructor/1')
+
 
 # Create your views here.
+def assignment_main_page(request, class_pk):
+    class_instance = Class.objects.filter(class_id=class_pk).first()
+    if not class_instance:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/groups/class/"+str(class_pk))
+    if class_instance.instructor_instance != request.user:
+        messages.info(request, "You are not the instructor of this class")
+        return HttpResponseRedirect("/groups/class/" + str(class_pk))
+
+    assignments_in_this_class = Assignment.objects.filter(class_instance=class_instance)
+    return render(request, 'assignment_main_instructor.html',{
+        'class_ins': class_instance,
+        'assignments': assignments_in_this_class
+    })
+
+
+def get_class_ins(request):
+    return Class.objects.first()
+
+
+def get_assignment_ins(request):
+    return Assignment.objects.first()
+
+
+def get_group_ins(request):
+    return Group.objects.first()
+
+
 def show(request):
-    class_ins = Class.objects.first()
+    class_ins = get_class_ins(request)
     # for test
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
@@ -22,6 +61,51 @@ def show(request):
         })
     else:
         form = AssignmentsForm(initial={'class_instance': class_ins})
-        return render(request, 'assignment.html',{
+        return render(request, 'assignment.html', {
+            'form': form,
+        })
+
+
+def show_student_upload(request):
+    assignment_ins = get_assignment_ins(request)
+    group_ins = get_group_ins(request)
+    # for test
+    if request.method == 'POST':
+        form = StudentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            student_upload = form.save()
+            print(student_upload.upload_file)
+
+            temp_a_re = AssignmentRelationship.objects.filter(group_instance=group_ins,
+                                                              assignment_instance=assignment_ins)
+            if not temp_a_re:
+                # this group hasn't uploaded file for this assignment
+                new_a_re = AssignmentRelationship()
+                new_a_re.student_upload_instance = student_upload
+                new_a_re.group_instance = group_ins
+                new_a_re.assignment_instance = assignment_ins
+                new_a_re.save()
+                print(new_a_re.upload_time)
+                print(new_a_re.student_upload_instance.upload_file)
+
+            else:
+                # this group has already uploaded a file for this assignment
+                exist_a_re = temp_a_re.first()
+                old_student_upload = exist_a_re.student_upload_instance
+                exist_a_re.student_upload_instance = student_upload
+                exist_a_re.save()
+                print(exist_a_re.upload_time)
+                # delete the old one
+                old_student_upload.delete()
+                print(exist_a_re.student_upload_instance.upload_file)
+
+
+        # TODO: new return
+        return render(request, 'assignment.html', {
+            'form': form,
+        })
+    else:
+        form = StudentUploadForm()
+        return render(request, 'student_upload.html', {
             'form': form,
         })

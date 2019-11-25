@@ -78,6 +78,26 @@
             font-family: 'Montserrat', sans-serif;
         }
 
+        #assignment-container{
+            width:100%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            background-color: darkgreen;
+            padding-top:10px;
+            padding-bottom: 10px;
+            margin-top:-10px;
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
+
+        #assignment-container:hover{
+            opacity: .7;
+        }
+
+        #assignment-container-text{
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+
         #big-group-button{
             width:100%;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -536,7 +556,13 @@
             overflow: auto;
         }
     </style>
-
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
     {% if invalid %}
         <p style="margin-left: 300px; margin-top: 80px; position:absolute">This class does not exist.</p>
     {% else %}
@@ -573,7 +599,13 @@
                         </div>
                     </div>
                 </div>
-                {% elif enrolled and not in_group or request.user.pk == class.instructor_instance_id %}
+                {% endif %}
+                {% if user.is_instructor and  user.account_id == class.instructor_instance_id %}
+                    <button id="assignment-container" onclick="window.location.href='/assignment/instructor/{{ class.class_id }}'">
+                        <h1 id="assignment-container-text">Assignments</h1>
+                    </button>
+                {% endif %}
+                {% if enrolled and not in_group or request.user.pk == class.instructor_instance_id %}
                     <button id="create-group-container">
                         <h1 id="create-group-container-text">Start a Group</h1>
                     </button>
@@ -590,11 +622,12 @@
                             </div>
                         </div>
                     </div>
-                {% elif not user.is_instructor %}
+                {% endif %}
+                {% if enrolled and not user.is_instructor and in_group%}
                     <button id="big-group-button" onclick="window.location.href='/groups/{{ own_group.group_id }}'">
                         <h1 id="big-group-button-text">Your group is: {{ own_group.group_name }}</h1>
                     </button>
-            {% endif %}
+                {% endif %}
             <div>
                 <button id="students-button" onclick="changeToStudentRoster()">Students</button>
                 <button id="groups-button" onclick="changeToGroupRoster()">Groups</button>
@@ -1182,7 +1215,7 @@
         function inviteStudent(elem){
             var buttonId = elem.id;
             var list = buttonId.split("-");
-            var studentId = list[list.length - 1]
+            var studentId = list[list.length - 1];
             $.ajax({
                 url: '/groups/invite/',
                 method: 'post',
