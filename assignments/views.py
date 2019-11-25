@@ -5,9 +5,10 @@ from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelat
 
 # Create your views here.
 def assignment_main_page(request):
-
+    class_id = request.GET.get('class_id')
+    class_instance = Class.objects.filter(class_id=class_id).first()
     return render(request, 'assignment_main_instructor.html',{
-
+        'class_ins': class_instance
     })
 
 
