@@ -5,6 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.show),
+    path('', views.assignment_main_page),
+    path('upload', views.show),
     path('student/upload', views.show_student_upload)
 ]
