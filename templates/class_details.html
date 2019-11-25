@@ -518,7 +518,7 @@
                 </div>
                 {% endif %}
                 {% if user.is_instructor and  user.account_id == class.instructor_instance_id %}
-                    <button id="assignment-container" onclick="gotoAssignments()">
+                    <button id="assignment-container" onclick="window.location.href='/assignment/instructor/{{ class.class_id }}'">
                         <h1 id="assignment-container-text">Assignments</h1>
                     </button>
                 {% endif %}
@@ -967,7 +967,7 @@
         function inviteStudent(elem){
             var buttonId = elem.id;
             var list = buttonId.split("-");
-            var studentId = list[list.length - 1]
+            var studentId = list[list.length - 1];
             $.ajax({
                 url: '/groups/invite/',
                 method: 'post',
@@ -998,21 +998,5 @@
             window.location.reload();
           }
         });
-        function gotoAssignments() {
-            $.ajax({
-                url: "{% url 'instructor_assign' %}",
-                method: 'get',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    'class_id': '{{ class.class_id }}'
-                },
-                dataType: 'json',
-                success: function (data) {
-                    //window.location.href = "{% url 'instructor_assign' %}";
-                },
-                error: function (data){
-                }
-            });
-        }
     </script>
 {%endblock %}
