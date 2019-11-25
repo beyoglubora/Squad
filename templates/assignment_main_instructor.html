@@ -3,4 +3,24 @@
 <h1>
     {{ class_ins.class_name }}
 </h1>
+<table>
+    <thead>
+        <tr>
+            <th>Assignment Subject</th>
+            <th>due Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for assignment in assignments %}
+            <tr>
+                <td>
+                    <span> {{ assignment.subject }} </span>
+                </td>
+                <td>
+                    <span> {{ assignment.due_date }} </span>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
