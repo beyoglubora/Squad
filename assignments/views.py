@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
 from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship
@@ -84,6 +84,10 @@ def show_student_upload(request, a_pk, g_pk):
             'form': form,
         })
 
+def remove_assignment(request):
+    assignment_id = request.POST.get("assignment_id")
+    Assignment.objects.filter(assignment_id=assignment_id).delete()
+    return JsonResponse({"data": "Successfully deleted assignment"})
 
 def show_assignment_detail(request, a_pk):
     """

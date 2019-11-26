@@ -573,6 +573,17 @@
         #assignments-roster{
             margin-bottom: 20px;
         }
+        #cant-view-assignments-text{
+            color: gray;
+            font-size: 30px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .delete-assignment{
+            border: none;
+            color: red;
+            outline: none;
+            background: none;
+        }
     </style>
 {% if messages %}
         <script>
@@ -713,6 +724,7 @@
                             <tr>
                                 <th>Assignment Subject (click name to view detail) </th>
                                 <th>due Date</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -723,6 +735,9 @@
                                     </td>
                                     <td>
                                         <span> {{ assignment.due_date }} </span>
+                                    </td>
+                                    <td>
+                                        <button onclick="removeAssignmentModal({{ assignment.assignment_id }})" class="delete-assignment">X</button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -811,7 +826,7 @@
             </div>
             {% else %}
                 <div id="assignments-roster">
-
+                    <p id="cant-view-assignments-text">You must be enrolled in this class in order to view the assignments.</p>
                 </div>
             {% endif %}
             <div id="discussion-roster">
@@ -1237,7 +1252,19 @@
             commentId = comment_id;
             let p = document.createElement('p');
             p.setAttribute("id", "removal-text");
-            p.innerHTML = "I confirm I want to delete this message and it's comments (if any)";
+            p.innerHTML = "Are you sure you want to delete this message and any comment messages that may be associated with it?";
+            removeModalBody.prepend(p);
+            removeModal.style.display="block";
+        }
+
+        var removeAssignment = false;
+        var assignmentId = null;
+        function removeAssignmentModal(assignment_id){
+            removeAssignment = true;
+            assignmentId = assignment_id;
+            let p = document.createElement('p');
+            p.setAttribute("id", "removal-text");
+            p.innerHTML = "Are you sure you want to delete this assignment? Doing so will also delete any submissions.";
             removeModalBody.prepend(p);
             removeModal.style.display="block";
         }
@@ -1273,8 +1300,10 @@
             if(removeComment) {
                 delete_post(commentId);
             }
-
-            if(removingStudent){
+            else if(removeAssignment){
+                deleteAssignment(assignmentId);
+            }
+            else if(removingStudent){
                 $.ajax({
                     url: '/groups/class/removestudent/',
                     method: 'post',
@@ -1400,16 +1429,32 @@
         }
 
 
-            function publish() {
-                var type = document.getElementById("publish-form-container").style.display;
-                if (type === "none") {
-                    document.getElementById("publish-form-container").style.display = "block";
-                } else {
-                    document.getElementById("publish-form-container").style.display = "none";
-                }
+        function publish() {
+            var type = document.getElementById("publish-form-container").style.display;
+            if (type === "none") {
+                document.getElementById("publish-form-container").style.display = "block";
+            } else {
+                document.getElementById("publish-form-container").style.display = "none";
             }
-            function cancel_form() {
-                window.location.href = ""
-            }
+        }
+        function cancel_form() {
+            window.location.href = ""
+        }
+        function deleteAssignment(assignment_id){
+             $.ajax({
+                    url: '/assignment/removeassignment/',
+                    method: 'post',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'assignment_id': assignment_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        window.location.href = ""
+                    },
+                    error: function (data){
+                    }
+                  });
+        }
     </script>
 {%endblock %}
