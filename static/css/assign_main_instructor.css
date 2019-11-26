@@ -71,14 +71,10 @@
     }
 
     #assignment-container{
-        width:100%;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        background-color: dodgerblue;
-        padding-top:10px;
-        padding-bottom: 10px;
-        margin-top:-10px;
-        margin-bottom: 20px;
-        padding-right: 50px;
+        border: none;
+        outline: none;
+        color: dodgerblue;
+        background-color: whitesmoke;
     }
 
     #assignment-container:hover{
@@ -86,8 +82,9 @@
     }
 
     #assignment-container-text{
-        color: white;
+        color: dodgerblue;
         font-family: 'Montserrat', sans-serif;
+        font-size: 24px;
     }
 
     #big-group-button{

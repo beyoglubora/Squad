@@ -3,6 +3,8 @@ from data import models as DataModel
 from django.http import HttpResponseRedirect, JsonResponse
 import re
 import collections
+from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
+from django.utils import timezone
 
 
 def class_details(request, message=None, class_id=None):
@@ -101,12 +103,38 @@ def class_details(request, message=None, class_id=None):
     od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
     print(od_msg_dict)
 
+    assignments_in_this_class = DataModel.Assignment.objects.filter(class_instance=c)
+    if request.method == 'POST':
+        form = AssignmentsForm(request.POST, request.FILES)
+        if form.is_valid():
+            a = form.save()
+    else:
+        form = AssignmentsForm(initial={'class_instance': c})
+
+    group_instance = own_group
+    class_instance = c
+    # find all assignment for this class
+    assignment_in_class = DataModel.Assignment.objects.filter(class_instance=class_instance)
+    assignment_group_dict = {}
+    for a in assignment_in_class:
+        a_rel = DataModel.AssignmentRelationship.objects.filter(group_instance=group_instance,
+                                                      assignment_instance=a).first()
+        if not a_rel:
+            # this group has no file for this assignment
+            assignment_group_dict[a] = False
+        else:
+            assignment_group_dict[a] = a_rel
+
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'enrolled': enrolled, 'invalid': invalid,
                                                   'student_descriptions_skills': student_descriptions_skills, "in_group": in_group,
                                                   "own_group": own_group,
                                                   'msg_dict': od_msg_dict,
                                                   'requesterID': requesterID,
-                                                  'isInstructor': isInstructor
+                                                  'isInstructor': isInstructor,
+                                                  'assignments': assignments_in_this_class,
+                                                  'form': form,
+                                                  'assignment_rel_dic': assignment_group_dict,
+                                                  'time_now': timezone.now()
                                                   })
 
 

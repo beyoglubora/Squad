@@ -1,10 +1,20 @@
+{% extends 'base.html' %}
+
+
+{# Include Bootstrap 4 and jQuery #}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+{# Django Tempus Dominus assets are included in `{{ form.media }}` #}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
 
-{% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    {{ form.media }}
     <style>
         body{
             background-color: whitesmoke;
@@ -78,26 +88,6 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        #assignment-container{
-            width:100%;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            background-color: darkgreen;
-            padding-top:10px;
-            padding-bottom: 10px;
-            margin-top:-10px;
-            margin-bottom: 20px;
-            padding-right: 50px;
-        }
-
-        #assignment-container:hover{
-            opacity: .7;
-        }
-
-        #assignment-container-text{
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-        }
-
         #big-group-button{
             width:100%;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -122,7 +112,7 @@
             border: none;
             background: none;
             color: gray;
-            margin-left:15%;
+            margin-left:5%;
             margin-bottom: 3%;
         }
         #students-button:hover{
@@ -136,7 +126,7 @@
             border: none;
             background: none;
             color: gray;
-            margin-left:15%;
+            margin-left:5%;
             margin-bottom: 3%;
         }
         #groups-button:hover{
@@ -151,13 +141,28 @@
             border: none;
             background: none;
             color: gray;
-            margin-left:15%;
+            margin-left:5%;
             margin-bottom: 3%;
         }
         #discussion-button:hover{
             color: lightskyblue;
         }
         #discussion-button:focus {
+            outline: none;
+        }
+
+        #assignments-button{
+            font-size: 40px;
+            border: none;
+            background: none;
+            color: gray;
+            margin-left:5%;
+            margin-bottom: 3%;
+        }
+        #assignments-button:hover{
+            color: lightskyblue;
+        }
+        #assignments-button:focus {
             outline: none;
         }
 
@@ -282,8 +287,6 @@
         .delete-skill{
             display: inline-block;
             height: 28px;
-            {#margin-left:-4px;#}
-            {#margin-bottom: 50000px;#}
             background: none;
             background-color: lightskyblue;
             color: white;
@@ -567,7 +570,9 @@
         .post-text-box{
             background-color: whitesmoke;
         }
-
+        #assignments-roster{
+            margin-bottom: 20px;
+        }
     </style>
 {% if messages %}
         <script>
@@ -613,11 +618,6 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if user.is_instructor and  user.account_id == class.instructor_instance_id %}
-                    <button id="assignment-container" onclick="window.location.href='/assignment/instructor/{{ class.class_id }}'">
-                        <h1 id="assignment-container-text">Assignments</h1>
-                    </button>
-                {% endif %}
                 {% if enrolled and not in_group or request.user.pk == class.instructor_instance_id %}
                     <button id="create-group-container">
                         <h1 id="create-group-container-text">Start a Group</h1>
@@ -645,6 +645,7 @@
                 <button id="students-button" onclick="changeToStudentRoster()">Students</button>
                 <button id="groups-button" onclick="changeToGroupRoster()">Groups</button>
                 <button id="discussion-button" onclick="changeToDiscussionRoster()">Discussion</button>
+                <button id="assignments-button" onclick="changeToAssignmentsRoster()">Assignments</button>
             </div>
 
             <div id="student-roster">
@@ -684,7 +685,135 @@
                     </div>
                 {% endfor %}
             </div>
+            {% if isInstructor %}
+                <div id="assignments-roster">
+                    <button onclick="publish()" id="assignment-container">
+                        <h1 id="assignment-container-text">+ Publish New Assignment</h1>
+                    </button>
+                <div id="publish-form-container" style="display: none">
+                <form method="post" enctype="multipart/form-data" id="publish-form">
+                    {% csrf_token %}
+                    {{ form.errors }}
+                    <ul id="form-ul-container">
+                        <li id="form-li-container"><p id="group-name-text">Subject</p><div style="width: 60%">{{ form.subject }}</div></li>
+                        <li id="form-li-container"><p id="group-name-text">Description</p><div style="width: 60%">{{ form.description }}</div></li>
+                        <li id="form-li-container"><p id="group-name-text">Deadline</p><div style="width: 60%">{{ form.due_date }}</div></li>
+                        <li id="form-li-container" style="display: none">{{ form.class_instance }}</li>
+                        <li id="form-li-container">
+                        <div style="width: 60%">
+                            <button id="create-group-button" type="submit">submit</button>
+                            <button id="create-group-button" type="button" onclick="cancel_form()">cancel</button>
+                        </div>
+                        </li>
+                    </ul>
+                </form>
+                </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Assignment Subject (click name to view detail) </th>
+                                <th>due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assignment in assignments %}
+                                <tr>
+                                    <td>
+                                        <a href="../../assignment/detail/{{ assignment.assignment_id }}"> {{ assignment.subject }} </a>
+                                    </td>
+                                    <td>
+                                        <span> {{ assignment.due_date }} </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif enrolled %}
+            <div id="assignments-roster">
+                <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th></th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                        <th>Upload Time</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in assignment_rel_dic.items %}
+                        <tr>
+                            <td>
+                                <span>{{ key.subject }}</span>
+                            </td>
+                            <td>
+                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal_{{ forloop.counter }}">
+                                    details
+                             </button>
+                                <div class="modal fade" id="exampleModal_{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Description</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        {{ key.description }}
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if time_now < key.due_date  %}
+                                    <span class="btn btn-outline-secondary btn-sm">{{ key.due_date }}</span>
+                                {% else %}
+                                    <span class="btn btn-outline-danger btn-sm" >{{ key.due_date }}</span>
+                                {% endif %}
+                            </td>
+                            {% if value %}
+                                <td>
+                                    <span> <a class="btn btn-success btn-sm" href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
+                                </td>
+                                <td>
 
+                                    <span>{{ value.upload_time }}</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-danger btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Resubmit </a>
+                                </td>
+                            {% else %}
+                            <td>
+                                <span> No upload files </span>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                {% if in_group %}
+                                    <a class="btn btn-primary btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Submit Now </a>
+                                {% else %}
+                                    <p>You must be in a group in order to submit an assignment.</p>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            {% else %}
+                <div id="assignments-roster">
+
+                </div>
+            {% endif %}
             <div id="discussion-roster">
                 {% if enrolled or isInstructor %}
                     <div id="message-board" class="has-border">
@@ -889,6 +1018,9 @@
                             document.body.scrollTop=parseInt(arr[1]);
                         }
                     }
+                    else if (showElement[1] === "assignments") {
+                        changeToAssignmentsRoster();
+                    }
                 } else {
                     changeToStudentRoster();
                 }
@@ -898,29 +1030,46 @@
         function changeToStudentRoster(){
             document.getElementById("groups-button").setAttribute("style", 'color:gray');
             document.getElementById("students-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("assignments-button").setAttribute("style", 'color:gray');
             document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "block";
             document.getElementById("group-roster").style.display = "none";
             document.getElementById("discussion-roster").style.display = "none";
+            document.getElementById("assignments-roster").style.display="none";
             document.cookie = "show="+"student";
         }
         function changeToGroupRoster(){
             document.getElementById("students-button").setAttribute("style", 'color:gray');
             document.getElementById("groups-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("assignments-button").setAttribute("style", 'color:gray');
             document.getElementById("discussion-button").setAttribute("style", 'color:gray');
             document.getElementById("student-roster").style.display = "none";
             document.getElementById("group-roster").style.display = "block";
             document.getElementById("discussion-roster").style.display = "none";
+            document.getElementById("assignments-roster").style.display="none";
             document.cookie = "show="+"group";
         }
         function changeToDiscussionRoster() {
             document.getElementById("students-button").setAttribute("style", 'color:gray');
             document.getElementById("groups-button").setAttribute("style", 'color:gray');
+            document.getElementById("assignments-button").setAttribute("style", 'color:gray');
             document.getElementById("discussion-button").setAttribute("style", 'color:lightskyblue');
             document.getElementById("student-roster").style.display = "none";
             document.getElementById("group-roster").style.display = "none";
+            document.getElementById("assignments-roster").style.display="none";
             document.getElementById("discussion-roster").style.display = "block";
             document.cookie = "show="+"discussion";
+        }
+        function changeToAssignmentsRoster() {
+            document.getElementById("students-button").setAttribute("style", 'color:gray');
+            document.getElementById("groups-button").setAttribute("style", 'color:gray');
+            document.getElementById("discussion-button").setAttribute("style", 'color:gray');
+            document.getElementById("assignments-button").setAttribute("style", 'color:lightskyblue');
+            document.getElementById("student-roster").style.display = "none";
+            document.getElementById("group-roster").style.display = "none";
+            document.getElementById("discussion-roster").style.display = "none";
+            document.getElementById("assignments-roster").style.display = "block";
+            document.cookie = "show="+"assignments";
         }
 
         var enrollModal = document.getElementById("enroll-modal");
@@ -1249,14 +1398,18 @@
                 }
               });
         }
-        window.addEventListener( "pageshow", function ( event ) {
-          var historyTraversal = event.persisted ||
-                                 ( typeof window.performance != "undefined" &&
-                                      window.performance.navigation.type === 2 );
-          if ( historyTraversal ) {
-            // Handle page restore.
-            window.location.reload();
-          }
-        });
+
+
+            function publish() {
+                var type = document.getElementById("publish-form-container").style.display;
+                if (type === "none") {
+                    document.getElementById("publish-form-container").style.display = "block";
+                } else {
+                    document.getElementById("publish-form-container").style.display = "none";
+                }
+            }
+            function cancel_form() {
+                window.location.href = ""
+            }
     </script>
 {%endblock %}
