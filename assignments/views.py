@@ -2,16 +2,9 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
-from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
+from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship
 from django.urls import reverse_lazy
-from bootstrap_modal_forms.generic import BSModalCreateView
-
-
-class Assignment_create_view(BSModalCreateView):
-    template_name = 'publish_assignment.html'
-    form_class = Assignments_Boostrap_Form
-    success_message = 'Success: Assignment was published.'
-    success_url = reverse_lazy('/assignment/instructor/1')
+from django.utils import timezone
 
 
 # Create your views here.
@@ -25,50 +18,32 @@ def assignment_main_page(request, class_pk):
         return HttpResponseRedirect("/groups/class/" + str(class_pk))
 
     assignments_in_this_class = Assignment.objects.filter(class_instance=class_instance)
-    return render(request, 'assignment_main_instructor.html',{
-        'class_ins': class_instance,
-        'assignments': assignments_in_this_class
-    })
 
-
-def get_class_ins(request):
-    return Class.objects.first()
-
-
-def get_assignment_ins(request):
-    return Assignment.objects.first()
-
-
-def get_group_ins(request):
-    return Group.objects.first()
-
-
-def show(request):
-    class_ins = get_class_ins(request)
-    # for test
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
-        print(222)
         if form.is_valid():
-            print(form.cleaned_data['due_date'])
+            a = form.save()
 
-            print("1111")
-            # a = form.save()
-
-        # TODO: new return
-        return render(request, 'assignment.html', {
+        return render(request, 'assignment_main_instructor.html', {
+            'class_ins': class_instance,
+            'assignments': assignments_in_this_class,
             'form': form,
         })
     else:
-        form = AssignmentsForm(initial={'class_instance': class_ins})
-        return render(request, 'assignment.html', {
+        form = AssignmentsForm(initial={'class_instance': class_instance})
+        return render(request, 'assignment_main_instructor.html', {
+            'class_ins': class_instance,
+            'assignments': assignments_in_this_class,
             'form': form,
         })
 
 
-def show_student_upload(request):
-    assignment_ins = get_assignment_ins(request)
-    group_ins = get_group_ins(request)
+def show_student_upload(request, a_pk, g_pk):
+    assignment_ins = Assignment.objects.filter(assignment_id=a_pk).first()
+    if not assignment_ins:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    group_ins = Group.objects.filter(group_id=g_pk).first()
     # for test
     if request.method == 'POST':
         form = StudentUploadForm(request.POST, request.FILES)
@@ -101,11 +76,77 @@ def show_student_upload(request):
 
 
         # TODO: new return
-        return render(request, 'assignment.html', {
-            'form': form,
-        })
+        return HttpResponseRedirect("/assignment/group/" + str(g_pk))
     else:
         form = StudentUploadForm()
         return render(request, 'student_upload.html', {
+            'assign_ins': assignment_ins,
             'form': form,
         })
+
+
+def show_assignment_detail(request, a_pk):
+    """
+    render to a detail page of an assignment, where instructor can see groups with their
+    uploaded files
+    :param request, a_pk:
+    :return:
+    """
+    assignment_ins = Assignment.objects.filter(assignment_id=a_pk).first()
+    if not assignment_ins:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    if assignment_ins.class_instance.instructor_instance != request.user:
+        messages.info(request, "You are not the instructor of this class")
+        return HttpResponseRedirect("/explore")
+
+    ass_class_instance = assignment_ins.class_instance
+    # get groups in this class
+    groups = Group.objects.filter(class_instance=ass_class_instance)
+    groups_assignment_dict = {}
+    for group in groups:
+        a_rel = AssignmentRelationship.objects.filter(group_instance=group,
+                                                      assignment_instance=assignment_ins).first()
+        if not a_rel:
+            # this group has no file for this assignment
+            groups_assignment_dict[group] = False
+        else:
+            groups_assignment_dict[group] = a_rel
+
+    return render(request, 'assignment_detail_instructor.html', {
+        'assignment_ins': assignment_ins,
+        'groups_rel_dic': groups_assignment_dict
+    })
+
+
+def show_assignment_group(request, group_pk):
+    group_instance = Group.objects.filter(group_id=group_pk).first()
+    if request.user.is_instructor:
+        messages.info(request, "This is for students only")
+        return HttpResponseRedirect("/explore")
+    if not group_instance:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    relationship_instance = Relationship.objects.filter(group_id=group_pk, student_instance=request.user).first()
+    if not relationship_instance:
+        messages.info(request, "You are not in that Group")
+        return HttpResponseRedirect("/explore")
+
+    class_instance = group_instance.class_instance
+    # find all assignment for this class
+    assignment_in_class = Assignment.objects.filter(class_instance=class_instance)
+    assignment_group_dict = {}
+    for a in assignment_in_class:
+        a_rel = AssignmentRelationship.objects.filter(group_instance=group_instance,
+                                                      assignment_instance=a).first()
+        if not a_rel:
+            # this group has no file for this assignment
+            assignment_group_dict[a] = False
+        else:
+            assignment_group_dict[a] = a_rel
+
+    return render(request, 'assignment_in_group.html', {
+        'group_ins': group_instance,
+        'assignment_rel_dic': assignment_group_dict,
+        'time_now': timezone.now()
+    })

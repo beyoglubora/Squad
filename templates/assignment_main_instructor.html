@@ -1,19 +1,58 @@
-{% extends 'base.html' %}
-{% block extra_js%}
-    <script src="http://malsup.github.com/jquery.form.js"></script>
-{% endblock %}
+<!DOCTYPE html>
+{% include 'navbar.html' %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignments</title>
+        {# Include FontAwesome; required for icon display #}
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+    {# Include Bootstrap 4 and jQuery #}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    {# Django Tempus Dominus assets are included in `{{ form.media }}` #}
+    {{ form.media }}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
+</head>
 {% block content %}
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/jquery.bootstrap.modal.forms.min.js"></script>
-<h1>
-    {{ class_ins.class_name }}
-</h1>
-  <button class="create-assignment btn btn-primary" type="button" name="button">Publish</button>
+<div id="wrapper">
+    <div id="banner-card">
+        <h1 id = "class-title">{{ class_ins.class_name }}</h1>
+        <a id="instructor-name" href="/account/{{ class_ins.instructor_instance.account_id }}">{{ class_ins.instructor_instance.first_name }} {{ class_ins.instructor_instance.last_name }}</a>
+        <br>
+        <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+        <br>
+    </div>
+<button onclick="publish()" id="assignment-container">
+    <h1 id="assignment-container-text">Publish New Assignment</h1>
+</button>
+<button onclick="window.history.back()" id="assignment-container">
+    <h1 id="assignment-container-text">Back to Class</h1>
+</button>
+<div id="publish-form-container" style="display: none">
+<form method="post" enctype="multipart/form-data" id="publish-form">
+    {% csrf_token %}
+    {{ form.errors }}
+    <ul id="form-ul-container">
+        <li id="form-li-container"><p id="group-name-text">Subject</p><div style="width: 60%">{{ form.subject }}</div></li>
+        <li id="form-li-container"><p id="group-name-text">Description</p><div style="width: 60%">{{ form.description }}</div></li>
+        <li id="form-li-container"><p id="group-name-text">Deadline</p><div style="width: 60%">{{ form.due_date }}</div></li>
+        <li id="form-li-container" style="display: none">{{ form.class_instance }}</li>
+        <li id="form-li-container">
+        <div style="width: 60%">
+            <button id="create-group-button" type="submit">submit</button>
+            <button id="create-group-button" type="button" onclick="cancel_form()">cancel</button>
+        </div>
+        </li>
+    </ul>
+</form>
+</div>
 <table>
     <thead>
         <tr>
-            <th>Assignment Subject</th>
+            <th>Assignment Subject (click name to view detail) </th>
             <th>due Date</th>
         </tr>
     </thead>
@@ -21,7 +60,7 @@
         {% for assignment in assignments %}
             <tr>
                 <td>
-                    <span> {{ assignment.subject }} </span>
+                    <a href="../../assignment/detail/{{ assignment.assignment_id }}"> {{ assignment.subject }} </a>
                 </td>
                 <td>
                     <span> {{ assignment.due_date }} </span>
@@ -30,13 +69,18 @@
         {% endfor %}
     </tbody>
 </table>
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        $(".create-assignment").modalForm({
-            formURL: "{% url 'create_assignment' %}"
-        });
-
-    });
+</div>
+<script>
+    function publish() {
+        var type = document.getElementById("publish-form-container").style.display;
+        if (type === "none") {
+            document.getElementById("publish-form-container").style.display = "block";
+        } else {
+            document.getElementById("publish-form-container").style.display = "none";
+        }
+    }
+    function cancel_form() {
+        window.location.href = ""
+    }
 </script>
 {% endblock %}

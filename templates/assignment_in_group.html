@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% include 'navbar.html' %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group Assignments</title>
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <script src="/static/js/popper.min.js"></script>
+</head>
+<body>
+<div id="wrapper">
+<div id="banner-card">
+    <h1 id = "class-title">{{ group_ins.group_name }}</h1>
+    <a id="instructor-name" href="/groups/class/{{ group_ins.class_instance.class_id }}">{{ group_ins.class_instance.class_name }}</a>
+    <br>
+    <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+    <br>
+</div>
+<button onclick="window.history.back()" id="assignment-container">
+    <h1 id="assignment-container-text">Back to Class</h1>
+</button>
+<div>
+    <table>
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th></th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th>Upload Time</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in assignment_rel_dic.items %}
+            <tr>
+                <td>
+                    <span>{{ key.subject }}</span>
+                </td>
+                <td>
+                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal_{{ forloop.counter }}">
+                        details
+                 </button>
+                    <div class="modal fade" id="exampleModal_{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Description</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            {{ key.description }}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </td>
+                <td>
+                    {% if time_now < key.due_date  %}
+                        <span class="btn btn-outline-secondary btn-sm">{{ key.due_date }}</span>
+                    {% else %}
+                        <span class="btn btn-outline-danger btn-sm" >{{ key.due_date }}</span>
+                    {% endif %}
+                </td>
+                {% if value %}
+                    <td>
+                        <span> <a class="btn btn-success btn-sm" href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
+                    </td>
+                    <td>
+
+                        <span>{{ value.upload_time }}</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Resubmit </a>
+                    </td>
+                {% else %}
+                <td>
+                    <span> No upload files </span>
+                </td>
+                <td>
+
+                </td>
+                <td>
+                    <a class="btn btn-primary btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Submit Now </a>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

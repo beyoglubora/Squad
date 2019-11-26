@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% extends 'base.html' %}
 
 {% block title %}Home{% endblock %}
@@ -47,24 +48,38 @@
             margin-bottom: 2%;
         }
         .class-name-container{
+            background-color: whitesmoke;
             border: 2px solid lightskyblue;
             width: 45%;
             padding-top: 80px;
             padding-bottom: 100px;
-            padding-left: 70px;
-            padding-right: 30px;
             float: left;
             word-wrap: break-word;
-            min-width:400px;
-
+            text-align: center;
+            -webkit-transition: background-color .5s;
+            -moz-transition:    background-color .5s;
+            -ms-transition:     background-color .5s;
+            -o-transition:      background-color .5s;
+            transition:         background-color .5s;
         }
+        .class-name-container:hover{
+            background-color: dodgerblue;
+            border-color: dodgerblue;
+        }
+        .class-name-container:hover .class-name{
+            color: white !important;
+        }
+        .class-name-container:hover .instructor-name{
+            color: lightgray !important;
+        }
+
         .description-container{
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             word-break: break-word;
 
         }
-        #class-name{
+        .class-name{
             color: lightskyblue;
             font-family: 'Montserrat', sans-serif;
             font-size: 40px;
@@ -83,7 +98,7 @@
             color: gray;
         }
 
-        #instructor-name{
+        .instructor-name{
             color: gray;
             font-size: 30px;
         }
@@ -215,11 +230,31 @@
         #create-class-redirect:hover{
             text-decoration: underline;
         }
+        #search-icon{
+            color: lightskyblue;
+            float:right;
+            margin-top: -80px;
+            margin-right: 150px;
+        }
+        #profile-photo{
+            border-radius: 55%;
+            height: 50px;
+            width: 50px;
+            margin-right:5px;
+        }
     </style>
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+{% endif %}
     {% if user.is_authenticated %}
         <div id="wrapper">
             <div id="banner-card">
                 <h1 id = "explore-title">Explore</h1>
+                <i style="color: lightskyblue; float:right; margin-right: 50px;" id="search-icon" class="fa fa-search w3-jumbo"></i>
                 <br>
                 <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
                 <br>
@@ -246,10 +281,10 @@
             {% for class in classes %}
                 <li class="class-list-item">
                     <div class="class-container">
-                        <div  class="class-name-container">
-                            <a href="../groups/class/{{ class.class_id }}"  id="class-name">{{ class.class_name }}</a>
-                            <p id="instructor-name">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</p>
-                        </div>
+                        <button onclick="window.location.href='../groups/class/{{ class.class_id }}'" class="class-name-container">
+                            <p class="class-name">{{ class.class_name }}</p>
+                            <a href='../account/{{ class.instructor_instance.account_id }}' class="instructor-name"><img id="profile-photo" src="{{ class.instructor_instance.profile_photo.url }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a>
+                        </button>
                         <div class="description-container">
                             <h2 class="description-label">Description</h2>
                             <hr>
@@ -276,12 +311,15 @@ function classSearch() {
 
   // Loop through all list items, and hide those who don't match the search query
   for (i = 0; i < li.length; i++) {
-    a = li[i].getElementsByTagName("a")[0];
-    b = li[i].getElementsByTagName("p")[1];
+    a = li[i].getElementsByClassName("class-name")[0];
+    b = li[i].getElementsByClassName("description")[0];
     txtValue = a.textContent || a.innerText;
     txtValue2 = b.textContent || b.innerText;
     if (txtValue.toUpperCase().replace(/\s/g, '').indexOf(filter) > -1) {
       li[i].style.display = "";
+    }
+    else if(txtValue.toUpperCase().indexOf(filter) > -1){
+
     }
     else if(txtValue2.toUpperCase().replace(/\s/g, '').indexOf(filter) > -1){
         li[i].style.display = "";

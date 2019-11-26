@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% include 'navbar.html' %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+<div id="wrapper">
+<div id="banner-card">
+    <h1 id = "class-title">{{ assignment_ins.subject }}</h1>
+    <a id="instructor-name" href="/groups/class/{{ assignment_ins.class_instance.class_id }}">{{ assignment_ins.class_instance.class_name }}</a>
+    <br>
+    <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+    <br>
+    <span> DUE: {{ assignment_ins.due_date }}</span>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Group Name</th>
+            <th>Submitted Assignment</th>
+            <th>Upload Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in groups_rel_dic.items %}
+            {% if value %}
+            <tr>
+                <td>
+                    <span> {{ key.group_name }} </span>
+                </td>
+                <td>
+                    <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
+                </td>
+                <td>
+                    {% if value.upload_time < assignment_ins.due_date %}
+                        <span class="btn btn-outline-success btn-sm"> {{ value.upload_time }}</span>
+                    {% else %}
+                        <span class="btn btn-outline-danger btn-sm"> {{ value.upload_time }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>
+                    <span> {{ key.group_name }} </span>
+                </td>
+                <td>
+                    <span> They didn't upload assignment yet </span>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</body>
+</html>

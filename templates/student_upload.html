@@ -5,19 +5,47 @@
     <title>Assignments</title>
         {# Include FontAwesome; required for icon display #}
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
-
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     {# Include Bootstrap 4 and jQuery #}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
     {# Django Tempus Dominus assets are included in `{{ form.media }}` #}
     {{ form.media }}
 </head>
 <body>
-<form method="post" enctype="multipart/form-data">
+{% include 'navbar.html' %}
+<div id="wrapper">
+    <div id="banner-card">
+        <h1 id = "class-title">Uploading for {{ assign_ins.subject }}</h1>
+        <a id="instructor-name" href="/groups/class/{{ assign_ins.class_instance.instructor_instance.account_id }}">{{ assign_ins.class_instance.class_name }}</a>
+        <br>
+        <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
+        <br>
+    </div>
+<button onclick="back_to_group()" id="assignment-container">
+    <h1 id="assignment-container-text">Back to group</h1>
+</button>
+<div id="publish-form-container">
+<form method="post" enctype="multipart/form-data" id="publish-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">submit</button>
+    {{ form.errors }}
+    <ul id="form-ul-container">
+        <li id="form-li-container"><p id="group-name-text">Description</p><div style="width: 80%">{{ form.description }}</div></li>
+        <li id="form-li-container"><p id="group-name-text">Upload</p><div style="width: 80%">{{ form.upload_file }}</div></li>
+        <li id="form-li-container">
+        <div style="width: 80%">
+            <button id="create-group-button" type="submit">submit</button>
+        </div>
+        </li>
+    </ul>
 </form>
+</div>
+</div>
 </body>
+<script>
+    function back_to_group() {
+        window.history.back();
+    }
+</script>
 </html>
