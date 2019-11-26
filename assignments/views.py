@@ -4,14 +4,6 @@ from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
 from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
 from django.urls import reverse_lazy
-from bootstrap_modal_forms.generic import BSModalCreateView
-
-
-class Assignment_create_view(BSModalCreateView):
-    template_name = 'publish_assignment.html'
-    form_class = Assignments_Boostrap_Form
-    success_message = 'Success: Assignment was published.'
-    success_url = reverse_lazy('/assignment/instructor/1')
 
 
 # Create your views here.
@@ -25,10 +17,29 @@ def assignment_main_page(request, class_pk):
         return HttpResponseRedirect("/groups/class/" + str(class_pk))
 
     assignments_in_this_class = Assignment.objects.filter(class_instance=class_instance)
-    return render(request, 'assignment_main_instructor.html',{
-        'class_ins': class_instance,
-        'assignments': assignments_in_this_class
-    })
+
+    if request.method == 'POST':
+        form = AssignmentsForm(request.POST, request.FILES)
+        print(222)
+        if form.is_valid():
+            print(form.cleaned_data['due_date'])
+
+            print("1111")
+            # a = form.save()
+
+        # TODO: new return
+        return render(request, 'assignment_main_instructor.html', {
+            'class_ins': class_instance,
+            'assignments': assignments_in_this_class,
+            'form': form,
+        })
+    else:
+        form = AssignmentsForm(initial={'class_instance': class_instance})
+        return render(request, 'assignment.html', {
+            'class_ins': class_instance,
+            'assignments': assignments_in_this_class,
+            'form': form,
+        })
 
 
 def get_class_ins(request):
@@ -109,3 +120,24 @@ def show_student_upload(request):
         return render(request, 'student_upload.html', {
             'form': form,
         })
+
+
+def show_assignment_detail(request, a_pk):
+    """
+    render to a detail page of an assignment, where instructor can see groups with their
+    uploaded files
+    :param request, a_pk:
+    :return:
+    """
+    assignment_ins = Assignment.objects.filter(assignment_id=a_pk).first()
+    if not assignment_ins:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    if assignment_ins.class_instance.instructor_instance != request.user:
+        messages.info(request, "You are not the instructor of this class")
+        return HttpResponseRedirect("/explore")
+
+    ass_class_instance = assignment_ins.class_instance
+    groups = Group.objects.filter(class_instance=ass_class_instance)
+
+
