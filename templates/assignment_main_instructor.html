@@ -1,15 +1,9 @@
 {% extends 'base.html' %}
-{% block extra_js%}
-    <script src="http://malsup.github.com/jquery.form.js"></script>
-{% endblock %}
 {% block content %}
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/jquery.bootstrap.modal.forms.min.js"></script>
 <h1>
     {{ class_ins.class_name }}
 </h1>
-  <button class="create-assignment btn btn-primary" type="button" name="button">Publish</button>
+
 <table>
     <thead>
         <tr>
@@ -30,13 +24,4 @@
         {% endfor %}
     </tbody>
 </table>
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        $(".create-assignment").modalForm({
-            formURL: "{% url 'create_assignment' %}"
-        });
-
-    });
-</script>
 {% endblock %}
