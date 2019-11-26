@@ -25,6 +25,7 @@
     </thead>
     <tbody>
         {% for key, value in groups_rel_dic.items %}
+            {% if value %}
             <tr>
                 <td>
                     <span> {{ key.group_name }} </span>
@@ -33,6 +34,16 @@
                     <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">download</a> </span>
                 </td>
             </tr>
+            {% else %}
+            <tr>
+                <td>
+                    <span> {{ key.group_name }} </span>
+                </td>
+                <td>
+                    <span> They didn't upload assignment yet </span>
+                </td>
+            </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
