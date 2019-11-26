@@ -4,6 +4,7 @@ from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 import datetime
 from bootstrap_modal_forms.forms import BSModalForm
 
+
 class Assignments_Boostrap_Form(BSModalForm):
     class Meta:
         model = Assignment
@@ -18,10 +19,11 @@ class Assignments_Boostrap_Form(BSModalForm):
             )
         }
 
+
 class AssignmentsForm(forms.ModelForm):
     class Meta:
         model = Assignment
-        fields = ('subject', 'description', 'due_date', 'class_instance')
+        fields = ('subject', 'file', 'description', 'due_date', 'class_instance')
         widgets = {
             'subject': forms.TextInput(attrs={'class': 'subject-class'}),
             'class_instance': forms.HiddenInput(),

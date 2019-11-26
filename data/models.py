@@ -155,6 +155,7 @@ class Messages(models.Model):
 class Assignment(models.Model):
     assignment_id = models.BigAutoField(primary_key=True)
     subject = models.CharField(max_length=30)
+    file = models.FileField(upload_to='assignments/uploads', null=True, blank=True)
     description = models.TextField(max_length=300)
     class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
     due_date = models.DateTimeField()

@@ -117,8 +117,7 @@ def class_details(request, message=None, class_id=None):
     assignment_in_class = DataModel.Assignment.objects.filter(class_instance=class_instance)
     assignment_group_dict = {}
     for a in assignment_in_class:
-        a_rel = DataModel.AssignmentRelationship.objects.filter(group_instance=group_instance,
-                                                      assignment_instance=a).first()
+        a_rel = DataModel.AssignmentRelationship.objects.filter(group_instance=group_instance, assignment_instance=a).first()
         if not a_rel:
             # this group has no file for this assignment
             assignment_group_dict[a] = False

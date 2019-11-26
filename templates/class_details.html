@@ -195,6 +195,15 @@
         #group-roster{
             display: none;
         }
+        #student-roster{
+            display: none;
+        }
+        #assignments-roster{
+            display: none;
+        }
+        #discussion-roster{
+            display: none;
+        }
         .group-container{
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             width: 500px;
@@ -707,6 +716,7 @@
                     {{ form.errors }}
                     <ul id="form-ul-container">
                         <li id="form-li-container"><p id="group-name-text">Subject</p><div style="width: 60%">{{ form.subject }}</div></li>
+                        <li id="form-li-container"><p id="group-name-text">File</p><div style="width: 60%">{{ form.file }}</div></li>
                         <li id="form-li-container"><p id="group-name-text">Description</p><div style="width: 60%">{{ form.description }}</div></li>
                         <li id="form-li-container"><p id="group-name-text">Deadline</p><div style="width: 60%">{{ form.due_date }}</div></li>
                         <li id="form-li-container" style="display: none">{{ form.class_instance }}</li>
@@ -761,7 +771,11 @@
                     {% for key, value in assignment_rel_dic.items %}
                         <tr>
                             <td>
-                                <span>{{ key.subject }}</span>
+                                {% if key.file %}
+                                    <a style="color: dodgerblue" href="{{ key.file.url }}">{{ key.subject }}</a>
+                                {% else %}
+                                    <span>{{ key.subject }}</span>
+                                {% endif %}
                             </td>
                             <td>
                              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal_{{ forloop.counter }}">
