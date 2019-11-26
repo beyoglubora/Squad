@@ -23,7 +23,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">submit</button>
-    <button onclick="cancel_form()">cancel</button>
+    <button type="button" onclick="cancel_form()">cancel</button>
 </form>
 </div>
 <table>
@@ -51,7 +51,7 @@
         document.getElementById("publish-form").style.display = "block"
     }
     function cancel_form() {
-        document.getElementById("publish-form").style.display = "none"
+        window.location.href = ''
     }
 </script>
 {% endblock %}
