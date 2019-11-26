@@ -186,6 +186,13 @@
             margin-bottom: 5%;
         }
 
+        .edit-profile-error-message{
+            color: darkred;
+            font-size: small;
+            margin-top: 8%;
+            margin-bottom: -7%;
+        }
+
         .edit-class-modal-content{
             position: absolute;
             background-color: white;
@@ -198,6 +205,22 @@
 	        left: 0;
 	        right: 0;
             min-width: 480px;
+            text-align: center;
+        }
+
+        .edit-profile-modal-content{
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            height: 60%;
+            width: 60%;
+            margin: 10% auto;
+            top:0;
+	        bottom: 0;
+	        left: 0;
+	        right: 0;
+            min-width: 480px;
+            min-height: 420px;
             text-align: center;
         }
 
@@ -224,6 +247,59 @@
             width: 80%;
             text-indent: 10px;
             margin: 15% auto;
+        }
+        .edit-profile-first-name{
+            border: 2px solid lightskyblue;
+            height: 10%;
+            width: 40%;
+            text-indent: 10px;
+            margin: 10% auto;
+            display: inline-block;
+        }
+        .edit-profile-last-name{
+            border: 2px solid lightskyblue;
+            height: 10%;
+            width: 40%;
+            text-indent: 10px;
+            margin: 10% auto;
+        }
+        .edit-profile-email{
+            border: 2px solid lightskyblue;
+            height: 10%;
+            width: 80%;
+            text-indent: 10px;
+            margin-top: -4%;
+        }
+        .edit-profile-photo{
+            margin-top: 5%;
+        }
+        .edit-profile-modal-body{
+            margin: -5% auto;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+        #edit-profile-banner{
+            width:100%;
+            height:20%;
+            background-color: lightskyblue;
+            text-align: center;
+        }
+        #banner-edit-profile-text{
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            margin: 0px;
+            padding-top: 20px;
+        }
+        #edit-profile-submit-button{
+            background-color: lightskyblue;
+            height: 40px;
+            width: 100px;
+            color: white;
+            border: none;
+            margin-top:5%;
+        }
+        #edit-profile-submit-button:hover{
+            opacity: .7;
         }
         .edit-class-class-description{
             border: 2px solid lightskyblue;
@@ -306,12 +382,22 @@
         #dont-delete-class-button:hover{
             opacity: .7;
         }
+        #edit-profile-button{
+            color: lightskyblue;
+            outline: none;
+            border: none;
+            color: gray;
+            margin-top: 50px;
+        }
+        #edit-profile-button:hover{
+            text-decoration: underline;
+        }
 </style>
 
     <div id="wrapper">
         <div id="banner-card">
             {% if user_instance.profile_photo %}
-                <img class="profile-photo" src="{{ k.student_instance.profile_photo.url }}"/>
+                <img class="profile-photo" src="{{ user_instance.profile_photo.url }}"/>
             {% else %}
                 <img class="profile-photo" src="../../media/default.jpg"/>
             {% endif %}
@@ -320,6 +406,9 @@
             <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
             <h3 id="email">{{ user_instance.email }}</h3>
             <br>
+            {% if user_instance.account_id == request.user.pk %}
+                <button id="edit-profile-button" onclick="editProfileModal()">Edit Profile</button>
+            {% endif %}
         </div>
         {% if user_instance.is_instructor %}
             <p id="header-text">This instructor is teaching the following courses</p>
@@ -370,6 +459,22 @@
                             </div>
                         </div>
 
+                    <div id="edit-profile-modal" class="modal edit-profile-modal">
+                        <div class="edit-profile-modal-content">
+                            <div id="edit-profile-banner">
+                                <h3 id="banner-edit-profile-text">Edit Your Profile</h3>
+                            </div>
+                            <div class="edit-profile-modal-body">
+                                <input placeholder="First Name" value="{{ request.user.first_name }}" class="edit-profile-first-name"/>
+                                <input placeholder="Last Name" value="{{ request.user.last_name }}" class="edit-profile-last-name"/>
+                                <input type="text" placeholder="Email" value="{{ request.user.email }}" class="edit-profile-email"/>
+                                <input type="file" accept=".jpg, .png" class="edit-profile-photo"/>
+                                <br>
+                                <button id="edit-profile-submit-button" onclick="processEditProfile()">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+
                         <div id="delete-class-modal" class="modal delete-class-modal">
                             <div class="delete-class-modal-content">
                                 <div class="delete-class-modal-body">
@@ -405,6 +510,49 @@
 
 <script>
 
+    var editProfile = null;
+    var editProfileModalBody = null;
+    var edit_profile_error_message_displayed = false;
+    function editProfileModal(){
+        editProfile = document.getElementsByClassName("edit-profile-modal")[0];
+        editProfileModalBody = editProfile.getElementsByClassName("edit-profile-modal-body")[0];
+        editProfile.style.display="block";
+    }
+
+    function processEditProfile(){
+        var firstName = editProfileModalBody.getElementsByClassName("edit-profile-first-name")[0].value;
+        var lastName = editProfileModalBody.getElementsByClassName("edit-profile-last-name")[0].value;
+        var profilePhoto = editProfileModalBody.getElementsByClassName("edit-profile-photo")[0].files[0];
+        var email = editProfileModalBody.getElementsByClassName("edit-profile-email")[0].value;
+        var fd = new FormData();
+        fd.append('profile_photo', profilePhoto);
+        fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        fd.append('first_name', firstName);
+        fd.append('last_name', lastName);
+        fd.append('email', email);
+        $.ajax({
+            url: '/account/editprofile/',
+            method: 'post',
+            data: fd,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            success: function (data) {
+                window.location.href="/account/{{ request.user.pk }}"
+            },
+            error: function (data){
+                if (!edit_profile_error_message_displayed) {
+                    let p = document.createElement('p');
+                    p.setAttribute("class", "edit-profile-error-message");
+                    p.innerHTML = "Please give a valid email address.";
+                    edit_profile_error_message_displayed = true;
+                    editProfileModalBody.prepend(p)
+                }
+            }
+          });
+    }
+
     var editEnroll = null;
     let editEnrollModalBody = null;
     let enroll_message_error_displayed = false;
@@ -429,6 +577,13 @@
             if (error_message_displayed) {
                 editClassModalBody.removeChild(editClass.getElementsByClassName("edit-class-error-message")[0]);
                 error_message_displayed = false;
+            }
+        }
+        if (event.target == editProfile) {
+            editProfile.style.display = "none";
+            if (edit_profile_error_message_displayed) {
+                editProfileModalBody.removeChild(editProfile.getElementsByClassName("edit-profile-error-message")[0]);
+                edit_profile_error_message_displayed = false;
             }
         }
     };

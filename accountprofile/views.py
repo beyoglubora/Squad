@@ -5,6 +5,8 @@ from data import models as DataModel
 from myclasses.views import getMyClass
 from groups.views import enroll, check_enroll
 import html
+import re
+
 
 
 def getIDInstance(request):
@@ -143,6 +145,29 @@ def edit_class(request):
     except:
         raise ValueError("This class already exists")
     return JsonResponse({"message":"Successfully edited class"})
+
+
+def edit_profile(request):
+    first_name = request.POST.get("first_name")
+    last_name = request.POST.get("last_name")
+    email = request.POST.get("email")
+    profile_photo = request.FILES.get("profile_photo")
+    pattern = re.compile("^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
+    if pattern.match(email):
+        student_instance = DataModel.Account.objects.filter(account_id=request.user.pk).first()
+        if first_name and not first_name.isspace():
+            student_instance.first_name = first_name
+        if last_name and not last_name.isspace():
+            student_instance.last_name = last_name
+        student_instance.email = email
+        if profile_photo:
+            student_instance.profile_photo = profile_photo
+        student_instance.save()
+        return JsonResponse({"data": "successfully updated users profile"})
+    else:
+        response = JsonResponse({"data": "user did not provide valid email address"})
+        response.status_code = 403
+        return response
 
 
 def delete_class(request):
