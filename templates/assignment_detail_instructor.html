@@ -15,7 +15,6 @@
     <br>
     <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
     <br>
-    <span> DUE: {{ assignment_ins.due_date }}</span>
 </div>
 <table>
     <thead>
@@ -30,23 +29,23 @@
             {% if value %}
             <tr>
                 <td>
-                    <span> {{ key.group_name }} </span>
+                    <span><a style="color: dodgerblue" href="../../../groups/{{ key.group_id }}">{{ key.group_name }} </a></span>
                 </td>
                 <td>
-                    <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
+                    <span> <a style="color: green" href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">Submitted, click to download</a> </span>
                 </td>
                 <td>
                     {% if value.upload_time < assignment_ins.due_date %}
-                        <span class="btn btn-outline-success btn-sm"> {{ value.upload_time }}</span>
+                        <span style="color:green" class="btn btn-sm"> {{ value.upload_time }}</span>
                     {% else %}
-                        <span class="btn btn-outline-danger btn-sm"> {{ value.upload_time }}</span>
+                        <span style="color: red" class="btn btn-sm"> {{ value.upload_time }}</span>
                     {% endif %}
                 </td>
             </tr>
             {% else %}
             <tr>
                 <td>
-                    <span> {{ key.group_name }} </span>
+                    <span><a style="color: dodgerblue" href="../../../groups/{{ key.group_id }}">{{ key.group_name }} </a></span>
                 </td>
                 <td>
                     <span> They didn't upload assignment yet </span>

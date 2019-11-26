@@ -719,7 +719,7 @@
                             {% for assignment in assignments %}
                                 <tr>
                                     <td>
-                                        <a href="../../assignment/detail/{{ assignment.assignment_id }}"> {{ assignment.subject }} </a>
+                                        <a style="color: dodgerblue" href="../../assignment/detail/{{ assignment.assignment_id }}"> {{ assignment.subject }} </a>
                                     </td>
                                     <td>
                                         <span> {{ assignment.due_date }} </span>
@@ -773,9 +773,9 @@
                             </td>
                             <td>
                                 {% if time_now < key.due_date  %}
-                                    <span class="btn btn-outline-secondary btn-sm">{{ key.due_date }}</span>
+                                    <span class="btn btn-sm">{{ key.due_date }}</span>
                                 {% else %}
-                                    <span class="btn btn-outline-danger btn-sm" >{{ key.due_date }}</span>
+                                    <span class="btn btn-sm" style="color:red;">{{ key.due_date }}</span>
                                 {% endif %}
                             </td>
                             {% if value %}
