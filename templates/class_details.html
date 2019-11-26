@@ -131,14 +131,6 @@
         #students-button:focus{
             outline:none;
         }
-        {##groups-button{#}
-        {#    float:right;#}
-        {#    margin-right:25%;#}
-        {#    font-size: 40px;#}
-        {#    border: none;#}
-        {#    background: none;#}
-        {#    color: gray;#}
-        {#}#}
         #groups-button{
             font-size: 40px;
             border: none;
@@ -168,11 +160,6 @@
         #discussion-button:focus {
             outline: none;
         }
-
-        {##discussion-roster {#}
-        {#    margin-left: 270px;#}
-        {#    width: 80%;#}
-        {#}#}
 
         .student-container{
             background-color: white;
@@ -517,7 +504,6 @@
         }
         .span-parent-content {
             white-space: pre-line;
-            margin-left: 1em;
         }
 
         .message-info {
@@ -526,7 +512,7 @@
         }
         .key-info {
             font-size: 0.7em;
-            color: skyblue;
+            color: dodgerblue;
         }
         .comment-delete-button:hover{
             cursor: pointer;
@@ -536,7 +522,7 @@
             color: skyblue;
         }
         .message-date {
-            color: #848d95;
+            color: black;
         }
         .child-separator {
             color: lightgray;
@@ -558,7 +544,30 @@
             background-color: lightgray;
             font-size: 1.2em;
             overflow: auto;
+            padding-left: 10px;
+            padding-right: 5px;
         }
+        #new-topic-button{
+            outline: none;
+            background-color: whitesmoke;
+            border: none;
+            color: dodgerblue;
+            font-size: 24px;
+            margin-bottom: 10px;
+
+        }
+        .cancel-post-button{
+            margin-left: 2em;
+            color: darkred;
+        }
+        .cancel-post-button:hover{
+            color: darkred;
+            text-decoration: underline;
+        }
+        .post-text-box{
+            background-color: whitesmoke;
+        }
+
     </style>
 {% if messages %}
         <script>
@@ -680,7 +689,7 @@
                 {% if enrolled or isInstructor %}
                     <div id="message-board" class="has-border">
                         <div id="create-new-message-area">
-                            <button id="big-group-button" onclick="create_form(this, -5)">Start New Topic</button>
+                            <button id="new-topic-button" onclick="create_form(this, -5)">+ Start New Topic</button>
                         </div>
                         {% for key, values in msg_dict.items %}
                             <div class="has-border message-font whole-message">
@@ -690,7 +699,7 @@
                                     <a href="../../account/{{ key.creator.account_id }}" class="key-info">{{ key.creator.first_name }}</a>
                                     <i class="key-info message-date">{{ key.date }}</i>
                                     {% if requesterID == key.creator.account_id or isInstructor %}
-                                        <a onclick="removeCommentModal({{ key.message_id }})" class="key-info comment-delete-button" style="color: skyblue">delete</a>
+                                        <a onclick="removeCommentModal({{ key.message_id }})" class="key-info comment-delete-button" style="color: dodgerblue">delete</a>
 
                                     {% endif %}
                                     </span>
@@ -758,6 +767,7 @@
             body.setAttribute('type',"text");
             body.setAttribute('id',"reply_"+pid);
             body.style.width = "100%";
+            body.style.className = "post-text-box";
             body.onkeydown = function(event) {
                 var shiftKey = event.shiftKey;
 
@@ -774,12 +784,10 @@
             buttonElement.href = "";
             buttonElement.style.color = "lightskyblue";
             buttonElement.onclick = function () { create_post(pid, body.id) };
-
             cancel = document.createElement('a');
             cancel.innerHTML = "cancel";
-            cancel.style.marginLeft = "2em";
+            cancel.className = 'cancel-post-button';
             cancel.href = "";
-            cancel.style.color = "#DC143C";
             cancel.onclick = function () { cancel_post(this) };
 
             container.appendChild(body);
@@ -862,26 +870,31 @@
         }
         document.cookie="scrollTop="+scrollPos;
     };
-        window.onload = function() {
-            if(document.cookie.match(/show=([a-zA-Z]+)/)!=null){
-            var showElement = document.cookie.match(/show=([a-zA-Z]+)/);
-            console.log(showElement[1]);
-            if (showElement[1] === "student") {
-                changeToStudentRoster();
-            } else if (showElement[1] === "group") {
-                changeToGroupRoster();
-            } else if (showElement[1] === "discussion") {
-                changeToDiscussionRoster();
-                if(document.cookie.match(/scrollTop=([^;]+)(;|$)/)!=null){
-                    var arr=document.cookie.match(/scrollTop=([^;]+)(;|$)/);
-                    document.documentElement.scrollTop=parseInt(arr[1]);
-                    document.body.scrollTop=parseInt(arr[1]);
+        document.onreadystatechange = function(e)
+        {
+            if (document.readyState === 'complete')
+            {
+                if(document.cookie.match(/show=([a-zA-Z]+)/)!=null){
+                    var showElement = document.cookie.match(/show=([a-zA-Z]+)/);
+                    {#console.log(showElement[1]);#}
+                    if (showElement[1] === "student") {
+                        changeToStudentRoster();
+                    } else if (showElement[1] === "group") {
+                        changeToGroupRoster();
+                    } else if (showElement[1] === "discussion") {
+                        changeToDiscussionRoster();
+                        if(document.cookie.match(/scrollTop=([^;]+)(;|$)/)!=null){
+                            var arr=document.cookie.match(/scrollTop=([^;]+)(;|$)/);
+                            document.documentElement.scrollTop=parseInt(arr[1]);
+                            document.body.scrollTop=parseInt(arr[1]);
+                        }
+                    }
+                } else {
+                    changeToStudentRoster();
                 }
             }
-        } else {
-            changeToStudentRoster();
-        }
         };
+
         function changeToStudentRoster(){
             document.getElementById("groups-button").setAttribute("style", 'color:gray');
             document.getElementById("students-button").setAttribute("style", 'color:lightskyblue');

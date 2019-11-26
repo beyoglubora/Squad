@@ -40,6 +40,7 @@
             margin-bottom: 2%;
         }
         .class-name-container{
+            background-color: whitesmoke;
             border: 2px solid lightskyblue;
             width: 45%;
             padding-top: 80px;
@@ -121,8 +122,8 @@
             {% for class, group in classes.items %}
                 <li class="class-list-item">
                     <div class="class-container">
-                        <div  class="class-name-container">
-                            <a href="../groups/class/{{ class.class_id }}"  class="class-name">{{ class.class_name }}</a>
+                        <button  class="class-name-container" onclick="window.location.href='../groups/class/{{ class.class_id }}'">
+                            <p class="class-name">{{ class.class_name }}</p>
                             <br>
                             {% if not request.user.is_instructor %}
                                 {% if group == -1 %}
@@ -131,7 +132,7 @@
                                     <a href="../groups/{{ group.group_id }}" class="instructor-name">{{ group.group_name }}</a>
                                 {% endif %}
                             {% endif %}
-                        </div>
+                        </button>
                         <div class="description-container">
                             <h2 class="description-label">Description</h2>
                             <hr>

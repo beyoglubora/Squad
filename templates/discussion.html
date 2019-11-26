@@ -8,6 +8,8 @@
             background-color: lightgray;
             font-size: 1.2em;
             overflow: auto;
+            padding-left: 10px;
+            padding-right: 10px;
         }
         .child-message {
             margin-top: 1em;
@@ -22,7 +24,6 @@
         }
         .span-parent-content {
             white-space: pre-line;
-            margin-left: 1em;
         }
         .message-info {
             float: right;
@@ -39,7 +40,7 @@
         }
         .key-info {
             font-size: 0.7em;
-            color: skyblue;
+            color: dodgerblue;
         }
         #add-a-comment {
             color: #848d95;
@@ -55,7 +56,7 @@
             color: skyblue;
         }
         .message-date {
-            color: #848d95;
+            color: black;
         }
         .whole-message {
             margin-bottom: 2em;
@@ -163,6 +164,18 @@
             font-size: 24px;
             font-family: 'Montserrat', sans-serif;
         }
+        .cancel-post-button{
+            margin-left: 2em;
+            color: darkred;
+        }
+        .cancel-post-button:hover{
+            color: darkred;
+            text-decoration: underline;
+        }
+        .post-text-box{
+            background-color: whitesmoke;
+        }
+
     </style>
 
     <div class="discussion-page wrapper">
@@ -185,7 +198,7 @@
                         <i class="key-info message-date">{{ key.date }}</i>
                         {% if requesterID == key.creator.account_id or is_instructor %}
 {#                            <a href="" onclick="delete_post({{ key.message_id }})" class="key-info">delete</a>#}
-                            <a onclick="removeCommentModal({{ key.message_id }})" class="key-info" style="color: skyblue; ">delete</a>
+                            <a onclick="removeCommentModal({{ key.message_id }})" class="key-info" style="color: dodgerblue;">delete</a>
                         {% endif %}
                         </span>
                     </div>
@@ -273,9 +286,8 @@ function create_form(this_element, pid) {
 
     cancel = document.createElement('a');
     cancel.innerHTML = "cancel";
-    cancel.style.marginLeft = "2em";
     cancel.href = "";
-    cancel.style.color = "#DC143C";
+    cancel.className = "cancel-post-button";
     cancel.onclick = function () { cancel_post(this) };
 
     container.appendChild(body);
