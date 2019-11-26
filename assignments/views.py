@@ -35,7 +35,7 @@ def assignment_main_page(request, class_pk):
         })
     else:
         form = AssignmentsForm(initial={'class_instance': class_instance})
-        return render(request, 'assignment.html', {
+        return render(request, 'assignment_main_instructor.html', {
             'class_ins': class_instance,
             'assignments': assignments_in_this_class,
             'form': form,
@@ -138,6 +138,9 @@ def show_assignment_detail(request, a_pk):
         return HttpResponseRedirect("/explore")
 
     ass_class_instance = assignment_ins.class_instance
+    # get groups in this class
     groups = Group.objects.filter(class_instance=ass_class_instance)
+    # groups_assignment_
+
 
 
