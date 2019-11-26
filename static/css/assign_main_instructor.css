@@ -537,6 +537,10 @@
     .subject-class {
         width: 100%;
     }
+
+    .assignment-upload-button {
+        width: 100%;
+    }
     #form-ul-container {
         list-style-type: none;
     }

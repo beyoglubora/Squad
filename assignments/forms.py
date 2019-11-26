@@ -40,3 +40,7 @@ class StudentUploadForm(forms.ModelForm):
     class Meta:
         model = StudentUpload
         fields = ('description', 'upload_file')
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'description-class'}),
+            'upload_file': forms.FileInput(attrs={'class': 'assignment-upload-button'})
+        }

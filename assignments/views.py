@@ -79,6 +79,7 @@ def show_student_upload(request, a_pk, g_pk):
     else:
         form = StudentUploadForm()
         return render(request, 'student_upload.html', {
+            'assign_ins': assignment_ins,
             'form': form,
         })
 
