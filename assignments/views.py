@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
-from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship
+from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship
 from django.urls import reverse_lazy
 
 
@@ -135,7 +135,44 @@ def show_assignment_detail(request, a_pk):
     ass_class_instance = assignment_ins.class_instance
     # get groups in this class
     groups = Group.objects.filter(class_instance=ass_class_instance)
-    # groups_assignment_
+    groups_assignment_dict = {}
+    for group in groups:
+        a_rel = AssignmentRelationship.objects.filter(group_instance=group,
+                                                      assignment_instance=assignment_ins).first()
+        if not a_rel:
+            # this group has no file for this assignment
+            groups_assignment_dict[group] = False
+        else:
+            groups_assignment_dict[group] = a_rel
+
+    return render(request, 'assignment_detail_instructor.html', {
+        'groups_rel_dic': groups_assignment_dict
+    })
 
 
+def show_assignment_group(request, group_pk):
+    group_instance = Group.objects.filter(group_id=group_pk).first()
+    if not group_instance:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    relationship_instance = Relationship.objects.filter(group_id=group_pk, student_instance=request.user).first()
+    if not relationship_instance:
+        messages.info(request, "You are not in that Group")
+        return HttpResponseRedirect("/explore")
 
+    class_instance = group_instance.class_instance
+    # find all assignment for this class
+    assignment_in_class = Assignment.objects.filter(class_instance=class_instance)
+    assignment_group_dict = {}
+    for a in assignment_in_class:
+        a_rel = AssignmentRelationship.objects.filter(group_instance=group_instance,
+                                                      assignment_instance=a).first()
+        if not a_rel:
+            # this group has no file for this assignment
+            assignment_group_dict[a] = False
+        else:
+            assignment_group_dict[a] = a_rel
+
+    return render(request, 'assignment_in_group.html', {
+        'assignment_rel_dic': assignment_group_dict
+    })
