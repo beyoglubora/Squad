@@ -38,13 +38,13 @@
                 </td>
                 {% if value %}
                     <td>
-                        <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">download</a> </span>
+                        <span> <a class="btn btn-success btn-sm" href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
                     </td>
                     <td>
                         <span>{{ value.upload_time }}</span>
                     </td>
                     <td>
-                        <a class="btn btn-outline-danger btn-sm" href=""> Resubmit </a>
+                        <a class="btn btn-danger btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Resubmit </a>
                     </td>
                 {% else %}
                 <td>
@@ -54,7 +54,7 @@
 
                 </td>
                 <td>
-                    <a class="btn btn-outline-primary btn-sm" href=""> Submit Now </a>
+                    <a class="btn btn-primary btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Submit Now </a>
                 </td>
                 {% endif %}
             </tr>

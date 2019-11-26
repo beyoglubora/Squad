@@ -37,44 +37,12 @@ def assignment_main_page(request, class_pk):
         })
 
 
-def get_class_ins(request):
-    return Class.objects.first()
-
-
-def get_assignment_ins(request):
-    return Assignment.objects.first()
-
-
-def get_group_ins(request):
-    return Group.objects.first()
-
-
-def show(request):
-    class_ins = get_class_ins(request)
-    # for test
-    if request.method == 'POST':
-        form = AssignmentsForm(request.POST, request.FILES)
-        print(222)
-        if form.is_valid():
-            print(form.cleaned_data['due_date'])
-
-            print("1111")
-            # a = form.save()
-
-        # TODO: new return
-        return render(request, 'assignment.html', {
-            'form': form,
-        })
-    else:
-        form = AssignmentsForm(initial={'class_instance': class_ins})
-        return render(request, 'assignment.html', {
-            'form': form,
-        })
-
-
-def show_student_upload(request):
-    assignment_ins = get_assignment_ins(request)
-    group_ins = get_group_ins(request)
+def show_student_upload(request, a_pk, g_pk):
+    assignment_ins = Assignment.objects.filter(assignment_id=a_pk).first()
+    if not assignment_ins:
+        messages.info(request, "No Such Class")
+        return HttpResponseRedirect("/explore")
+    group_ins = Group.objects.filter(group_id=g_pk).first()
     # for test
     if request.method == 'POST':
         form = StudentUploadForm(request.POST, request.FILES)
@@ -107,9 +75,7 @@ def show_student_upload(request):
 
 
         # TODO: new return
-        return render(request, 'assignment.html', {
-            'form': form,
-        })
+        return HttpResponseRedirect("/assignment/group/" + str(g_pk))
     else:
         form = StudentUploadForm()
         return render(request, 'student_upload.html', {
