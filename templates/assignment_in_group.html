@@ -36,13 +36,18 @@
                     <span>{{ key.subject }}</span>
                 </td>
                 <td>
-                    <span>{{ key.due_date }}</span>
+                    {% if time_now < key.due_date  %}
+                        <span class="btn btn-outline-secondary btn-sm">{{ key.due_date }}</span>
+                    {% else %}
+                        <span class="btn btn-outline-danger btn-sm" >{{ key.due_date }}</span>
+                    {% endif %}
                 </td>
                 {% if value %}
                     <td>
                         <span> <a class="btn btn-success btn-sm" href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
                     </td>
                     <td>
+
                         <span>{{ value.upload_time }}</span>
                     </td>
                     <td>

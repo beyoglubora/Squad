@@ -4,6 +4,7 @@ from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
 from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 
 # Create your views here.
@@ -146,5 +147,6 @@ def show_assignment_group(request, group_pk):
 
     return render(request, 'assignment_in_group.html', {
         'group_ins': group_instance,
-        'assignment_rel_dic': assignment_group_dict
+        'assignment_rel_dic': assignment_group_dict,
+        'time_now': timezone.now()
     })

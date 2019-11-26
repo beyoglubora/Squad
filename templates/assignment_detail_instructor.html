@@ -15,12 +15,14 @@
     <br>
     <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
     <br>
+    <span> DUE: {{ assignment_ins.due_date }}</span>
 </div>
 <table>
     <thead>
         <tr>
             <th>Group Name</th>
             <th>Submitted Assignment</th>
+            <th>Upload Time</th>
         </tr>
     </thead>
     <tbody>
@@ -31,7 +33,14 @@
                     <span> {{ key.group_name }} </span>
                 </td>
                 <td>
-                    <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">download</a> </span>
+                    <span> <a href="{{ value.student_upload_instance.upload_file.url }}" title="{{ value.student_upload_instance.description }}">submitted, click to download</a> </span>
+                </td>
+                <td>
+                    {% if value.upload_time < assignment_ins.due_date %}
+                        <span class="btn btn-outline-success btn-sm"> {{ value.upload_time }}</span>
+                    {% else %}
+                        <span class="btn btn-outline-danger btn-sm"> {{ value.upload_time }}</span>
+                    {% endif %}
                 </td>
             </tr>
             {% else %}
