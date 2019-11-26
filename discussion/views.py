@@ -45,12 +45,11 @@ def show_messages(request):
 def create_post_class(request):
     class_id = request.POST.get("class_id")
     class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    group_instance = DataModel.Group.objects.filter(group_name=class_instance.class_name).first()
 
     creator = request.user
     body = request.POST.get("body")
     parent = request.POST.get("parent_id")
-    create_post_db(group_instance, class_instance, creator, body, parent)
+    create_post_db(None, class_instance, creator, body, parent)
 
     # push notifications to all enrolled class members
     relation = DataModel.Relationship.objects.filter(class_instance=class_instance)

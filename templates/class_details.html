@@ -676,23 +676,6 @@
                 {% endfor %}
             </div>
 
-            <div id="group-roster">
-                <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
-                <div id="group-list">
-                {% for k,v in groups.items %}
-                    {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
-                    <div class="group-container column" id="group-{{ k.group_id }}">
-                        {% if request.user.pk == class.instructor_instance.pk %}
-                            <button onclick="removeStudentModal(this)" id="remove-group">X</button>
-                        {% endif %}
-                        <a href="/groups/{{ k.group_id }}" class="group-name">{{ k.group_name }}</a>
-                        <p class="students-in-group-text">{{ v }}</p>
-                    </div>
-                    {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
-                {% endfor %}
-                </div>
-            </div>
-
             <div id="discussion-roster">
                 {% if enrolled or isInstructor %}
                     <div id="message-board" class="has-border">
@@ -734,14 +717,30 @@
                 {% endif %}
             </div>
 
-        </div>
-
         <div id="remove-modal" class="modal">
             <div id="remove-modal-body" class="remove-modal-content">
                 <button id="dont-confirm-removal">No</button>
                 <button id="confirm-removal" onclick="remove()">Yes</button>
             </div>
         </div>
+            <div id="group-roster">
+                <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
+                <div id="group-list">
+                {% for k,v in groups.items %}
+                    {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
+                    <div class="group-container column" id="group-{{ k.group_id }}">
+                        {% if request.user.pk == class.instructor_instance.pk %}
+                            <button onclick="removeStudentModal(this)" id="remove-group">X</button>
+                        {% endif %}
+                        <a href="/groups/{{ k.group_id }}" class="group-name">{{ k.group_name }}</a>
+                        <p class="students-in-group-text">{{ v }}</p>
+                    </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+
     {% endif %}
     <script>
 
