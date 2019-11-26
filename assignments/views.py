@@ -146,6 +146,7 @@ def show_assignment_detail(request, a_pk):
             groups_assignment_dict[group] = a_rel
 
     return render(request, 'assignment_detail_instructor.html', {
+        'assignment_ins': assignment_ins,
         'groups_rel_dic': groups_assignment_dict
     })
 
