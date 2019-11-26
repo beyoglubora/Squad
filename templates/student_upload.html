@@ -23,6 +23,9 @@
         <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
         <br>
     </div>
+<button onclick="back_to_group()" id="assignment-container">
+    <h1 id="assignment-container-text">Back to group</h1>
+</button>
 <div id="publish-form-container">
 <form method="post" enctype="multipart/form-data" id="publish-form">
     {% csrf_token %}
@@ -40,4 +43,9 @@
 </div>
 </div>
 </body>
+<script>
+    function back_to_group() {
+        window.history.back();
+    }
+</script>
 </html>
