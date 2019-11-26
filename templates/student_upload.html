@@ -17,14 +17,14 @@
 {% include 'navbar.html' %}
 <div id="wrapper">
     <div id="banner-card">
-        <h1 id = "class-title">Uploading for {{ assign_ins.subject }}</h1>
+        <h1 id = "class-title">Turn in {{ assign_ins.subject }}</h1>
         <a id="instructor-name" href="/groups/class/{{ assign_ins.class_instance.instructor_instance.account_id }}">{{ assign_ins.class_instance.class_name }}</a>
         <br>
         <hr id="underline" style="width:50px;border:5px solid lightskyblue" class="w3-round">
         <br>
     </div>
-<button onclick="back_to_group()" id="assignment-container">
-    <h1 id="assignment-container-text">Back to group</h1>
+<button onclick="back_to_group()" id="back-to-class-container">
+    <h1 id="back-to-class-container-text">Back to class</h1>
 </button>
 <div id="publish-form-container">
 <form method="post" enctype="multipart/form-data" id="publish-form">

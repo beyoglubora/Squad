@@ -787,7 +787,7 @@
                                     <span>{{ value.upload_time }}</span>
                                 </td>
                                 <td>
-                                    <a class="btn btn-danger btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Resubmit </a>
+                                    <a class="btn btn-danger btn-sm" href="../../../assignment/student/upload/group/{{own_group.group_id}}/assignment/{{key.assignment_id}}"> Resubmit </a>
                                 </td>
                             {% else %}
                             <td>
@@ -798,7 +798,7 @@
                             </td>
                             <td>
                                 {% if in_group %}
-                                    <a class="btn btn-primary btn-sm" href="../student/upload/group/{{group_ins.group_id}}/assignment/{{key.assignment_id}}"> Submit Now </a>
+                                    <a class="btn btn-primary btn-sm" href="../../../assignment/student/upload/group/{{own_group.group_id}}/assignment/{{key.assignment_id}}"> Submit Now </a>
                                 {% else %}
                                     <p>You must be in a group in order to submit an assignment.</p>
                                 {% endif %}

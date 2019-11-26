@@ -76,7 +76,7 @@ def show_student_upload(request, a_pk, g_pk):
 
 
         # TODO: new return
-        return HttpResponseRedirect("/assignment/group/" + str(g_pk))
+        return HttpResponseRedirect("/groups/class/" + str(group_ins.class_instance.class_id))
     else:
         form = StudentUploadForm()
         return render(request, 'student_upload.html', {
