@@ -20,14 +20,9 @@ def assignment_main_page(request, class_pk):
 
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
-        print(222)
         if form.is_valid():
-            print(form.cleaned_data['due_date'])
+            a = form.save()
 
-            print("1111")
-            # a = form.save()
-
-        # TODO: new return
         return render(request, 'assignment_main_instructor.html', {
             'class_ins': class_instance,
             'assignments': assignments_in_this_class,

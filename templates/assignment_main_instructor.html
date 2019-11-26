@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Assignments</title>
@@ -17,11 +18,12 @@
     {{ class_ins.class_name }}
 </h1>
 <button onclick="publish()">Publish New Assignment</button>
-<div id="publish-form">
+<div id="publish-form" style="display: none">
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">submit</button>
+    <button onclick="cancel_form()">cancel</button>
 </form>
 </div>
 <table>
@@ -47,6 +49,9 @@
 <script>
     function publish() {
         document.getElementById("publish-form").style.display = "block"
+    }
+    function cancel_form() {
+        document.getElementById("publish-form").style.display = "none"
     }
 </script>
 {% endblock %}
