@@ -2,6 +2,7 @@ from django.shortcuts import render
 from data import models as DataModel
 from django.http import HttpResponseRedirect, JsonResponse
 import re
+import collections
 
 
 def class_details(request, message=None, class_id=None):
@@ -77,9 +78,38 @@ def class_details(request, message=None, class_id=None):
                 d['accepted'] = False
         student_descriptions_skills[student] = d
 
+    print("enrolled: " + str(enrolled))
+    isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
+    print("isInstructor: " + str(isInstructor))
+    # get message dict
+    requesterID = request.user.account_id
+
+    # class_id = request.POST.get("class_id")
+    # class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    group_instance = DataModel.Group.objects.filter(group_name=c.class_name).first()
+
+    # get messages
+    messages = list(DataModel.Messages.objects.filter(group_instance=group_instance))
+    parent_msgs = list(
+        DataModel.Messages.objects.filter(parent=-5, group_instance=group_instance))  # get parent messages
+    msg_dict = {}  # msg_dict = {parent_msg: [children_msgs]}
+    for parent_msg in parent_msgs:
+        children_msg = []
+        for m in messages:
+            if parent_msg.message_id == m.parent:  # classify the children node
+                children_msg.append(m)
+        msg_dict[parent_msg] = children_msg
+    # sort the dict based on the key's datetime
+    od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
+    print(od_msg_dict)
+
     return render(request, 'class_details.html', {'class': c, 'groups': active_groups, 'enrolled': enrolled, 'invalid': invalid,
                                                   'student_descriptions_skills': student_descriptions_skills, "in_group": in_group,
-                                                  "own_group": own_group})
+                                                  "own_group": own_group,
+                                                  'msg_dict': od_msg_dict,
+                                                  'requesterID': requesterID,
+                                                  'isInstructor': isInstructor
+                                                  })
 
 
 def group_detail(request):

@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from data import models as DataModel
 import collections
+from groups.views import create_notification
 
 
 def show_messages(request):
@@ -41,6 +42,24 @@ def show_messages(request):
                                                'msg_dict': od_msg_dict,
                                                'requesterID': requesterID})
 
+def create_post_class(request):
+    class_id = request.POST.get("class_id")
+    class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
+    group_instance = DataModel.Group.objects.filter(group_name=class_instance.class_name).first()
+
+    creator = request.user
+    body = request.POST.get("body")
+    parent = request.POST.get("parent_id")
+    create_post_db(group_instance, class_instance, creator, body, parent)
+
+    # push notifications to all enrolled class members
+    relation = DataModel.Relationship.objects.filter(class_instance=class_instance)
+    for r in relation:
+        if request.user.account_id == r.student_instance.account_id :
+            continue
+        create_notification(class_instance.class_id, creator.account_id, r.student_instance.account_id, False, 11)
+
+    return JsonResponse({"result": True})
 
 def create_post(request):
     # class post -> -5
@@ -50,9 +69,15 @@ def create_post(request):
     class_instance = group_instance.class_instance
     creator = request.user
     body = request.POST.get("body")
-    print(body)
     parent = request.POST.get("parent_id")
     create_post_db(group_instance, class_instance, creator, body, parent)
+
+    # push notifications to all group members
+    relation = DataModel.Relationship.objects.filter(group_id=group_id)
+    for r in relation:
+        if request.user.account_id == r.student_instance.account_id :
+            continue
+        create_notification(class_instance.class_id, creator.account_id, r.student_instance.account_id, False, 11, group_instance.group_id)
 
     return JsonResponse({"result": True})
 
