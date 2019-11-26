@@ -153,6 +153,9 @@ def show_assignment_detail(request, a_pk):
 
 def show_assignment_group(request, group_pk):
     group_instance = Group.objects.filter(group_id=group_pk).first()
+    if request.user.is_instructor:
+        messages.info(request, "This is for students only")
+        return HttpResponseRedirect("/explore")
     if not group_instance:
         messages.info(request, "No Such Class")
         return HttpResponseRedirect("/explore")
@@ -175,5 +178,6 @@ def show_assignment_group(request, group_pk):
             assignment_group_dict[a] = a_rel
 
     return render(request, 'assignment_in_group.html', {
+        'group_ins': group_instance,
         'assignment_rel_dic': assignment_group_dict
     })
