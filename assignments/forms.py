@@ -23,7 +23,9 @@ class AssignmentsForm(forms.ModelForm):
         model = Assignment
         fields = ('subject', 'description', 'due_date', 'class_instance')
         widgets = {
+            'subject': forms.TextInput(attrs={'class': 'subject-class'}),
             'class_instance': forms.HiddenInput(),
+            'description': forms.Textarea(attrs={'class': 'description-class'}),
             'due_date': DateTimePicker(
                 options={
                     'minDate': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
