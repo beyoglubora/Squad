@@ -528,6 +528,9 @@
             font-size: 0.7em;
             color: skyblue;
         }
+        .comment-delete-button:hover{
+            cursor: pointer;
+        }
         .value-info {
             font-size: 0.8em;
             color: skyblue;
@@ -545,6 +548,7 @@
         }
         #add-a-comment:hover {
             text-decoration: underline;
+            cursor: pointer;
         }
         .child-message {
             margin-top: 1em;
@@ -676,7 +680,6 @@
                 <input type="text" id="group-search" onkeyup="groupSearch()" placeholder="Search for Groups">
                 <div id="group-list">
                 {% for k,v in groups.items %}
-                    {% if k.group_name != k.class_instance.class_name %}
                     {% if forloop.counter0|divisibleby:2 %}<div class="row">{% endif %}
                     <div class="group-container column" id="group-{{ k.group_id }}">
                         {% if request.user.pk == class.instructor_instance.pk %}
@@ -686,7 +689,6 @@
                         <p class="students-in-group-text">{{ v }}</p>
                     </div>
                     {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
-                    {% endif %}
                 {% endfor %}
                 </div>
             </div>
@@ -705,8 +707,7 @@
                                     <a href="../../account/{{ key.creator.account_id }}" class="key-info">{{ key.creator.first_name }}</a>
                                     <i class="key-info message-date">{{ key.date }}</i>
                                     {% if requesterID == key.creator.account_id or isInstructor %}
-{#                                        <a href="" onclick="delete_post({{ key.message_id }})" class="key-info" id="{{ key.message_id }}">delete</a>#}
-                                        <a onclick="removeCommentModal({{ key.message_id }})" class="key-info" style="color: skyblue">delete</a>
+                                        <a onclick="removeCommentModal({{ key.message_id }})" class="key-info comment-delete-button" style="color: skyblue">delete</a>
 
                                     {% endif %}
                                     </span>
@@ -719,8 +720,7 @@
                                             <a href="../../account/{{ val.creator.account_id }}" class="value-info">{{ val.creator.first_name }}</a>
                                             <i class="value-info message-date">{{ val.date }}</i>
                                             {% if requesterID == val.creator.account_id or isInstructor %}
-{#                                                <a href="" onclick="delete_post({{ val.message_id }})" class="value-info" id="{{ val.message_id }}">delete</a>#}
-                                                <a onclick="removeCommentModal({{ val.message_id }})" class="value-info" style="color: skyblue">delete</a>
+                                                <a onclick="removeCommentModal({{ val.message_id }})" class="value-info comment-delete-button" style="color: skyblue">delete</a>
                                             {% endif %}
                                         </div>
                                         <hr class="child-separator">

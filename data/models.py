@@ -144,7 +144,7 @@ class Description(models.Model):
 
 class Messages(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE)
+    group_instance = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
     parent = models.BigIntegerField(default=-5)
     class_instance = models.ForeignKey('Class', on_delete=models.CASCADE)
     creator = models.ForeignKey('Account', on_delete=models.CASCADE)

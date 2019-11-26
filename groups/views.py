@@ -78,20 +78,18 @@ def class_details(request, message=None, class_id=None):
                 d['accepted'] = False
         student_descriptions_skills[student] = d
 
-    print("enrolled: " + str(enrolled))
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
-    print("isInstructor: " + str(isInstructor))
     # get message dict
     requesterID = request.user.account_id
 
     # class_id = request.POST.get("class_id")
     # class_instance = DataModel.Class.objects.filter(class_id=class_id).first()
-    group_instance = DataModel.Group.objects.filter(group_name=c.class_name).first()
+    # group_instance = DataModel.Group.objects.filter(group_name=c.class_name).first()
 
     # get messages
-    messages = list(DataModel.Messages.objects.filter(group_instance=group_instance))
+    messages = list(DataModel.Messages.objects.filter(class_instance=c, group_instance=None))
     parent_msgs = list(
-        DataModel.Messages.objects.filter(parent=-5, group_instance=group_instance))  # get parent messages
+        DataModel.Messages.objects.filter(parent=-5, class_instance=c, group_instance=None))  # get parent messages
     msg_dict = {}  # msg_dict = {parent_msg: [children_msgs]}
     for parent_msg in parent_msgs:
         children_msg = []

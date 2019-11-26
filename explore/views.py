@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from data.models import Class, Group
+from data.models import Class
 from django.http import JsonResponse
 
 
@@ -22,13 +22,13 @@ def create_class(request):
     class_instance = Class.objects.last()
     data = {'status': "../groups/class/" + str(class_instance.class_id)}
 
-    create_class_group(class_instance)
+    # create_class_group(class_instance)
     return JsonResponse(data)
 
-def create_class_group(class_instance):
-    group_instance = Group()
-    group_instance.group_name = class_instance.class_name
-    group_instance.class_instance = class_instance
-    group_instance.save()
-    return
+# def create_class_group(class_instance):
+#     group_instance = Group()
+#     group_instance.group_name = class_instance.class_name
+#     group_instance.class_instance = class_instance
+#     group_instance.save()
+#     return
 
