@@ -12,8 +12,11 @@
 {% block content %}
     {% include 'navbar.html' %}
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
+
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/assign_main_instructor.css">
+
     {{ form.media }}
     <style>
         body{
@@ -593,6 +596,11 @@
             outline: none;
             background: none;
         }
+
+        .bootstrap-datetimepicker-widget.dropdown-menu {
+            width: 240px;
+        }
+
     </style>
 {% if messages %}
         <script>
@@ -729,24 +737,24 @@
                     </ul>
                 </form>
                 </div>
-                    <table>
+                    <table class="assignment">
                         <thead>
                             <tr>
-                                <th>Assignment Subject (click name to view detail) </th>
-                                <th>due Date</th>
-                                <th>Delete</th>
+                                <th class="assignment">Assignment Subject (click name to view detail) </th>
+                                <th class="assignment">due Date</th>
+                                <th class="assignment">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for assignment in assignments %}
                                 <tr>
-                                    <td>
+                                    <td class="assignment">
                                         <a style="color: dodgerblue" href="../../assignment/detail/{{ assignment.assignment_id }}"> {{ assignment.subject }} </a>
                                     </td>
-                                    <td>
+                                    <td class="assignment">
                                         <span> {{ assignment.due_date }} </span>
                                     </td>
-                                    <td>
+                                    <td class="assignment">
                                         <button onclick="removeAssignmentModal({{ assignment.assignment_id }})" class="delete-assignment">X</button>
                                     </td>
                                 </tr>
@@ -759,12 +767,12 @@
                 <table>
                 <thead>
                     <tr>
-                        <th>Subject</th>
-                        <th></th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th>Upload Time</th>
-                        <th></th>
+                        <th class="assignment">Subject</th>
+                        <th class="assignment"></th>
+                        <th class="assignment">Deadline</th>
+                        <th class="assignment">Status</th>
+                        <th class="assignment">Upload Time</th>
+                        <th class="assignment"></th>
                     </tr>
                 </thead>
                 <tbody>
