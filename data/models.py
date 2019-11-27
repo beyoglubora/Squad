@@ -103,8 +103,10 @@ class Notification(models.Model):
     # 7: Instructor has put you into a group
     # 8: instructor has removed you from the class
     # 9: request to join group
-    #10: confirmation of being accepted into a group
-    #11: new comments are published in discussion
+    # 10: confirmation of being accepted into a group
+    # 11: new comments are published in discussion
+    # 20: new assignment is published in class
+    # 21: group member submitted an assignment
 
 
 class Group(models.Model):
