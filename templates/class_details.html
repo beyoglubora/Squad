@@ -810,9 +810,9 @@
                             </td>
                             <td>
                                 {% if time_now < key.due_date  %}
-                                    <span class="btn btn-sm">{{ key.due_date }}</span>
+                                    <span>{{ key.due_date }}</span>
                                 {% else %}
-                                    <span class="btn btn-sm" style="color:red;">{{ key.due_date }}</span>
+                                    <span style="color:red;">{{ key.due_date }}</span>
                                 {% endif %}
                             </td>
                             {% if value %}
