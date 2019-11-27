@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
-from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship
+from data.models import Class, Assignment, Group, StudentUpload, AssignmentRelationship, Relationship, Notification
 from django.urls import reverse_lazy
 from django.utils import timezone
 
@@ -21,8 +21,19 @@ def assignment_main_page(request, class_pk):
 
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
+        print("create form")
         if form.is_valid():
+            print("form.is_valid()")
             a = form.save()
+            # push notifications to all students in that class
+            relations = Relationship.objects.filter(class_instance=class_instance)
+            print(relations)
+            for r in relations:
+                new_notification = Notification(class_instance=class_instance,
+                                                sender_instance=request.user,
+                                                receiver_instance=r.student_instance,
+                                                status=20)
+                new_notification.save()
 
         return render(request, 'assignment_main_instructor.html', {
             'class_ins': class_instance,
@@ -74,6 +85,17 @@ def show_student_upload(request, a_pk, g_pk):
                 old_student_upload.delete()
                 print(exist_a_re.student_upload_instance.upload_file)
 
+        # push notifications to all group members
+        relations = Relationship.objects.filter(group_id=group_ins.group_id)
+        for r in relations:
+            if request.user.account_id == r.student_instance.account_id:
+                continue
+            new_notification = Notification(class_instance=group_ins.class_instance,
+                                            sender_instance=request.user,
+                                            receiver_instance=r.student_instance,
+                                            group_instance=group_ins,
+                                            status=21)
+            new_notification.save()
 
         # TODO: new return
         return HttpResponseRedirect("/groups/class/" + str(group_ins.class_instance.class_id))
@@ -156,3 +178,4 @@ def show_assignment_group(request, group_pk):
         'assignment_rel_dic': assignment_group_dict,
         'time_now': timezone.now()
     })
+

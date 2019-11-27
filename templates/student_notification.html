@@ -327,6 +327,11 @@
                     {% else %}
                         <p id="action-text"> has made a comment in your group <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a> in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                     {% endif %}
+                {% elif notification.status == 20 %}
+                    <p id="action-text"> has uploaded a new assignment in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% elif notification.status == 21 %}
+                    <p id="action-text"> has submitted an assignment in <a class="group-link" href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a>
+                        for <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
                 {% endif %}
 
                 {% if not notification.read %}

@@ -101,13 +101,22 @@ def class_details(request, message=None, class_id=None):
         msg_dict[parent_msg] = children_msg
     # sort the dict based on the key's datetime
     od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
-    print(od_msg_dict)
+    # print(od_msg_dict)
 
     assignments_in_this_class = DataModel.Assignment.objects.filter(class_instance=c)
     if request.method == 'POST':
         form = AssignmentsForm(request.POST, request.FILES)
         if form.is_valid():
-            a = form.save()
+            form.save()
+            # push notifications to all students in that class
+            relations = DataModel.Relationship.objects.filter(class_instance=c)
+            print(relations)
+            for r in relations:
+                new_notification = DataModel.Notification(class_instance=c,
+                                                          sender_instance=request.user,
+                                                          receiver_instance=r.student_instance,
+                                                          status=20)
+                new_notification.save()
     else:
         form = AssignmentsForm(initial={'class_instance': c})
 
