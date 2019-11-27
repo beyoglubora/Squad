@@ -321,8 +321,13 @@
                     </button>
                 {% elif notification.status == 10 %}
                     <p id="action-text">has accepted your request to join their <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">group</a> in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                {% elif notification.status == 11 %}
+                    {% if notification.group_instance == None %}
+                        <p id="action-text"> has made a comment in <a class="group-link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    {% else %}
+                        <p id="action-text"> has made a comment in your group <a id=group-link href="../groups/{{ notification.group_instance.group_id }}">{{ notification.group_instance.group_name }}</a> in <a class="class_link" href="../groups/class/{{ notification.class_instance.class_id }}">{{ notification.class_instance.class_name }}</a></p>
+                    {% endif %}
                 {% endif %}
-
 
                 {% if not notification.read %}
                     <button class="read-button" onclick=readNotification(this)>Read</button>
