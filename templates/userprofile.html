@@ -444,20 +444,49 @@
                             </div>
                         </div>
 
-                        <div id="edit-class-modal" class="modal edit-class-modal">
-                            <div class="edit-class-modal-content">
-                                <div id="edit-class-banner">
-                                    <h3 id="banner-edit-class-text">Edit Your Class</h3>
-                                </div>
-                                <div class="edit-class-modal-body">
-                                    <input placeholder="What is your class code?" value="{{ k.class_name }}" class="edit-class-class-name"/>
-                                    <textarea placeholder="Give your class a description" class="edit-class-class-description">{{ k.description }}</textarea>
-                                    <br>
-                                    <button id="delete-class-button" onclick="deleteClassModal()">Delete</button>
-                                    <button id="edit-class-button" onclick="processEditClass()">Edit</button>
-                                </div>
+                        <a id="class-name" href="../groups/class/{{ k.class_id }}">{{ k.class_name }}</a>
+                        {% if user_instance.is_instructor and user_instance.account_id == request.user.pk %}
+                            <button id = '{{ k.class_id }}' class="edit" onclick="editClassInstructor(this)">Edit</button>
+                        {% elif not user_instance.is_instructor and user_instance.account_id == request.user.pk%}
+                            <button class="edit" onclick="editClassStudent(this)">Edit</button>
+                        {% endif %}
+                        <hr>
+                        <p id="description-label">Description for this course</p>
+                        <p id="description">{{ v.description }}</p>
+                        <br>
+                        {% if not user_instance.is_instructor %}
+                            <div id="skills">
+                                <p id="skill-text">Skills:</p>
+                                <p id="skills-list-text">{{ v.skills_display }}</p>
+                            </div>
+                        {% endif %}
+                        <br>
+                    <div id="edit-class-modal" class="modal edit-class-modal">
+                        <div class="edit-class-modal-content">
+                            <div id="edit-class-banner">
+                                <h3 id="banner-edit-class-text">Edit Your Class</h3>
+                            </div>
+                            <div class="edit-class-modal-body">
+                                <input placeholder="What is your class code?" value="{{ k.class_name }}" class="edit-class-class-name"/>
+                                <textarea placeholder="Give your class a description" class="edit-class-class-description">{{ k.description }}</textarea>
+                                <br>
+                                <button id="delete-class-button" onclick="deleteClassModal()">Delete</button>
+                                <button id="edit-class-button" onclick="processEditClass()">Edit</button>
                             </div>
                         </div>
+                    </div>
+                    <div id="delete-class-modal" class="modal delete-class-modal">
+                        <div class="delete-class-modal-content">
+                            <div class="delete-class-modal-body">
+                                <p id="confirm-delete-class-text">Are you sure you want to delete this class? All students will be unenrolled and all groups will be deleted.</p>
+                                <button id="dont-delete-class-button" onclick="reshowEditClassInstructor()">No, I change my mind.</button>
+                                <button id="confirm-delete-class-button" onclick="processDeleteClass({{ k.class_id }})">Yes, I'm sure.</button>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
 
                     <div id="edit-profile-modal" class="modal edit-profile-modal">
                         <div class="edit-profile-modal-content">
@@ -474,38 +503,6 @@
                             </div>
                         </div>
                     </div>
-
-                        <div id="delete-class-modal" class="modal delete-class-modal">
-                            <div class="delete-class-modal-content">
-                                <div class="delete-class-modal-body">
-                                    <p id="confirm-delete-class-text">Are you sure you want to delete this class? All students will be unenrolled and all groups will be deleted.</p>
-                                    <button id="dont-delete-class-button" onclick="editClassInstructor()">No, I change my mind.</button>
-                                    <button id="confirm-delete-class-button" onclick="processDeleteClass({{ k.class_id }})">Yes, I'm sure.</button>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <a id="class-name" href="../groups/class/{{ k.class_id }}">{{ k.class_name }}</a>
-                        {% if user_instance.is_instructor and user_instance.account_id == request.user.pk %}
-                            <button class="edit" onclick="editClassInstructor()">Edit</button>
-                        {% elif not user_instance.is_instructor and user_instance.account_id == request.user.pk%}
-                            <button class="edit" onclick="editClassStudent(this)">Edit</button>
-                        {% endif %}
-                        <hr>
-                        <p id="description-label">Description for this course</p>
-                        <p id="description">{{ v.description }}</p>
-                        <br>
-                        {% if not user_instance.is_instructor %}
-                            <div id="skills">
-                                <p id="skill-text">Skills:</p>
-                                <p id="skills-list-text">{{ v.skills_display }}</p>
-                            </div>
-                        {% endif %}
-                        <br>
-                    </div>
-                {% endfor %}
-            </div>
     </div>
 
 <script>
@@ -515,6 +512,7 @@
     var edit_profile_error_message_displayed = false;
     function editProfileModal(){
         editProfile = document.getElementsByClassName("edit-profile-modal")[0];
+        console.log(editProfile);
         editProfileModalBody = editProfile.getElementsByClassName("edit-profile-modal-body")[0];
         editProfile.style.display="block";
     }
@@ -661,15 +659,20 @@
         var editClassModalBody = null;
         var error_message_displayed = false;
 
-        var deleteClass = document.getElementById("delete-class-modal");
-
-        function editClassInstructor(){
-            editClass = document.getElementsByClassName("modal edit-class-modal")[0];
+        var deleteClass = null;
+        function editClassInstructor(elem){
+            console.log(elem);
+            console.log(elem.parentElement);
+            editClass = elem.parentElement.getElementsByClassName("edit-class-modal")[0];
             editClassModalBody = editClass.getElementsByClassName("edit-class-modal-body")[0];
+            deleteClass = elem.parentElement.getElementsByClassName("modal delete-class-modal")[0];
             deleteClass.style.display = "none";
             editClass.style.display="block";
         }
-
+        function reshowEditClassInstructor(){
+            deleteClass.style.display = "none";
+            editClass.style.display="block";
+        }
         function deleteClassModal(){
             editClass.style.display = "none";
             deleteClass.style.display = "block";

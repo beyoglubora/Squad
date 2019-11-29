@@ -80,6 +80,12 @@
         font-size: x-small;
         color: gray;
     }
+    #p-photo-label{
+        display: inline;
+        font-family: 'Montserrat', sans-serif;
+        font-size: x-small;
+        color: gray;
+    }
     #help-text{
         list-style-type: none;
         font-size: x-small;
@@ -101,7 +107,7 @@
         <div id="banner">
             <h1 id="title">Sign Up</h1>
         </div>
-        <form id="sign-up-form" method="post" action="{% url 'signup' %}">
+        <form id="sign-up-form" enctype="multipart/form-data" method="post" action="{% url 'signup' %}">
             {% csrf_token %}
             {% for field in form %}
                 {{ field.errors }}
@@ -114,6 +120,8 @@
                     <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="password" placeholder="{{ field.label }}"/>
                 {% elif field.id_for_label == "id_profile_photo" %}
                     <label for="{{ field.id_for_label }}"></label>
+                    <p id="p-photo-label">Profile Photo</p>
+                    <br>
                     <input class="form-control-photo" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" type="file" placeholder="{{ field.label }}"/>
                 {% elif field.id_for_label == "id_is_instructor" %}
                     <label for="{{ field.id_for_label }}"></label>

@@ -55,6 +55,7 @@
             padding-bottom: 100px;
             float: left;
             word-wrap: break-word;
+            word-break: break-word;
             text-align: center;
             -webkit-transition: background-color .5s;
             -moz-transition:    background-color .5s;
@@ -430,8 +431,16 @@ function classCreation(){
         }
       });
     }
-
 }
+window.addEventListener( "pageshow", function ( event ) {
+  var historyTraversal = event.persisted ||
+                         ( typeof window.performance != "undefined" &&
+                              window.performance.navigation.type === 2 );
+  if ( historyTraversal ) {
+    // Handle page restore.
+    window.location.reload();
+  }
+});
 </script>
 
 {% endblock %}

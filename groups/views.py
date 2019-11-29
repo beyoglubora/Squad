@@ -5,7 +5,13 @@ import re
 import collections
 from assignments.forms import AssignmentsForm, StudentUploadForm, Assignments_Boostrap_Form
 from django.utils import timezone
-
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+import threading
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from Squad.settings import EMAIL_HOST_USER
 
 def class_details(request, message=None, class_id=None):
     # The class_id should be retrieved from the sent request displaying the class_temp detail page.
@@ -263,6 +269,16 @@ def enroll_student(request):
     student_id = request.POST.get("student_id")
     student_instance = DataModel.Account.objects.filter(account_id=student_id).first()
     DataModel.Notification.objects.create(class_instance=class_instance, sender_instance=request.user, receiver_instance=student_instance, status=3)
+    current_site = get_current_site(request)
+    mail_subject = 'Enroll Notification'
+    message = render_to_string('enroll_email_html.html', {
+        'user': student_instance,
+        'domain': current_site.domain,
+        'instructor': request.user,
+        'class_name': class_instance.class_name
+    })
+    to_email = student_instance.email
+    send_mail(mail_subject, message, EMAIL_HOST_USER, [to_email], fail_silently=True)
     return JsonResponse({"message": "student was successfully notified of enrollment"})
 
 
@@ -305,6 +321,16 @@ def enroll_students(request):
                             error_str += email + " has already been notified and still needs to fill out their skills and description. <br>"
                         else:
                             DataModel.Notification.objects.create(sender_instance=request.user, receiver_instance=student_instance, status=3, class_instance=class_instance)
+                            current_site = get_current_site(request)
+                            mail_subject = 'Enroll Notification'
+                            message = render_to_string('enroll_email_html.html', {
+                                'user': student_instance,
+                                'domain': current_site.domain,
+                                'instructor': request.user,
+                                'class_name': class_instance.class_name
+                            })
+                            to_email = email
+                            send_mail(mail_subject, message, EMAIL_HOST_USER, [to_email], fail_silently=True)
     return JsonResponse({"message": error_str})
 
 def edit_group_name(request):
@@ -561,3 +587,24 @@ def add_msg_to_DB(request):
 def get_group_message(group_id):
     messages = DataModel.Messages.objects.filter(group_instance=group_id)
     return messages
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, body, from_email, recipient_list, fail_silently, html):
+        self.subject = subject
+        self.body = body
+        self.recipient_list = recipient_list
+        self.from_email = from_email
+        self.fail_silently = fail_silently
+        self.html = html
+        threading.Thread.__init__(self)
+
+    def run (self):
+        msg = EmailMultiAlternatives(self.subject, self.body, self.from_email, self.recipient_list)
+        if self.html:
+            msg.attach_alternative(self.html, "text/html")
+        msg.send(self.fail_silently)
+
+
+def send_mail(subject, body, from_email, recipient_list, fail_silently=False, html=None, *args, **kwargs):
+    EmailThread(subject, body, from_email, recipient_list, fail_silently, html).start()
