@@ -284,7 +284,11 @@
                     <div class="class-container">
                         <button onclick="window.location.href='../groups/class/{{ class.class_id }}'" class="class-name-container">
                             <p class="class-name">{{ class.class_name }}</p>
-                            <a href='../account/{{ class.instructor_instance.account_id }}' class="instructor-name"><img id="profile-photo" src="{{ class.instructor_instance.profile_photo.url }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a>
+                            {% if class.instructor_instance.profile_photo %}
+                                <a href='../account/{{ class.instructor_instance.account_id }}' class="instructor-name"><img id="profile-photo" src="{{ class.instructor_instance.profile_photo.url }}">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a>
+                            {% else %}
+                                <a href='../account/{{ class.instructor_instance.account_id }}' class="instructor-name"><img id="profile-photo" src="../media/default.jpg">{{ class.instructor_instance.first_name }} {{ class.instructor_instance.last_name }}</a>
+                            {% endif %}
                         </button>
                         <div class="description-container">
                             <h2 class="description-label">Description</h2>
