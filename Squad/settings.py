@@ -79,6 +79,7 @@ TEMPLATES = [
     },
 ]
 
+# AUTH_USER_MODEL = 'data.Account'
 WSGI_APPLICATION = 'Squad.wsgi.application'
 
 
@@ -142,4 +143,3 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'officialsquadwebsite@gmail.com'
 EMAIL_HOST_PASSWORD = 'officialsquad@123'
 EMAIL_PORT = 587
-AUTH_USER_MODEL = 'data.Account'
