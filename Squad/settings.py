@@ -79,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-AUTH_USER_MODEL = 'data.Account'
+# AUTH_USER_MODEL = 'data.Account'
 WSGI_APPLICATION = 'Squad.wsgi.application'
 
 
