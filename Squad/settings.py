@@ -25,7 +25,7 @@ SECRET_KEY = ')f_u1a6yh0at!n9&e47&-gq2d$v^mm5=8#x_i33cy7a0s819)2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-env.c2px3m34is.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -140,6 +140,6 @@ MEDIA_URL = '/media/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'signupforsquad@gmail.com'
-EMAIL_HOST_PASSWORD = 'joinsquad@123'
+EMAIL_HOST_USER = 'officialsquadwebsite@gmail.com'
+EMAIL_HOST_PASSWORD = 'officialsquad@123'
 EMAIL_PORT = 587
