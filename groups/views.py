@@ -123,6 +123,8 @@ def class_details(request, message=None, class_id=None):
                                                           receiver_instance=r.student_instance,
                                                           status=20)
                 new_notification.save()
+
+        return HttpResponseRedirect("/groups/class/"+str(c.class_id))
     else:
         form = AssignmentsForm(initial={'class_instance': c})
 
