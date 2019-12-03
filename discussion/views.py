@@ -15,6 +15,7 @@ def show_messages(request):
     group_instance = DataModel.Group.objects.filter(group_id=group_id).first()
 
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
+    isTheSame = isInstructor and group_instance.class_instance.instructor_instance == request.user
     isEnrolled = False
     group_relation = list(DataModel.Relationship.objects.filter(group_id=group_id))
     for r in group_relation:
@@ -37,7 +38,7 @@ def show_messages(request):
     od_msg_dict = collections.OrderedDict(sorted(msg_dict.items(), key=lambda t: t[0].date, reverse=True))
 
     return render(request, 'discussion.html', {'is_enrolled': isEnrolled,
-                                               'is_instructor': isInstructor,
+                                               'is_instructor': isTheSame,
                                                'group_instance': group_instance,
                                                'msg_dict': od_msg_dict,
                                                'requesterID': requesterID})

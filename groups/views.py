@@ -87,6 +87,7 @@ def class_details(request, message=None, class_id=None):
         student_descriptions_skills[student] = d
 
     isInstructor = DataModel.Account.objects.filter(account_id=request.user.account_id).first().is_instructor
+    isTheSameInstructor = isInstructor and c.instructor_instance == request.user
     # get message dict
     requesterID = request.user.account_id
 
@@ -146,7 +147,7 @@ def class_details(request, message=None, class_id=None):
                                                   "own_group": own_group,
                                                   'msg_dict': od_msg_dict,
                                                   'requesterID': requesterID,
-                                                  'isInstructor': isInstructor,
+                                                  'isInstructor': isTheSameInstructor,
                                                   'assignments': assignments_in_this_class,
                                                   'form': form,
                                                   'assignment_rel_dic': assignment_group_dict,
