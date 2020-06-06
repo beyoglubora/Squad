@@ -1,4 +1,4 @@
-Django==2.1.1
+Django==2.2.13
 django-bootstrap-modal-forms==1.5.0
 django-tempus-dominus==5.1.2.9
 Pillow==6.2.1
