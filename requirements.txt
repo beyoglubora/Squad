@@ -1,7 +1,7 @@
 Django==2.1.1
 django-bootstrap-modal-forms==1.5.0
 django-tempus-dominus==5.1.2.9
-Pillow==6.2.1
+Pillow==8.2.0
 pytz==2019.2
 sqlparse==0.3.0
 xlrd==1.2.0
